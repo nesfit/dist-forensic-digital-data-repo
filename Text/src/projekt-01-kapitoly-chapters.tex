@@ -4,10 +4,98 @@
 
 \chapter{Úvod}
 
-\chapter{Digitální forenzní data}
+\chapter{Forenzní analýza digitálních dat} %???
+Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a předávající fakta ohledně digitálních důkazů nalezených v počítačích nebo digitálních úložištích mediálních zařízení.
+Nezabývá se tedy pouze počítači, ale také ostatními digitálními technologiemi včetně mobilních telefonů a tabletů, mobilních sítí, internetového bankovnictví, datových médií apod. Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
+
+\begin{itemize}
+\item Identifikace - Jedná se o první část celého procesu. Předtím, než je cokoliv zkoumáno a analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
+
+\item Zachování - Důležitá je ochrana důkazů, tzn. pro sběr a analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a ztrátě. Bez integrity je důkazní materiál nepoužitelný.
+
+\item Obnovení - Součástí procesu je i obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a také poškozené soubory.
+
+\item Analýza - Jedná se o hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů.
+
+\item Předání - Po analýze jsou artefakty důkladně zdokumentovány a odevzdány například ve formě protokolu.
+\end{itemize}
+
+\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření a prozkoumání obrazu disku. Obraz disku je kopie celého disku nebo jeho části bit po bitu. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů a být tak použitý jako důkaz v soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
+
+Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z disku. Forenzní obraz obsahuje soubory z disku, ale také nealokovaný prostor a tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a ten všechen prostor nepotřebuje. Právě v těchto prostorech mohou být nalezeny relevantní informace jako například smazané soubory, či jejich fragmenty. \cite{forensicImages}
+
 \section{Formáty digitálních forenzních dat}
-\section{Způsob uložení}
-\section{Existující systémy}
+Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z \cite{forensicswikiForensicFF}.
+
+Mnoho forenzních počítačových programů používají své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a programově-specifické formáty (anglicky \texttt{Program-Specific File Formats}).
+
+\begin{itemize}
+\item Independent File Formats - Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
+
+\item Program-Specific File Formats - Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní a proto je pro přečtení potřeba unikátního nástroje.
+Zástupci jsou například \texttt{Encase image file format}, \texttt{ProDiscover image file format}, \texttt{IXimager file formats}.
+\end{itemize}
+
+\noindent Vyznamným zástupcem je systém AFF4, který bude popsán detailněji.
+
+\section{AFF4}
+Celým názvem \texttt{The Advanced Forensics File Format 4} se jedná o open source formát pro ukládání digitálních důkazů a dat. Jeho výhodami jsou správa metadat a možnost komprese. Tato sekce čerpá převážně z\cite{aff4}. Je založen na objektově orientované architektuře. Veškerá množina známých objektů je označována jako \texttt{AFF4 universe}. Takový prostor je definovaný jako nekonečný, protože AFF4 je navržen pro škálování obrovského množství důkazního materiálu. Všechny objekty jsou adresovatelné jejich jménem, které je v rámci AFF4 universe unikátní.
+
+\vspace{0.5cm}
+
+\noindent Příkladem jména nějakého AFF4 objektu může být:
+
+\texttt{urn:aff4:f3eba626-505a-4730-8216-1987853bc4d2}
+
+\noindent Jedná se o standardní URN notaci, URN je unikátní.
+
+\vspace{0.5cm}
+
+\noindent AFF4 universe používá RDF notaci pro specifikaci atributů objektů. V nejjednodušší podobě je RDF množina tvrzení o objektu ve formátu:
+
+\texttt{Subject   Attribute   Value}
+
+\vspace{0.5cm}
+
+\noindent Příklad:
+
+\noindent \texttt{******** Object urn:aff4:f3eba626-505a-4730-8216-1987853bc4d2 ***********}\\
+\texttt{aff4:stored = urn:aff4:4bdbf8bc-d8a5-40cb-9af0-fd7e4d0e2c9e}\\
+\texttt{aff4:type = image}\\
+\texttt{aff4:interface = stream}\\
+\texttt{aff4:timestamp = 0x49E9DEC3}\\
+\texttt{aff4:chunk\_size = 32k}\\
+\texttt{aff4:compression = 8}\\
+\texttt{aff4:chunks\_in\_segment = 2048}\\
+\texttt{aff4:size = 10485760}\\
+
+\noindent Příklad ukazuje, že objekt má tyto atributy a hodnoty. Nazýváme je relace nebo fakta. Celý AFF4 universe je sestavený z takových faktů.
+
+\noindent AFF4 objekty existují, protože dělají něco užitečného, což závisí na rozhraní, které představují. Aktuálně existuje několik rozhraní, nejvýznamnější jsou \texttt{Volume} a \texttt{Stream}. Rozhraní objektu je fakt o objektu, který nalezneme v atributu \texttt{aff4:interface}.
+
+\subsection{Rozhraní Volume}
+Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno a získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a \texttt{ZipFile}.
+
+\begin{itemize}
+\item \texttt{Directory Volume} - Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké http adrese, což nám umožní používat obraz přímo z webu.
+
+\item \texttt{ZipFile Volume} - Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze tak bez problémů otevřít obyčejným průzkumníkem (windows explorer) a data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a používat obraz přímo ze serveru.
+\end{itemize}
+
+\noindent Je možnost převádět mezi oběma formáty z jednoho na druhý, extrahovat zip archiv do adresáře a vytvoření Directory volume.
+
+\subsection{Rozhraní Stream}
+Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a \texttt{close}. Podporuje ještě \texttt{write}, ale ne k modifikaci obrazu, nýbrž k jeho vytvoření. Pokud nějaký AFF4 objektu podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z nich jsou:
+
+\begin{itemize}
+\item \texttt{FileBackedObjects} - Stream, který ukládá data v souboru v souborovém systému, jehož pozice je určena URN souboru.
+
+\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a číst z HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů, režie síťového provozu mezi klientem a serverem je minimální. Je možné vyšetřit vzdálený obraz přes http bez potřeby celé kopie obrazu. Server musí být samozřejmě zabezpečen, ale to už AFF neřeší.
+
+\item \texttt{Segments} - Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a ne forenzní obraz celkového systému.
+
+\item \texttt{Image streams} - Tyto streamy jsou opakem segmentů. Pro velké obrazy nemůžeme použít segmenty, protože by nebyly zkomprimovány efektivně. Image stream ukládá obraz v tzv. \texttt{chunks}.
+\end{itemize}
 
 \chapter{Úložiště pro rozsáhlá strukturovaná i nestrukturovaná data}
 V této kapitole budou vysvětleny termíny Big data, distribuované databáze a NoSQL databáze, včetně jejich vlastností, výhod a nevýhod.
