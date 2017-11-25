@@ -1,0 +1,18 @@
+#  Author: Martin Josefik
+#  Date: 2017-11-11 14:38:55 +0000 (Sat, 11 Nov 2017)
+
+version: '3'
+
+services:
+    cassandra:
+        image: cassandra:latest
+    hadoop:
+        image: sequenceiq/hadoop-docker:latest
+    zookeeper:
+        image: wurstmeister/zookeeper:latest
+    kafka:
+        image: wurstmeister/kafka:latest
+    ubuntu:
+        image: harisekhon/ubuntu-dev:latest
+        #Empty Ubuntu
+        #image: ubuntu:latest
