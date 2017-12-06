@@ -16,7 +16,7 @@ public class AcknowledgementProducer {
     }
 
     public void acknowledge() {
-        KafkaRequest response = new KafkaRequest.Builder().build();
+        KafkaRequest response = new KafkaRequest.Builder().id(request.getId()).build();
         Producer<KafkaRequest, String> producer = new Producer<>(KafkaRequestSerializer.class, StringSerializer.class);
         producer.produce(new ProducerRecord<>(request.getResponseTopic(), response, value));
     }

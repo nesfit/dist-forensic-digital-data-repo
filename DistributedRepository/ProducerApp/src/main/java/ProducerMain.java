@@ -9,9 +9,7 @@ import communication.producer.Producer;
 import communication.request.KafkaRequest;
 import communication.request.serialization.KafkaRequestDeserializer;
 import communication.request.serialization.KafkaRequestSerializer;
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
@@ -19,6 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.UUID;
 
 public class ProducerMain {
 
@@ -36,6 +35,7 @@ public class ProducerMain {
                             .operation(Operation.STORE).dataType(DataType.PCAP)
                             .awaitsResponse(Boolean.TRUE)
                             .responseTopic(Properties.getInstance().loadProperty(PropertyConstants.OUTPUT_TOPIC))
+                            .id(UUID.randomUUID())
                             .build();
 
                     Producer<KafkaRequest, String> producer = new Producer<>(KafkaRequestSerializer.class, StringSerializer.class);

@@ -32,7 +32,6 @@ public class PcapParser implements IPcapParser {
                 Packet packet = handle.getNextPacketEx();
                 packets.add(packet);
             } catch (EOFException e) {
-                e.printStackTrace();
                 break;
             } catch (TimeoutException e) {
                 e.printStackTrace();

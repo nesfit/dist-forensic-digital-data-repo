@@ -4,12 +4,15 @@ import communication.command.DataType;
 import communication.command.Operation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.UUID;
+
 public class KafkaRequest {
 
     private Operation operation;
     private DataType dataType;
     private Boolean awaitsResponse;
     private String responseTopic;
+    private UUID id;
 
     public Operation getOperation() {
         return operation;
@@ -43,6 +46,14 @@ public class KafkaRequest {
         this.responseTopic = responseTopic;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
@@ -72,6 +83,11 @@ public class KafkaRequest {
 
         public Builder responseTopic(String responseTopic) {
             request.setResponseTopic(responseTopic);
+            return this;
+        }
+
+        public Builder id(UUID id) {
+            request.setId(id);
             return this;
         }
 
