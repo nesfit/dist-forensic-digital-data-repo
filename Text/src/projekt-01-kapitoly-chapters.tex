@@ -3,8 +3,17 @@
 
 
 \chapter{Úvod}
+Během začátku 21. století došlo k ohromnému růstu v oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a dalších zařízení, či mobilních plateb a on-line transakcí. S tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, nebo také vyšetřovat. Rozdílnost mezi digitálními daty, jejich nestrukturované vlastnosti a prudký nárůst vyžadují mnoho rozličných přístupů a technologií pro jejich zpracování.
 
-\chapter{Forenzní analýza digitálních dat} %???
+Cílem této práce je navrhnout a vytvořit distribuované úložiště pro digitální forenzní data. V rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat, vysvětluje, jak probíhá a co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a existujícími systémy, které slouží k uchování těchto dat a důkazního materiálu. Je představen systém AFF4.
+
+Kapitola \ref{chapter2} pojednává o úložištích pro rozsáhlá strukturovaná i nestrukturovaná data. V jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a nevýhod. Kapitola je završena popisem a rozdělením NoSQL databází, na kterých bude úložiště distribuovaného repositáře založeno.
+
+Cílem praktické části práce je navrhnout a implementovat distribuovaný repositář. V kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a také rozšiřitelnost pro nové druhy digitálních forenzních dat.
+
+Pro ověření základních aspektů návrhu byl také implementován prototyp distribuovaného repositáře, který řeší převážně rozhraní komunikace s klientem, způsob ovládání repositáře, a rovněž zpracování požadavků od klienta. Prototypem se zabývá kapitola \ref{chapterPrototype}.
+
+\chapter{Forenzní analýza digitálních dat} \label{chapter1}
 Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a předávající fakta ohledně digitálních důkazů nalezených v počítačích nebo digitálních úložištích mediálních zařízení.
 Nezabývá se tedy pouze počítači, ale také ostatními digitálními technologiemi včetně mobilních telefonů a tabletů, mobilních sítí, internetového bankovnictví, datových médií apod. Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
@@ -20,26 +29,27 @@ Nezabývá se tedy pouze počítači, ale také ostatními digitálními technol
 \item Předání - Po analýze jsou artefakty důkladně zdokumentovány a odevzdány například ve formě protokolu.
 \end{itemize}
 
-\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření a prozkoumání obrazu disku. Obraz disku je kopie celého disku nebo jeho části bit po bitu. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů a být tak použitý jako důkaz v soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
+\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření a prozkoumání obrazu disku. Obraz disku je kopie celého disku nebo jeho části bit po bitu. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a může tak být použitý jako důkaz v soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
 
 Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z disku. Forenzní obraz obsahuje soubory z disku, ale také nealokovaný prostor a tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a ten všechen prostor nepotřebuje. Právě v těchto prostorech mohou být nalezeny relevantní informace jako například smazané soubory, či jejich fragmenty. \cite{forensicImages}
 
 \section{Formáty digitálních forenzních dat}
 Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z \cite{forensicswikiForensicFF}.
 
-Mnoho forenzních počítačových programů používají své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a programově-specifické formáty (anglicky \texttt{Program-Specific File Formats}).
+Mnoho forenzních počítačových programů používají své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a programově specifické formáty (anglicky \texttt{Program-Specific File Formats}):
 
 \begin{itemize}
-\item Independent File Formats - Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
+\item Nezávislé - Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
 
-\item Program-Specific File Formats - Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní a proto je pro přečtení potřeba unikátního nástroje.
+\item Programově specifické - Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní, a proto je pro přečtení potřeba unikátního nástroje.
 Zástupci jsou například \texttt{Encase image file format}, \texttt{ProDiscover image file format}, \texttt{IXimager file formats}.
 \end{itemize}
 
-\noindent Vyznamným zástupcem je systém AFF4, který bude popsán detailněji.
+\section{Existující systémy}
+Vyznamným zástupcem pro uložení digitálních forenzních dat je systém AFF4, který bude popsán detailněji.
 
-\section{AFF4}
-Celým názvem \texttt{The Advanced Forensics File Format 4} se jedná o open source formát pro ukládání digitálních důkazů a dat. Jeho výhodami jsou správa metadat a možnost komprese. Tato sekce čerpá převážně z\cite{aff4}. Je založen na objektově orientované architektuře. Veškerá množina známých objektů je označována jako \texttt{AFF4 universe}. Takový prostor je definovaný jako nekonečný, protože AFF4 je navržen pro škálování obrovského množství důkazního materiálu. Všechny objekty jsou adresovatelné jejich jménem, které je v rámci AFF4 universe unikátní.
+\subsection{AFF4}
+Jedná se o open source formát pro ukládání digitálních důkazů a dat. Jeho výhodami jsou správa metadat a možnost komprese. Tato sekce čerpá převážně z \cite{aff4}. Je založen na objektově orientované architektuře. Veškerá množina známých objektů je označována jako \texttt{AFF4 universe}. Takový prostor je definovaný jako nekonečný, protože AFF4 je navržen pro škálování obrovského množství důkazního materiálu. Všechny objekty jsou adresovatelné jejich jménem, které je v rámci AFF4 universe unikátní.
 
 \vspace{0.5cm}
 
@@ -73,80 +83,88 @@ Celým názvem \texttt{The Advanced Forensics File Format 4} se jedná o open so
 
 \noindent AFF4 objekty existují, protože dělají něco užitečného, což závisí na rozhraní, které představují. Aktuálně existuje několik rozhraní, nejvýznamnější jsou \texttt{Volume} a \texttt{Stream}. Rozhraní objektu je fakt o objektu, který nalezneme v atributu \texttt{aff4:interface}.
 
-\subsection{Rozhraní Volume}
-Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno a získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a \texttt{ZipFile}.
+\subsubsection{Rozhraní Volume}
+Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno, a získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a \texttt{ZipFile}.
 
 \begin{itemize}
 \item \texttt{Directory Volume} - Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké http adrese, což nám umožní používat obraz přímo z webu.
 
-\item \texttt{ZipFile Volume} - Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze tak bez problémů otevřít obyčejným průzkumníkem (windows explorer) a data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a používat obraz přímo ze serveru.
+\item \texttt{ZipFile Volume} - Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (windows explorer) a data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a používat obraz přímo ze serveru.
 \end{itemize}
 
-\noindent Je možnost převádět mezi oběma formáty z jednoho na druhý, extrahovat zip archiv do adresáře a vytvoření Directory volume.
+\noindent Je možné převádět mezi oběma formáty z jednoho na druhý, extrahovat zip archiv do adresáře a vytvoření Directory volume.
 
-\subsection{Rozhraní Stream}
+\subsubsection{Rozhraní Stream}
 Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a \texttt{close}. Podporuje ještě \texttt{write}, ale ne k modifikaci obrazu, nýbrž k jeho vytvoření. Pokud nějaký AFF4 objektu podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z nich jsou:
 
 \begin{itemize}
 \item \texttt{FileBackedObjects} - Stream, který ukládá data v souboru v souborovém systému, jehož pozice je určena URN souboru.
 
-\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a číst z HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů, režie síťového provozu mezi klientem a serverem je minimální. Je možné vyšetřit vzdálený obraz přes http bez potřeby celé kopie obrazu. Server musí být samozřejmě zabezpečen, ale to už AFF neřeší.
+\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a číst z HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a serverem je minimální. Je možné vyšetřit vzdálený obraz přes http bez potřeby celé kopie obrazu. Server musí být samozřejmě zabezpečen, ale to už AFF neřeší.
 
 \item \texttt{Segments} - Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a ne forenzní obraz celkového systému.
 
 \item \texttt{Image streams} - Tyto streamy jsou opakem segmentů. Pro velké obrazy nemůžeme použít segmenty, protože by nebyly zkomprimovány efektivně. Image stream ukládá obraz v tzv. \texttt{chunks}.
 \end{itemize}
 
-\chapter{Úložiště pro rozsáhlá strukturovaná i nestrukturovaná data}
-V této kapitole budou vysvětleny termíny Big data, distribuované databáze a NoSQL databáze, včetně jejich vlastností, výhod a nevýhod.
+\chapter{Úložiště pro rozsáhlá strukturovaná i nestrukturovaná data} \label{chapter2}
+V této kapitole bude představen a vysvětlen termín Big data, následován systémy a mechanismy pro uložení, jako například distribuované databáze a NoSQL databáze, včetně jejich vlastností, výhod a nevýhod.
 
-\section{Big data}
+\section{Big data} \label{bigDataSection}
 Definicí pro frázi Big data existuje několik. Jedná se o termín použitý na soubory dat, které jsou příliš komplexní z hlediska velikosti a různorodosti, a které je nemožné zpracovávat běžně používanými přístupy a softwarovými nástroji v rozumném čase.
 
-Objem takových dat rychle roste. Vyskytují se v mnoha odvětvích, například sběr informací o počasí, sociální sítě, energetické a telekomunikační společnosti, ekonomie a finančnictví, či data z kamer, měření z různých senzorů apod. Z toho plyne, že se jedná o data různorodých typů, mohou být strukturovaná i nestrukturovaná. Proto je potřeba existence různých technologií pro jejich uložení, zpracování i zobrazení.
+Objem takových dat rychle roste. Vyskytují se v mnoha odvětvích, například sběr informací o počasí, sociální sítě, energetické a telekomunikační společnosti, ekonomie a finančnictví, či data z kamer, měření z různých senzorů apod. Z toho plyne, že se jedná o data různorodých typů, mohou být strukturovaná i nestrukturovaná. Proto je potřeba existence různých technologií pro jejich uložení, zpracování, analýzu i zobrazení.
 
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=12.5cm]{template-fig/what_makes_data_big_data.pdf}
-  \caption{Definice Big data podle Oracle. \cite{johanBigData}}
-  \label{FIG_BigData}
-\end{figure}
+%\begin{figure}[!h]
+%  \centering
+%  \includegraphics[width=12.5cm]{template-fig/what_makes_data_big_data.pdf}
+%  \caption{Definice Big data podle Oracle. \cite{johanBigData}}
+%  \label{FIG_BigData}
+%\end{figure}
 
-\noindent Big data je často definováno jako 4V z anglických slov Volume, Velocity, Variety a Value. \cite{oracleBigData}
+\vspace{0.5cm}
+
+\noindent Pojem Big data je často definován jako 4V z anglických slov Volume, Velocity, Variety a Value: \cite{oracleBigData}
 
 \begin{itemize}
-\item Volume – značí množství nebo velikost dat. Big data vyžaduje zpracování vysokých objemů dat neznámých hodnot, například síťový provoz, data sesbírána ze senzorů apod.
+\item Volume – Značí množství nebo velikost dat. Je vyžadováno zpracování vysokých objemů dat neznámých hodnot, například síťový provoz, data sesbírána ze senzorů apod.
 
-\item Velocity – vyjadřuje rychlost z hlediska vzniku dat a potřeby jejich analýzy, některá vyžadují zpracování v reálném čase. Nejdůležitější data se zapisují přímo do paměti, a ne na disk, z důvodu co nejrychlejšího zpracování.
+\item Velocity – Vyjadřuje rychlost z hlediska vzniku dat a potřeby jejich analýzy, některá vyžadují zpracování v reálném čase. Nejdůležitější data se zapisují přímo do paměti, a ne na disk, z důvodu co nejrychlejšího zpracování.
 
-\item Variety – znamená různorodost typů. Jedná se především o nestrukturovaná data, například text, audio, video, data o geografické poloze a další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost. \cite{oracleBigData}
+\item Variety – Znamená různorodost typů. Jedná se především o nestrukturovaná data, například text, audio, video, data o geografické poloze a další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost. \cite{oracleBigData}
 
-\item Value – data mají vlastní hodnotu, která musí být analyzována a zjištěna. Nejedná se o jednoduchý proces, je stále potřeba nových metod a technik zpracování.
+\item Value – Data mají vlastní hodnotu, která musí být analyzována a zjištěna. Nejedná se o jednoduchý proces, je stále potřeba nových metod a technik zpracování.
 \end{itemize}
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/big_data_exabytes.pdf}
-  \caption{S novými technologiemi se masivně zvyšuje růst dat a přibývají nové typy. \cite{rajeshBigData}}
+  \caption{S přibývajícími novými technologiemi se masivně zvyšuje růst dat a přibývají nové typy. \cite{rajeshBigData}}
   \label{FIG_BigDataExabytes}
 \end{figure}
 
-\noindent Tato práce se zabývá Big daty hlavně typu – PCAP soubory, logy ze síťových zařízení a komunikací. Možnosti uložení Big data budou popsány v následujících podkapitolách.
+%\noindent Tato práce se zabývá Big daty hlavně typu – PCAP soubory, logy ze síťových zařízení a komunikací. Možnosti uložení Big data budou popsány v následujících podkapitolách.
 
 \section{Distribuované databáze}
-Distribuovaná databáze se skládá z většího počtu samostatných databází, které mohou být geograficky rozmístěny na jiných pozicích. Jednotlivé uzly spolu komunikují přes počítačovou síť. Každý uzel je sám o sobě databázový systém. DSŘBD neboli systém řízení distribuované báze dat (anglicky Distributed Database Database Management System) zajišťuje, že se distribuovaná databáze uživatelům jeví jako jedna jediná databáze. Data jsou fyzicky uložena na různých pozicích. Mohou být spravována rozdílnými SŘBD nezávisle na ostatních pozicích. \cite{distributedDBMS}
+Distribuovaná databáze se skládá z většího počtu samostatných databází, které mohou být geograficky rozmístěny na jiných pozicích. Jednotlivé uzly spolu komunikují přes počítačovou síť. Každý uzel je sám o sobě databázový systém. DSŘBD neboli systém řízení distribuované báze dat (anglicky Distributed Database Database Management System) zajišťuje, že se distribuovaná databáze uživatelům jeví jako jedna jediná databáze. Data jsou fyzicky uložena na různých pozicích. Mohou být spravována rozdílnými SŘBD nezávisle na ostatních pozicích.
 
-Systém řízení distribuované báze dat je centralizovaný systém s těmito vlastnostmi 
+\vspace{0.5cm}
+
+\noindent Systém řízení distribuované báze dat je centralizovaný systém s těmito vlastnostmi 
 \cite{distributedDBMS}:
 
 \begin{itemize}
-\item Umí vytvářet, získávat, upravovat a mazat distribuované databáze. Zajišťuje důvěrnost a integritu databází.
+\item Umí vytvářet, získávat, upravovat a mazat distribuované databáze.
+
+\item Zajišťuje důvěrnost a integritu databází.
 
 \item Periodicky synchronizuje databázi a poskytuje mechanismy přístupu tak, aby se databáze uživatelům jevila transparentní.
 
 \item Zajišťuje, že změna dat v kterémkoliv uzlu se promítne i v ostatních uzlech.
 
 \item Je využíván v aplikacích, kde se předpokládá zpracování velkých objemů dat, ke kterým přistupuje současně mnoho uživatelů.
+
+\item Je navržen pro heterogenní databázové platformy.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -156,24 +174,24 @@ Systém řízení distribuované báze dat je centralizovaný systém s těmito 
   \label{FIG_DistrDB}
 \end{figure}
 
-Výhody
+\noindent Výhody
 \begin{itemize}
-\item Rozšiřitelnost – pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a lokální data v nové pozici, a nakonec je připojit k distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Podobný postup je při odebrání uzlu.
+\item Rozšiřitelnost – Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a lokální data v nové pozici, a nakonec je připojit k distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Podobný postup je při odebrání uzlu.
 
-\item Spolehlivost – když nějaký z připojených uzlů selže, nepřestane distribuovaná databáze fungovat, sníží se maximálně výkon.
+\item Spolehlivost – Když nějaký z připojených uzlů selže, nepřestane distribuovaná databáze fungovat, sníží se maximálně výkon.
 
-\item Ochrana (záloha) dat – při zničení jednoho uzlu a smazání dat z něj, mohou být stejná data zálohována i na jiných uzlech.
+\item Ochrana (záloha) dat – Při zničení jednoho uzlu a smazání dat z něj, mohou být stejná data zálohována i na jiných uzlech.
 
-\item Výkonnost – pokud jsou data efektivně distribuována, může být uživatelův požadavek uspokojen rychleji. Transakce mohou být také distribuované a provedeny rychleji. 
+\item Výkonnost – Pokud jsou data efektivně distribuována, může být uživatelův požadavek uspokojen rychleji. Transakce mohou být také distribuované a provedeny rychleji. 
 \end{itemize}
 
-Nevýhody
+\noindent Nevýhody
 \begin{itemize}
-\item Integrita dat – data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z různých uzlů vraceny rozdílné odpovědi.
+\item Integrita dat – Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z různých uzlů vraceny rozdílné odpovědi.
 
-\item Komunikační režie – i zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
+\item Komunikační režie – I zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
 
-\item Cena – DSŘDB vyžaduje drahý a složitý software ke koordinaci uzlu a zajištění transparentnosti. \cite{distributedDBMS}
+\item Cena – DSŘDB vyžaduje drahý a složitý software ke koordinaci uzlů a zajištění transparentnosti. \cite{distributedDBMS}
 
 \item Mezi další patří – složitost, zabezpečení, řízení souběžného přístupu k datům.
 \end{itemize}
@@ -185,35 +203,218 @@ Nevýhody
   \label{FIG_DivDistrDB}
 \end{figure}
 
-\noindent Homogenní – všechny uzly používají identické SŘBD a operační systémy. Uzly mají informace o ostatních uzlech a spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a spravovat.
+\subsection{Rozdělení}
+\subsubsection{Homogenní}
+Všechny uzly používají identické SŘBD a operační systémy. Uzly mají informace o ostatních uzlech a spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a spravovat.
 
-Heterogenní – uzly mohou mít rozdílné operační systémy a SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a transakcí. Kvůli tomu je také složité dotazování. \cite{wikiDBMS}
+\vspace{0.5cm}
+\noindent Autonomní - Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a pro předávání dat používají zasílání zpráv.
 
-Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, multi-databázová architektura.
+\vspace{0.5cm}
+\noindent Neautonomní - Data jsou distribuována napříč homogenními uzly. O aktualizaci a správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
 
+\subsubsection{Heterogenní}
+Uzly mohou mít rozdílné operační systémy a SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a transakcí. Kvůli tomu je také složité dotazování. \cite{wikiDBMS} Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
 
-\section{NoSQL, disky, úložiště}
+\vspace{0.5cm}
+\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, multi-databázová architektura.
 
-\chapter{Návrh distribuovaného úložiště}
-\section{Přístup k datům}
-\subsection{Sekvenční, náhodný}
-\subsection{Dotazování}
-\subsection{Big data přístupy}
-\section{Architektura}
+\section{Úložiště}
+V této sekci budou popsána strukturovaná a nestrukturovaná data, jaký je mezi nimi rozdíl a jaká jsou jejich úložiště.
+
+\subsection{Strukturovaná data}
+Strukturovanými daty jsou libovolná data, pro která lze sestavit datový model. Datový model přesně organizuje jednotlivé elementy dat a specifikuje, jak spolu elementy souvisí, jaké mají vazby, jak budou uloženy, přístup k nim, a jak souvisí s jednotlivými elementy reálného světa. \cite{structData} Typickým úložištěm strukturovaných dat je relační databáze. Pro čtení a dotazování byl vytvořen dotazovací jazyk SQL.
+
+\subsection{Nestrukturovaná data}
+Jak už bylo zmíněno v sekci \ref{bigDataSection}, Big data patří převážně mezi nestrukturovaná data. Data nemají přesně definovanou strukturu, neexistuje datový model, který by definoval jednotlivé dílčí elementy a jejich vztahy. Mezi typické zástupce patří: videa, obrázky, audio, webové stránky, text, obsah e-mailové komunikace apod. Mezi vhodná úložiště mohou patřit disková úložiště, NAS (celým názvem \texttt{Network Attached Storage}), HDFS (\texttt{Hadoop Distributed File System}) a NoSQL databáze.
+
+\subsubsection{NoSQL databáze}
+%noSqlOverview
+%noSqlIntro
+Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jedná se o databázový koncept, ve kterém datové úložiště i zpracování dat používají jiné prostředky než tabulková schémata tradiční relační databáze \cite{noSqlWiki}. NoSQL databáze jsou navrženy pro distribuovaná ukládání a dotazování dat, souběžný přístup, a manipulaci s obrovským objemem dat. Mezi výhody patří: horizontální i vertikální škálovatelnost, distribuovaný přístup, flexibilita schématu, dynamičnost. Nevýhodami však mohou být: absence standardizace, omezené schopnosti dotazování, konzistence \cite{noSqlIntro}.
+
+\vspace{0.5cm}
+\noindent NoSQL databáze mohou být rozděleny do čtyř kategorií \cite{noSqlOverview}:
+\begin{itemize}
+    \item Klíč-hodnota (angl. Key-Value databases) - Jsou nejjednoduššími NoSQL úložišti. Každá položka v databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Zástupci jsou databáze \texttt{Riak} a \texttt{Redis}.
+    
+    \item Dokumentové (angl. Document databases) - Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty typu XML a JSON. Mezi zástupce patří \texttt{MongoDB} a \texttt{CouchDB}.
+    
+    \item Grafové (angl. Graph databases) - Jsou navrženy pro ukládání entit (uzly) a jejich vztahů (hrany). Uzly i hrany mohou mít svoje atributy. Zástupcem je \texttt{Neo4J}.
+    
+    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Ukládají data ve sloupcích místo řádků, jsou optimalizovány pro dotazování nad velkými objemy dat. Zástupci jsou například \texttt{Cassandra} a \texttt{HBase}.
+\end{itemize}
+
+\chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
+Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána architektura systému včetně aplikačního rozhraní a použité technologie pro vytvoření distribuovaného repositáře.
+Systém bude založen na Big data technologiích - Kafka (společně se ZooKeeper), NoSQL databáze, případně Hadoop a Spark. Jak jednotlivé technologie fungují bude vysvětleno v této kapitole.
+
 \section{Aplikační rozhraní}
-\section{Technologie}
-\subsection{Docker}
-\subsection{HDFS, Hadoop, Spark}
-\subsection{Cassandra / MongoDB}
-\subsection{Zookeeper}
-\subsection{MQ broker}
+Aplikační rozhraní umožňuje klientovi komunikovat s distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Podle typu operace a typu dat je určeno, jak se daný příkaz zpracuje. V následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a bude také uvedeno schéma celé komunikace jako příklad.
 
-\chapter{Implementace}
-\section{Rozšiřitelnost, znuvupoužitelnost}
+\subsection{Komunikace}
+Komunikace s klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a řetězec dat. Atributy příkazu udávají následující informace:
 
-\chapter{Testování}
+\begin{itemize}
+    \item typ dat,
+    \item o jakou operaci se jedná,
+    \item unikátní ID příkazu, aby klient potom dokázal identifikovat už zpracované příkazy,
+    \item jestli klient/odesilatel zprávy očekává od repositáře odpověď,
+    \item ve které frontě (angl. topic) je odpověď na straně klienta očekávána,
+    \item a další potřebné atributy.
+\end{itemize}
+
+\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/Kafka_communication.pdf}
+  \caption{Příklad komunikace - klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné - klient zjistí, ke kterému příkazu odpověď patří.}
+  \label{FIG_KafkaCommunication}
+\end{figure}
+
+\subsubsection{Kafka}
+Apache Kafka je distribuovaný systém zpráv s robustními frontami založený na mechanismu \texttt{publish-subscribe} umožňující přenášet vysoké objemy dat. Kafka zprávy jsou perzistentně uloženy na disku a replikovány v rámci clusteru kvůli prevenci ztráty dat. Framework Kafka je postaven na synchronizační službě ZooKeeper \cite{kafkaTutorialsPoint}.
+
+\vspace{0.5cm}
+\noindent Výhody jsou:
+\begin{itemize}
+    \item Spolehlivost - Kafka je distribuovaný systém, segmentovaný, replikovaný a odolný proti chybám.
+    \item Rozšiřitelnost - Možnost připojení nových uzlů do clusteru.
+    \item Odolnost - Zprávy jsou uloženy na disku.
+    \item Výkon - Vysoká propustnost pro obě akce \texttt{publish} a \texttt{subscribe}. Je zachován stabilní výkon i při objemu zpráv v terabytech.
+\end{itemize}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/Kafka_architecture.pdf}
+  \caption{Diagram zobrazující klíčové komponenty systému Kafka. \cite{kafkaTutorialsPoint}}
+  \label{FIG_KafkaArchitecture}
+\end{figure}
+
+\noindent V diagramu \ref{FIG_KafkaArchitecture} je fronta (angl. topic) konfigurována do tří oddílů (angl. partition). Pokud je faktor replikace fronty nastaven na hodnotu 3, Kafka vytvoří tři identické repliky každého oddílu a umístí je do clusteru. Každý prostředník (angl. broker) ukládá jeden nebo více těchto oddílů za účelem vyvažování zátěže. Více producentů, respektive konzumentů, může zároveň vydávat (angl. publish), resp. odebírat, (angl. subscribe) zprávy \cite{kafkaTutorialsPoint}.
+
+\vspace{0.5cm}
+\noindent Hlavní komponenty systému Kafka z diagramu \ref{FIG_KafkaArchitecture}:
+\begin{itemize}
+    \item Fronta - Jedná se o proud zpráv patřící k příslušné kategorii. Data jsou uložena ve frontách. Fronty jsou rozděleny do oddílů.
+    
+    \item Oddíl - Fronty mohou mít mnoho oddílů, tak aby zvládaly zpracování libovolného množství dat.
+
+    \item Offset oddílu (angl. Partition offset) - Každá zpráva v oddílu má unikátní sekvenci ID nazývanou offset.
+
+    \item Replika oddílu - Je pouhou zálohou oddílu. Repliky nejsou využívány ke čtení nebo zápisu dat, slouží pouze jako prevence před ztrátou dat.
+    
+    \item Prostředník - Jednoduchý systém zodpovědný za správu dat v oddílech, resp. frontách. Prostředníci slouží k balancování zátěže.
+    
+    \item Kafka Cluster - Pokud existuje víc než jeden prostředník, pak se systém nazývá cluster. Cluster může být rozšířen bez prodlev o další prostředníky.
+    
+    \item Producent - Je odesilatel zprávy do jedné nebo více Kafka front. Producenti posílají data prostředníkům. Pokaždé když producent pošle zprávu prostředníkovi, prostředník přidá zprávu na konec oddílu. Producent nečeká na žádná potvrzení, posílá zprávy tak rychle, jak jen prostředník dokáže přijímat.
+    
+    \item Konzument - Čte data od prostředníka(ů). Odebírá z jedné nebo více front a konzumuje zprávy vytažením dat od prostředníků.
+\end{itemize}
+
+\section{Úložiště}
+Tato sekce se zaměřuje na úložiště, kde budou digitální forenzní data uchována. Můžeme je rozdělit na strukturovaná a nestrukturovaná.
+
+\subsection{Strukturovaná data}
+V souvislosti se systémem repositáře se obecně jedná o data, která mohou být rozdělena na menší části při zachování možnosti interpretace, a mohou být efektivně serializována pro uložení. Mezi strukturovaná data můžeme zařadit například soubory formátu \texttt{PCAP} obsahující síťovou komunikaci. Tyto soubory lze rozparsovat na jednotlivé segmenty pakety. Pakety lze potom serializovat na pole bajtů a uložit do NoSQL databáze. Pro strukturovaná data byla vybrána databáze Cassandra.
+
+\subsubsection{Cassandra}
+Jedná se o zástupce sloupcových NoSQL databází. Výhodami jsou předně: škálovatelnost, odolnost proti chybám, rychlost, distribuovanost, konzistence a podpora transakcí. Cassandru využívají i světoznámé společnosti Facebook, Twitter, Cisco, ebay, Twitter, Netflix a další. Cílem Cassandry je zvládat vysoké objemy dat napříč mnoha uzly. Data jsou pak distribuována na všech uzlech clusteru. Uzly lze libovolně přidávat. Každý uzel je nezávislý a zároveň propojený s ostatními. Každý uzel v clusteru se může podílet na požadavcích čtení a zápisu nezávisle na tom, kde jsou data skutečně uložena. Když uzel selže, požadavky čtení a zápisu mohou být obslouženy jinými uzly sítě \cite{cassandraTutorialsPoint}.
+
+\subsection{Nestrukturovaná data}
+Pro uchování nestrukturovaných dat typu například audio a video bude sloužit distribuovaný souborový systém, například HDFS. Taková data mohou mít velký objem, a bylo by plýtvání výkonem provádět jejich serializaci nebo rozdělování na části při ukládání do NoSQL databází.
+
+\subsection{Metadata} \label{metadata}
+V rámci zpracování příchozí zprávy do repositáře informující o operaci uložení, by bylo vhodné provést předzpracování dat za účelem vhodnější indexace a rychlejšího nalezení pro budoucí operace čtení. Jednalo by se tak o mechanismus podobný například pamětem cache. Uvažme následující scénář pro podrobnější vysvětlení.
+
+Do repositáře bylo v průběhu několika dnů uloženo mnoho milionů paketů, které obsahovaly síťovou komunikaci mezi několika komunikujícími stranami. Data paketů jsou uložena v serializované podobě v NoSQL databázi. Na úrovni databáze nedávají taková data žádný význam, pouze aplikace je dokáže správně interpretovat jako pakety. Po několika dnech by uživatel rád zjistil podrobnější informace o komunikaci mezi uzly A a B. Nezbývalo by mu nic jiného, než všechna data z NoSQL databáze načíst na aplikační úrovni a analyzovat paket po paketu, aby zjistil minimálně IP adresy zdroje a cíle. Takový způsob by byl velmi pomalý a neefektivní.
+
+Následně uvažme, jak by vypadal postup pro zjištění informací o komunikaci mezi uzly A a B, kdyby byla k dispozici cache, či paměť metadat. Cache by mohla uchovávat základní informace o dříve uložených paketech v jednotně definované struktuře. Mezi tyto informace by patřily - zdrojová a cílová IP adresa, zdrojová a cílová MAC adresa, typ protokolu, timestamp a další. Co je však důležité, u těchto informací by bylo uvedeno ID záznamu z NoSQL databáze, kde je uchován celý paket. Pro zjištění podrobnějších informací by uživatel mohl načíst pouze ty pakety, které jsou pro něj relevantní.
+
+Předzpracování dat je výhodné před jejich uložením, protože v kontextu provádění aplikace jsou data interpretovatelná. Výtah základních informací z nich nezpůsobí propad výkonu. Naopak se výkon zvýší pro případné operace čtení a hledání.
+
+Výše uvedený princip by se dal zobecnit pro libovolný typ forenzních digitálních dat. Tak by došlo k vytvoření tzv. registru, který by i mimo jiné informoval, co je jak a kde uloženo. Vhodnou strukturou pro uložení těchto metadat může být například formát XML nebo JSON. Z toho vyplývá použití dokumentové NoSQL databáze jako například MongoDB.
+
+\subsubsection{MongoDB}
+MongoDB je multiplatformní, dokumentově orientovaná databáze poskytující vysoký výkon a dostupnost a jednoduchou škálovatelnost. Pracuje na principu kolekcí, které nevyžadují schéma. Kolekce je skupina MongoDB dokumentů, a je ekvivalentem SŘBD tabulek. Dokumenty v kolekcích mohou mít dynamická schémata a rozdílné atributy. Dynamické schéma znamená, že dokumenty ve stejné kolekci nemusí mít stejnou strukturu atributů. Počet atributů, obsah a velikost dokumentu se může mezi dokumenty lišit. Dokument je množina párů klíč-hodnota \cite{mongoDBTutorialsPoint}.
+
+Relační databáze má určité schéma skládající se z tabulek a vztahů mezi nimi. V MongoDB je koncept vztahu řešen jinak. Existují dva mechanismy umožňující aplikaci reprezentovat vztahy: reference a vnořené dokumenty. Reference uchovávají vztahy mezi daty vložením odkazů (referencí) z jednoho dokumentu do druhého. Aplikace může díky odkazu přistoupit k příslušným datům. Vnořené dokumenty zachycují vztahy mezi daty ukládáním příslušných dat přímo do jednoho dokumentu. Namísto atributu dokumentu může být uložen i jiný dokument. Výhoda tohoto modelu je, že aplikace získá všechna data v jedné databázové operaci \cite{mongoDBDataModelingIntro}.
+
+Dynamičnost MongoDB je vhodná pro správu metadat, zvlášť když bude do repositáře potřeba přidávat nové druhy dat.
+
+\section{Zpracování zpráv}
+V předchozích sekcích byla představena komunikace s repositářem, jak vypadají příkazy a jakým způsobem jsou posílána data. Následně byly popsány možnosti ukládání. Tato sekce se zaměřuje na jádro distribuovaného repositáře, převážně na zpracování příkazů a manipulaci s  databázemi.
+
+Přijetí příkazu zajišťuje konzument zpráv. Konzument se v krátkých časových intervalech dotazuje na zprávy z Kafka fronty. Po přijetí zprávy dojde k přečtení příkazu určeného typem operace a typem dat společně s dodatečnými informacemi. Podle typu operace a typu dat se sestaví objekt příkazu. Na základě něj dojde k výběru konkrétní akce (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o uložení dat, o načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i o správu metadat zmíněnou v sekci \ref{metadata}. Při implementaci je handleru nastaven konkrétní odpovídající objekt, který řeší databázové operace pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
+%TODO: Vice Kafka front? - Vice konzumentu?
+
+\section{Architektura} \label{archSection}
+Tato sekce se zabývá architekturou systému, jak bude repositář implementován. Diagram tříd \ref{FIG_SystemArchitecture} zobrazuje z důvodu přehlednosti pouze klíčová rozhraní a třídy systému. Nejsou zde vyznačeny všechny implementační třídy a všechny vazby závislosti.
+
+Tok začíná ve třídě \texttt{DistributedRepository}, která zapouzdřuje konzumenta Kafka front a správce všech handlerů. Konzument přijme zprávu z fronty, sestaví objekt příkazu na základě typu operace a typu dat, a vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a \texttt{responseTopic}. Odpověď může obsahovat základní informace jako například kód a status, a také ID, aby si klient dokázal spárovat zpracované zprávy.
+
+Rozšíření v podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v rozšíření výčtů \texttt{Command}, \texttt{Operation} a \texttt{DataType}. Dále je potřeba implementovat rozhraní \texttt{IConsumerHandler}, které kompletně řídí zpracování příkazu.
+Pro nový druh dat a potřeby komunikace s úložištěm nebo databází je nutné přidat implementaci rozhraní \texttt{IStore} a/nebo \texttt{ILoad}.
+Nová třída handleru musí být přidána do správce handlerů společně s typem příkazu.
+
+Díky tomu že jsou typ operace a typ dat výčty, nemůže klient poslat libovolný dotaz na úplně neznámá data. Příkaz je ale určen kombinací těchto dvou výčtů, a proto i tak lze odeslat nepodporovaný příkaz, který může skončit chybou.
+
+Všechny výše zmíněné technologie, tzn. Kafka, Cassandra, MongoDB, i HDFS, jsou distribuované, je možné přidávat další uzly pro navýšení výkonu, a všechny tak počítají s rozšiřitelností do budoucna.
+
+Konfigurace parametrů systému a jednotlivých technologií bude možná pomocí specifických souborů s příponou \texttt{.properties} skládajících se z dvojic klíč-hodnota.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/Prototype_ClassDiagram.pdf}
+  \caption{Diagram tříd systému.}
+  \label{FIG_SystemArchitecture}
+\end{figure}
+
+\chapter{Implementace prototypu} \label{chapterPrototype}
+Prototyp distribuovaného repositáře byl implementován za účelem ověření základních aspektů návrhu, k ověření komunikace mezi klientem a systémem, zpracování příkazů, a také výkonu.
+
+Prototyp má omezenou funkcionalitu co se týká zpracování různých druhů digitálních forenzních dat a z hlediska operací. Neobsahuje také ani systém metadat. Podporuje pouze operaci uložení a pro soubory typu PCAP.
+
+Klient tedy může odeslat příkaz pro operaci \texttt{SAVE} a typ dat \texttt{PCAP}. Konzument zpráv zprávu přijme a spustí odpovídající handler. Jak bylo výše uvedeno, soubory typu PCAP lze považovat za strukturovaná data. Handler tedy soubor rozdělí na jednotlivé pakety a ty jsou potom serializovány a uloženy do Cassandry. Klientovi je odeslána odpověď informující o dokončení. Systém využívá knihovnu \texttt{pcap4j}\footnote{https://github.com/kaitoy/pcap4j} pro rozdělení na pakety.
+
 \section{Výkon}
+Tato sekce se věnuje shrnutí výkonnosti implementovaného prototypu. Test rychlosti byl proveden na této konfiguraci:
+
+\vspace{0.5cm}
+\noindent
+\texttt{CPU: Intel Core i5-4200U 1.6Ghz @ 2.3Ghz} \\
+\texttt{RAM: 8 GB} \\
+\texttt{OS: Windows 8.1} \\
+\texttt{Kafka, Zookeeper and Cassandra: running as containers in Docker environment} \\
+\texttt{hosted by boot2docker}
+
+\vspace{0.5cm}
+\noindent
+Pro testování byly použity PCAP soubory obsahující od stovkek paketů po několik tisíc. Čas v grafu \ref{FIG_PerformanceChart} je měřen od odeslání příkazu od klienta po obdržení odpovědi z repositáře. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
+
+Z výše uvedené hardwarové konfigurace vyplývá, že nebylo využito pravých vlastností použitých technologií, a to zejména distribuovanosti systému, který by běžel místo jednoho počítače v clusteru. V takovém prostředí by byla výkonnost systému znatelně vyšší.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/PerformanceChart.pdf}
+  \caption{Graf zobrazující počet uložených paketů z jednoho PCAP souboru za čas.}
+  \label{FIG_PerformanceChart}
+\end{figure}
+
+%\chapter{Implementace}
+%\section{Rozšiřitelnost, znovupoužitelnost}
+
+%\chapter{Testování}
+%\section{Výkon}
 
 \chapter{Závěr}
+V rámci semestrálního projektu jsem se seznámil s formáty digitálních forenzních dat a způsoby jejich uložení. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s distribuovanými databázemi a NoSQL databázemi. Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní.
+
+Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s klientem, způsob ovládání repositáře, a rovněž zpracovává požadavky od klienta.
+
+Dalším krokem bude rozšíření implementace prototypu o podporu nových druhů digitálních forenzních dat, zejména zjednodušení přidávání nových akcí, které zpracovávají příkazy od klienta. Bude také implementován podsystém metadat, který bude provádět předzpracování dat.
+Implementovaný systém bude zhodnocen z hlediska výkonu a použití pro vybrané druhy digitálních forenzních dat.
 
 %=========================================================================
