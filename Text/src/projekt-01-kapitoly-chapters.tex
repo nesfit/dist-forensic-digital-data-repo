@@ -169,7 +169,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=15cm]{template-fig/Distributed_database.pdf}
+  \includegraphics[width=13cm]{template-fig/Distributed_database.pdf}
   \caption{Schéma distribuované databáze a~současný přístup více zařízení k~ní. \cite{distributedDBMSPic}}
   \label{FIG_DistrDB}
 \end{figure}
@@ -187,6 +187,8 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \noindent Nevýhody
 \begin{itemize}
+\item CAP teorém - Pojednává o tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z těchto 3 vlastností: konzistence (angl. Consistency), dostupnost (angl. Availability) a odolnost k přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a dostupností v případě výpadku části sítě.
+
 \item Integrita dat – Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
 
 \item Komunikační režie – I~zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
@@ -198,8 +200,8 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=15cm]{template-fig/distributed_database_environments.pdf}
-  \caption{Distribuované databáze můžeme rozdělit na homogenní a~heterogenní, a~tyto ještě dále dělit. \cite{distributedDBMS}}
+  \includegraphics[width=14cm]{template-fig/distributed_database_environments.pdf}
+  \caption{Distribuované databáze můžeme podle jejich vlastností dělit. \cite{distributedDBMS}}
   \label{FIG_DivDistrDB}
 \end{figure}
 
@@ -256,15 +258,20 @@ Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným reposit
 Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a~řetězec dat. Atributy příkazu udávají následující informace:
 
 \begin{itemize}
-    \item typ dat,
-    \item o~jakou operaci se jedná,
-    \item unikátní ID příkazu, aby klient potom dokázal identifikovat už zpracované příkazy,
-    \item jestli klient/odesilatel zprávy očekává od repositáře odpověď,
-    \item ve které frontě (angl. topic) je odpověď na straně klienta očekávána,
-    \item a~další potřebné atributy.
+    \item \texttt{operation} - o~jakou operaci se jedná, výchozí operace jsou \texttt{SAVE}, \texttt{LOAD},
+    
+    \item \texttt{dataType} - typ dat,  výchozími typy jsou \texttt{Text}, \texttt{PCAP}, \texttt{Packet},
+    
+    \item \texttt{id} - unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy,
+    
+    \item \texttt{awaitsResponse} - jestli klient/odesilatel zprávy očekává od repositáře odpověď,
+    
+    \item \texttt{responseTopic} - ve které frontě (angl. topic) je odpověď na straně klienta očekávána,
+    
+    \item případně další potřebné atributy.
 \end{itemize}
 
-\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována.
+\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy operací a typy dat lze libovolně přidávat.
 
 \begin{figure}[!h]
   \centering
@@ -392,7 +399,7 @@ Tato sekce se věnuje shrnutí výkonnosti implementovaného prototypu. Test ryc
 
 \vspace{0.5cm}
 \noindent
-Pro testování byly použity PCAP soubory obsahující od stovkek paketů po několik tisíc. Čas v~grafu \ref{FIG_PerformanceChart} je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
+Pro testování byly použity PCAP soubory obsahující od stovkek paketů po několik tisíc. Tabulka \ref{TablePerformance} obsahuje informace z~měření. První sloupec udává velikost PCAP souboru v~bytech, druhý sloupec obsahuje počet paketů na daný PCAP soubor a~třetí sloupec zobrazuje průměrnou velikost paketu. Čas uvedený ve čtvrtém sloupci je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Poslední pátý sloupec udává počet paketů zpracovaných za sekundu. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
 
 Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí by byla výkonnost systému znatelně vyšší.
 
@@ -403,6 +410,32 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
   \label{FIG_PerformanceChart}
 \end{figure}
 
+\vspace{0.5cm}
+
+\noindent Z uvedeného grafu \ref{FIG_PerformanceChart} vyplývá lineární složitost. Podle údajů v~tabulce \ref{TablePerformance} lze průměrně zpracovat 89 paketů za sekundu při průměrné velikosti jednoho paketu 450 bytů.
+
+%AVG time (s)	AVG packet size (Bytes)
+%88,97043294	451,4784279
+
+
+\vspace{0.5cm}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{| l | l | l | l | l |}
+    \hline
+    PCAP size (Bytes)   &   Count of packets   &   Avg. packet size &  Time (s) &   Packets/s \\ \hline
+    91 340 & 382 & 239,1099476 & 7 & 54,57142857 \\ \hline
+    1 955 172 & 1360 & 1437,626471 & 13 & 104,6153846 \\ \hline
+    412 254 & 1879 & 219,4007451 & 19 & 98,89473684 \\ \hline
+    420 869 & 2263 & 185,9783473 & 23 & 98,39130435 \\ \hline
+    449 234 & 2563 & 175,276629 & 29 & 88,37931034 \\ \hline
+    \end{tabular}\par
+    \bigskip
+    \caption{Tabulka obsahuje měřená data.}
+    \label{TablePerformance}
+\end{table}
+
 %\chapter{Implementace}
 %\section{Rozšiřitelnost, znovupoužitelnost}
 
@@ -412,7 +445,7 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 \chapter{Závěr}
 V~rámci semestrálního projektu jsem se seznámil s~formáty digitálních forenzních dat a~způsoby jejich uložení. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s~distribuovanými databázemi a~NoSQL databázemi. Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní.
 
-Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracovává požadavky od klienta.
+Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracovává požadavky od klienta. Provedl jsem také základní vyhodnocení z hlediska výkonnosti na běžně dostupné hardwarové konfiguraci.
 
 Dalším krokem bude rozšíření implementace prototypu o~podporu nových druhů digitálních forenzních dat, zejména zjednodušení přidávání nových akcí, které zpracovávají příkazy od klienta. Bude také implementován podsystém metadat, který bude provádět předzpracování dat.
 Implementovaný systém bude zhodnocen z~hlediska výkonu a~použití pro vybrané druhy digitálních forenzních dat.
