@@ -6,13 +6,13 @@ version: '3'
 services:
     cassandra:
         image: cassandra:latest
-    hadoop:
-        image: sequenceiq/hadoop-docker:latest
+    #hadoop:
+    #    image: sequenceiq/hadoop-docker:latest
     zookeeper:
         image: wurstmeister/zookeeper:latest
     kafka:
         image: wurstmeister/kafka:latest
-    ubuntu:
-        image: harisekhon/ubuntu-dev:latest
+    #ubuntu:
+    #    image: harisekhon/ubuntu-dev:latest
         #Empty Ubuntu
         #image: ubuntu:latest
