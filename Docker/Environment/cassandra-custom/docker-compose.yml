@@ -1,0 +1,20 @@
+version: '2.1'
+services:
+    cassandra:
+        image: martinfit/cassandra:latest
+        build: .
+        restart: unless-stopped
+        ports:
+            - 7199:7199
+            - 9042:9042
+            - 9160:9160
+        #environment:
+        #    COMPOSE_CONVERT_WINDOWS_PATHS: 1
+        volumes:
+            - data:/var/lib/cassandra
+            - data:/home/cassandra/.cassandra
+            - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        container_name: cassandra
+
+volumes:
+    data: {}

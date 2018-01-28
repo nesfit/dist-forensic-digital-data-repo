@@ -5,7 +5,7 @@ version: '3'
 
 services:
     cassandra:
-        image: cassandra:latest
+        build: cassandra-custom
     #hadoop:
     #    image: sequenceiq/hadoop-docker:latest
     zookeeper:

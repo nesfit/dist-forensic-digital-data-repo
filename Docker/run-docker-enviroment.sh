@@ -1,11 +1,11 @@
 #!/bin/sh
 
-cd Environment/cassandra-official
-./run.sh
+cd Environment/cassandra-custom
+docker-compose up -d --build
 cd ../..
 
 cd Environment/kafka
-./run.sh
+docker-compose up -d
 cd ../..
 
 #cd Environment
