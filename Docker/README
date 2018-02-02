@@ -37,7 +37,7 @@ Navod pro ovladani technologii v Docker prostredi
 			$ docker exec kafka kafka-configs.sh --zookeeper 192.168.99.100:2181 --entity-type topics --entity-name input_topic --alter --add-config max.message.bytes=1000000000
 
 		Vypsani topicu
-			$ docker exec kafka kafka-topics.sh --describe --zookeeper 192.168.99.100:2181
+			$ docker exec kafka opt/kafka/bin/kafka-topics.sh --describe --zookeeper 192.168.99.100:2181
 			Topic:input_topic        PartitionCount:1        ReplicationFactor:1     Configs:
 			Topic: input_topic       Partition: 0    Leader: 0       Replicas: 0     Isr: 0
 
