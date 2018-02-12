@@ -4,6 +4,8 @@
 version: '3'
 
 services:
+    cassandra-official:
+        image: cassandra:latest
     cassandra:
         build: cassandra-custom
     #hadoop:
@@ -12,7 +14,10 @@ services:
         image: wurstmeister/zookeeper:latest
     kafka:
         image: wurstmeister/kafka:latest
+    maven:
+        build: maven-jdk-9-slim-custom
+        #image: maven:3.5.2-jdk-9-slim
     #ubuntu:
-    #    image: harisekhon/ubuntu-dev:latest
+        #image: harisekhon/ubuntu-dev:latest
         #Empty Ubuntu
         #image: ubuntu:latest
