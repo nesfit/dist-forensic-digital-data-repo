@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd Environment/cassandra-custom
-docker-compose up -d --build
+docker-compose up -d
 cd ../..
 
 cd Environment/kafka

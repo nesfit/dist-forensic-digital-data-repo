@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Docker Toolbox with VirtualBox
+
 docker-machine rm default
 docker-machine create --virtualbox-memory "4096" --virtualbox-share-folder "C:\\Users:c/Users" --driver virtualbox default
 eval "$(docker-machine env default)"

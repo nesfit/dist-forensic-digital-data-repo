@@ -1,0 +1,13 @@
+version: '2.1'
+services:
+    mongodb:
+        image: mongo:latest
+        restart: unless-stopped
+        ports:
+            - 27017:27017
+        #environment:
+        #    COMPOSE_CONVERT_WINDOWS_PATHS: 1
+        #volumes:
+        #    - data:/var/lib/mongodb
+        #    - data:/home/mongodb/.mongodb
+        container_name: mongodb

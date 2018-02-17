@@ -8,6 +8,8 @@ services:
         image: cassandra:latest
     cassandra:
         build: cassandra-custom
+    mongodb:
+        image: mongo:latest
     #hadoop:
     #    image: sequenceiq/hadoop-docker:latest
     zookeeper:
