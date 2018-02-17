@@ -13,6 +13,7 @@
     <bytecodeTargetLevel>
       <module name="distributed-repository" target="1.8" />
       <module name="DistributedRepository" target="1.8" />
+      <module name="Persistence" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

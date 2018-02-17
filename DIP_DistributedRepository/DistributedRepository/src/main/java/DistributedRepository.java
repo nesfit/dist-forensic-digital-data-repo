@@ -20,7 +20,7 @@ public class DistributedRepository {
         Consumer<KafkaRequest, byte[]> consumer =
                 new Consumer.Builder<KafkaRequest, byte[]>(KafkaRequestDeserializer.class, ByteArrayDeserializer.class)
                         .handlerManager(handlerManager).commandBuilder(new KafkaRequestCommandBuilder())
-                        .topic(topic).debug(false).build();
+                        .topic(topic).debug(true).build();
         consumer.subscribe();
         consumer.consume();
     }

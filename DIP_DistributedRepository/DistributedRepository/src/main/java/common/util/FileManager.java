@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 public class FileManager {
 
@@ -24,7 +25,7 @@ public class FileManager {
     }
 
     public static String GenerateTmpPath() {
-        return Properties.getInstance().loadProperty(PropertyConstants.TMP_DIRECTORY) + "tmp.pcap";
+        return Properties.getInstance().loadProperty(PropertyConstants.TMP_DIRECTORY) + UUID.randomUUID() + "_tmp.pcap";
     }
 
 }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -44,21 +45,23 @@ public class PcapProducerMain {
     private String outputTopic = Properties.getInstance().loadProperty(PropertyConstants.OUTPUT_TOPIC);
     private String inputTopic = Properties.getInstance().loadProperty(PropertyConstants.INPUT_TOPIC);
 
-    public void runMultipleProducer() {
+    public void runMultipleProducer(String directoryName) {
         File directory = null;
-        try {
-            directory = PathResolver.resolveFilePath(".").toFile();
+        //try {
+            //directory = PathResolver.resolveFilePath(directoryName).toFile();
+            directory = new File(directoryName);
             Arrays.stream(directory.listFiles())
                     .filter(file -> file.getName().contains(PCAP_FILE) || file.getName().contains(CAP_FILE))
-                    .forEach(file -> runProducer(file.getName()));
-        } catch (URISyntaxException e) {
+                    .forEach(file -> runProducer(directoryName + "/" + file.getName()));
+        /*} catch (URISyntaxException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void runProducer(String file) {
         try {
-            byte[] bytes = Files.readAllBytes(PathResolver.resolveFilePath(file));
+            //byte[] bytes = Files.readAllBytes(PathResolver.resolveFilePath(file));
+            byte[] bytes = Files.readAllBytes(Paths.get(file));
             System.out.println(new Date() + "\t" + file + "\t Size: " + bytes.length);
 
             KafkaRequest request = new KafkaRequest.Builder()
@@ -88,8 +91,12 @@ public class PcapProducerMain {
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException {
+        if (args.length != 1) {
+            System.exit(1);
+        }
         PcapProducerMain pcapProducer = new PcapProducerMain();
-        new Thread(pcapProducer::runMultipleProducer).start();
+        new Thread(() -> pcapProducer.runMultipleProducer(args[0])).start();
+        //new Thread(pcapProducer::runMultipleProducer).start();
         //new Thread(() -> pcapProducer.runProducer("dns.pcap")).start();
         new Thread(pcapProducer::runConsumer).start();
     }

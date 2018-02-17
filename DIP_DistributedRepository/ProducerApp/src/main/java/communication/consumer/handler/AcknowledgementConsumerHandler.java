@@ -8,7 +8,7 @@ public class AcknowledgementConsumerHandler implements ICommandHandler<KafkaResp
 
     @Override
     public void handleRequest(KafkaResponse response, byte[] s) {
-        System.out.println(new Date());
+        System.out.println("Receive time" + new Date());
         System.out.println(response);
         System.out.println(s);
     }

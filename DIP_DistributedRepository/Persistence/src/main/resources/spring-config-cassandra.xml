@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--        NOT USED ANYMORE
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:cassandra="http://www.springframework.org/schema/data/cassandra"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+	            http://www.springframework.org/schema/beans/spring-beans.xsd
+	            http://www.springframework.org/schema/context
+	            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/data/cassandra
+                http://www.springframework.org/schema/data/cassandra/spring-cassandra.xsd">
+
+    <context:property-placeholder location="classpath:cassandra.properties"/>
+
+    <cassandra:cluster id="cassandraCluster" contact-points="${cassandra.contactpoints}" port="${cassandra.port}"/>
+
+    <cassandra:session id="session" cluster-ref="cassandraCluster" keyspace-name="${cassandra.keyspace}"/>
+
+    <cassandra:session keyspace-name="${cassandra.keyspace}"/>
+
+    <cassandra:template id="cassandraTemplate"/>
+
+    <cassandra:repositories base-package="cz.vutbr.fit.cassandra.repository" cassandra-template-ref="cassandraTemplate"/>
+
+    <cassandra:mapping entity-base-packages="cassandra.entity"/>
+
+    <cassandra:converter/>
+
+</beans:beans>
+-->
