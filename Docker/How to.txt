@@ -14,10 +14,10 @@ Maven:
 	Spusteni maven clean install
 		$ docker run -it --rm --name my-maven-project -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven martinfit/maven:3.5.2-jdk-9 mvn clean install
 		
-		$ docker run -it --rm --name distributed-repository-communication -v "$HOME/.m2":/root/.m2 -v "$PWD":/usr/src/app -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
+		$ docker run -it --rm --name communication -v "$HOME/.m2":/root/.m2 -v "$PWD":/usr/src/app -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
 		$ docker run -it --rm --name persistence -v "$HOME/.m2":/root/.m2 -v "$PWD":/usr/src/app -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
 		$ docker run -it --rm --name producer-app -v "$PWD":/usr/src/app -v "$HOME/.m2":/root/.m2 -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
-		$ docker run -it --rm --name distributed-repository -v "$PWD":/usr/src/app -v "$HOME/.m2":/root/.m2 -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
+		$ docker run -it --rm --name repository -v "$PWD":/usr/src/app -v "$HOME/.m2":/root/.m2 -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim mvn clean install
 	Spusteni jarky
 		$ docker run -it --rm --name producer-app -v "$PWD":/usr/src/app -v "$HOME/.m2":/root/.m2 -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim java -cp producer-app-1.0-SNAPSHOT.jar -jar target/producer-app-1.0.jar target/classes/PCAP
 		$ docker run -it --rm --name distributed-repository -v "$PWD":/usr/src/app -v "$HOME/.m2":/root/.m2 -w "/usr/src/app/" martinfit/maven:3.5.2-jdk-9-slim java -cp distributed-repository-1.0-SNAPSHOT.jar -jar target/distributed-repository-1.0.jar

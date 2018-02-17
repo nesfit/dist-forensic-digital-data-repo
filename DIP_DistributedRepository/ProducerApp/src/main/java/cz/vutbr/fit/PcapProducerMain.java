@@ -1,6 +1,6 @@
-import common.properties.PathResolver;
+package cz.vutbr.fit;
+
 import common.properties.Properties;
-import common.properties.PropertyConstants;
 import communication.KafkaRequest;
 import communication.KafkaResponse;
 import communication.command.Command;
@@ -8,11 +8,12 @@ import communication.command.DataType;
 import communication.command.Operation;
 import communication.command.builder.KafkaResponseCommandBuilder;
 import communication.consumer.Consumer;
-import communication.consumer.handler.AcknowledgementConsumerHandler;
 import communication.consumer.handler.HandlerManager;
 import communication.producer.Producer;
 import communication.serialization.KafkaRequestSerializer;
 import communication.serialization.KafkaResponseDeserializer;
+import cz.vutbr.fit.common.properties.PropertyConstants;
+import cz.vutbr.fit.communication.consumer.handler.AcknowledgementConsumerHandler;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
@@ -46,21 +47,14 @@ public class PcapProducerMain {
     private String inputTopic = Properties.getInstance().loadProperty(PropertyConstants.INPUT_TOPIC);
 
     public void runMultipleProducer(String directoryName) {
-        File directory = null;
-        //try {
-            //directory = PathResolver.resolveFilePath(directoryName).toFile();
-            directory = new File(directoryName);
-            Arrays.stream(directory.listFiles())
-                    .filter(file -> file.getName().contains(PCAP_FILE) || file.getName().contains(CAP_FILE))
-                    .forEach(file -> runProducer(directoryName + "/" + file.getName()));
-        /*} catch (URISyntaxException e) {
-            e.printStackTrace();
-        }*/
+        File directory = new File(directoryName);
+        Arrays.stream(directory.listFiles())
+                .filter(file -> file.getName().contains(PCAP_FILE) || file.getName().contains(CAP_FILE))
+                .forEach(file -> runProducer(directoryName + "/" + file.getName()));
     }
 
     public void runProducer(String file) {
         try {
-            //byte[] bytes = Files.readAllBytes(PathResolver.resolveFilePath(file));
             byte[] bytes = Files.readAllBytes(Paths.get(file));
             System.out.println(new Date() + "\t" + file + "\t Size: " + bytes.length);
 

@@ -1,4 +1,4 @@
-package common.properties;
+package cz.vutbr.fit.common.properties;
 
 public class PropertyConstants {
 
