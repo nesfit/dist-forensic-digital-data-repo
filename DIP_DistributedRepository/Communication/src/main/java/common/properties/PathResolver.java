@@ -18,7 +18,6 @@ public class PathResolver {
     }
 
     public static Path resolveFilePath(String filename) throws URISyntaxException {
-        System.out.println("\t>> File -> " + filename);
         URL resource = Thread.currentThread().getContextClassLoader().getResource(filename);
         return Paths.get(resource.toURI());
     }

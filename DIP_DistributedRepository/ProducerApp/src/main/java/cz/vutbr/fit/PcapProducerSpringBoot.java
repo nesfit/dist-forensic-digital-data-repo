@@ -3,8 +3,6 @@ package cz.vutbr.fit;
 import common.properties.Properties;
 import communication.KafkaRequest;
 import communication.command.Command;
-import communication.command.DataType;
-import communication.command.Operation;
 import cz.vutbr.fit.common.properties.PropertyConstants;
 import cz.vutbr.fit.communication.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;

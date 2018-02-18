@@ -25,10 +25,11 @@
         <!-- Distributed Repository Communication -->
         <dependency>
             <groupId>cz.vutbr.fit</groupId>
-            <artifactId>distributed-repository-communication</artifactId>
+            <artifactId>communication</artifactId>
             <version>1.0</version>
         </dependency>
 
+        <!-- SpringBoot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -40,6 +41,7 @@
             </exclusions>
         </dependency>
 
+        <!-- Spring Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>

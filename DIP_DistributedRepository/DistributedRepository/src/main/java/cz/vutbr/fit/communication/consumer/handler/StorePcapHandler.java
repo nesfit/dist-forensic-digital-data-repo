@@ -1,24 +1,26 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
+import com.datastax.driver.core.utils.UUIDs;
 import communication.KafkaRequest;
 import communication.KafkaResponse;
 import communication.consumer.handler.ICommandHandler;
+import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.common.util.FileManager;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
-import cz.vutbr.fit.database.factory.DatabaseAbstractFactory;
-import cz.vutbr.fit.database.factory.FactoryCreator;
-import cz.vutbr.fit.database.impl.PacketStore;
-import cz.vutbr.fit.database.interfaces.IStore;
 import cz.vutbr.fit.service.pcap.IPcapParser;
-import cz.vutbr.fit.service.pcap.org.pcap4j.PcapParser;
+import cz.vutbr.fit.service.serialize.Serializer;
 import org.pcap4j.packet.Packet;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
-    private IStore packetStore;
+    @Autowired
+    private PacketRepository packetRepository;
+    @Autowired
     private IPcapParser pcapParser;
     private String tmpFile;
     private int count;
@@ -27,7 +29,6 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
 
-            initHandlers(request);
             processPayload(value);
             processPackets(tmpFile);
             FileManager.RemoveFile(tmpFile);
@@ -40,14 +41,6 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         }
     }
 
-    private void initHandlers(KafkaRequest key) {
-        // TODO: Remove comments
-        // DatabaseAbstractFactory storeFactory = FactoryCreator.getFactory(key.getOperation());
-        // packetStore = storeFactory.getStore(key.getDataType());
-        packetStore = new PacketStore();
-        pcapParser = new PcapParser();
-    }
-
     private void processPayload(byte[] value) throws IOException {
         tmpFile = FileManager.GenerateTmpPath();
         FileManager.SaveContent(tmpFile, value);
@@ -57,7 +50,10 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         List<Packet> packets = (List<Packet>) pcapParser.parseInput(filepath);
         count = 0;
         for (Packet packet : packets) {
-            packetStore.store(packet);
+            cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet();
+            p.setId(UUIDs.timeBased());
+            p.setPacket(ByteBuffer.wrap(Serializer.Serialize(packet)));
+            packetRepository.save(p);
             count++;
         }
     }
@@ -71,6 +67,14 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     private void sendAcknowledgement(KafkaResponse response, byte[] value) {
         AcknowledgementProducer acknowledgementProducer = new AcknowledgementProducer(response, value);
         acknowledgementProducer.acknowledge();
+    }
+
+    public void setPacketRepository(PacketRepository packetRepository) {
+        this.packetRepository = packetRepository;
+    }
+
+    public void setPcapParser(IPcapParser pcapParser) {
+        this.pcapParser = pcapParser;
     }
 
 }

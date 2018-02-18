@@ -9,19 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-@SpringBootApplication
+//@SpringBootApplication
 //@ComponentScan(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
 //@EnableJpaRepositories(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-public class TestApplication implements CommandLineRunner {
+//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Autowired
     PacketRepository packetRepository;
@@ -46,9 +43,9 @@ public class TestApplication implements CommandLineRunner {
         packet.setPacket(ByteBuffer.wrap("237283278".getBytes()));
         packetRepository.insertAsync(packet);
 
-        Iterable<Packet> packetList = packetRepository.findAll();
-        System.out.println("Packet List : ");
-        packetList.forEach(System.out::println);
+        packet = packetRepository.findByPacketId(packet.getId());
+        System.out.println("Packet : ");
+        System.out.println(packet);
     }
 
     public void testMongoDB() {
@@ -64,7 +61,7 @@ public class TestApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(TestApplication.class)
+        new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
                 .web(WebApplicationType.NONE)
                 .bannerMode(Banner.Mode.OFF)
                 .build()

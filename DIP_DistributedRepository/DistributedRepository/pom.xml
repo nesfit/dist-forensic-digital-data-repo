@@ -25,17 +25,18 @@
         <!-- Distributed Repository Communication -->
         <dependency>
             <groupId>cz.vutbr.fit</groupId>
-            <artifactId>distributed-repository-communication</artifactId>
+            <artifactId>communication</artifactId>
             <version>1.0</version>
         </dependency>
 
-        <!-- Distributed Repository Persistence
+        <!-- Distributed Repository Persistence -->
         <dependency>
             <groupId>cz.vutbr.fit</groupId>
-            <artifactId>distributed-repository-persistence</artifactId>
+            <artifactId>persistence</artifactId>
             <version>1.0</version>
-        </dependency>-->
+        </dependency>
 
+        <!-- SpringBoot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -47,10 +48,17 @@
             </exclusions>
         </dependency>
 
+        <!-- Spring Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
             <version>2.1.2.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Apache commons -->

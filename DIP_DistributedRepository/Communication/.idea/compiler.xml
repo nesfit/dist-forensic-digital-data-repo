@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Communication" />
+        <module name="communication" />
         <module name="DistributedRepositoryCommunication" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="communication" target="1.8" />
       <module name="Communication" target="1.8" />
       <module name="DistributedRepositoryCommunication" target="1.8" />
     </bytecodeTargetLevel>

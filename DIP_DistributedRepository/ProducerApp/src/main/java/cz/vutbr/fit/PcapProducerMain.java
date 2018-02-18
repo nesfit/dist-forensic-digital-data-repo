@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
+@Deprecated
 public class PcapProducerMain {
 
     private static class Callback implements org.apache.kafka.clients.producer.Callback {
