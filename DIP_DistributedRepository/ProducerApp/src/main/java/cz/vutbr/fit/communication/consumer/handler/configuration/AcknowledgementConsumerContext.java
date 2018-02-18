@@ -12,11 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class AcknowledgementConsumerContext {
 
     @Bean
-    public KafkaResponseCommandBuilder commandBuilder() {
-        return new KafkaResponseCommandBuilder();
-    }
-
-    @Bean
     public AcknowledgementConsumerHandler ackConsumerHandler() {
         return new AcknowledgementConsumerHandler();
     }

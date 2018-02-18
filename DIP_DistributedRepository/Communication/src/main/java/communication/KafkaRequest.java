@@ -1,5 +1,6 @@
 package communication;
 
+import communication.command.Command;
 import communication.command.DataType;
 import communication.command.Operation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,27 +10,43 @@ import java.util.UUID;
 
 public class KafkaRequest {
 
+    @Deprecated
     private Operation operation;
+    @Deprecated
     private DataType dataType;
+    private Command command;
+
     private Boolean awaitsResponse;
     private String responseTopic;
     private UUID id;
     // TODO: Criteria
 
+    @Deprecated
     public Operation getOperation() {
         return operation;
     }
 
+    @Deprecated
     public void setOperation(Operation operation) {
         this.operation = operation;
     }
 
+    @Deprecated
     public DataType getDataType() {
         return dataType;
     }
 
+    @Deprecated
     public void setDataType(DataType dataType) {
         this.dataType = dataType;
+    }
+
+    public Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Command command) {
+        this.command = command;
     }
 
     public Boolean getAwaitsResponse() {
@@ -68,13 +85,20 @@ public class KafkaRequest {
             request = new KafkaRequest();
         }
 
+        @Deprecated
         public Builder operation(Operation operation) {
             request.setOperation(operation);
             return this;
         }
 
+        @Deprecated
         public Builder dataType(DataType dataType) {
             request.setDataType(dataType);
+            return this;
+        }
+
+        public Builder command(Command command) {
+            request.setCommand(command);
             return this;
         }
 

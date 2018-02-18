@@ -14,8 +14,6 @@ public class AcknowledgementConsumer {
 
     @Autowired
     private HandlerManager<KafkaResponse, byte[]> handlerManager;
-    @Autowired
-    private ICommandBuilder<KafkaResponse> commandBuilder;
 
     @KafkaListener(topics = "${output.topic}")
     public void listen(ConsumerRecord<KafkaResponse, byte[]> record) {
@@ -23,16 +21,13 @@ public class AcknowledgementConsumer {
     }
 
     private void consume(ConsumerRecord<KafkaResponse, byte[]> record) {
-        Command command = commandBuilder.buildCommand(record.key());
+        // TODO: Remove hardcoded Command
+        Command command = Command.HANDLE_RESPONSE;
         handlerManager.handle(command, record.key(), record.value());
     }
 
     public void setHandlerManager(HandlerManager<KafkaResponse, byte[]> handlerManager) {
         this.handlerManager = handlerManager;
-    }
-
-    public void setCommandBuilder(ICommandBuilder<KafkaResponse> commandBuilder) {
-        this.commandBuilder = commandBuilder;
     }
 
 }

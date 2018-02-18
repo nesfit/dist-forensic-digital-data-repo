@@ -2,6 +2,7 @@ package cz.vutbr.fit;
 
 import common.properties.Properties;
 import communication.KafkaRequest;
+import communication.command.Command;
 import communication.command.DataType;
 import communication.command.Operation;
 import cz.vutbr.fit.common.properties.PropertyConstants;
@@ -43,8 +44,8 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(file));
             System.out.println(new Date() + "\t" + file + "\t Size: " + bytes.length);
-
-            KafkaRequest request = new KafkaRequest.Builder().operation(Operation.STORE).dataType(DataType.PCAP)
+            /*.operation(Operation.STORE).dataType(DataType.PCAP)*/
+            KafkaRequest request = new KafkaRequest.Builder().command(Command.STORE_PCAP)
                     .awaitsResponse(Boolean.TRUE).responseTopic(outputTopic).id(UUID.randomUUID()).build();
 
             producer.produce(new ProducerRecord<>(inputTopic, request, bytes));
