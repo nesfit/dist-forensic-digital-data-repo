@@ -11,4 +11,9 @@ public interface PacketRepository extends CrudRepository<Packet, UUID>, InsertAs
     @Query("Select * from pcap where id=?0")
     public Packet findByPacketId(UUID id);
 
+    // @Modifying
+    // @Query(nativeQuery = true, value = "INSERT INTO pcap (id, packet) VALUES(:id, :packet)")
+    // @Deprecated
+    // public void insertAsync(@Param("id") UUID id, @Param("packet") ByteBuffer packet);
+
 }

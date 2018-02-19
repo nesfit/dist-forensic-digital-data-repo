@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.UUID;
 
 //@SpringBootApplication
@@ -23,8 +27,8 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Autowired
     PacketRepository packetRepository;
 
-    @Autowired
-    PacketMetadataRepository packetMetadataRepository;
+    //@Autowired
+    //PacketMetadataRepository packetMetadataRepository;
 
     public void testCassandra() {
         Packet packet = new Packet();
@@ -38,17 +42,25 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     }
 
     public void testAsyncCassandra() {
-        Packet packet = new Packet();
-        packet.setId(UUIDs.timeBased());
-        packet.setPacket(ByteBuffer.wrap("237283278".getBytes()));
-        packetRepository.insertAsync(packet);
 
-        packet = packetRepository.findByPacketId(packet.getId());
-        System.out.println("Packet : ");
-        System.out.println(packet);
+        Date start = new Date();
+        // TODO: Do it in huge loop
+        for (int i = 0; i < 5000; i++) {
+            Packet packet = new Packet();
+            packet.setId(UUIDs.timeBased());
+            packet.setPacket(ByteBuffer.wrap("237283278".getBytes()));
+            packetRepository.insertAsync(packet);
+        }
+        Date end = new Date();
+
+        System.out.println("Time consumed: " + (end.getTime() - start.getTime()) / 1000);
+
+        //packet = packetRepository.findByPacketId(packet.getId());
+        //System.out.println("Packet : ");
+        //System.out.println(packet);
     }
 
-    public void testMongoDB() {
+    /*public void testMongoDB() {
         PacketMetadata packetMetadata = new PacketMetadata();
         packetMetadata.setRefId(UUID.randomUUID());
         packetMetadata.setSrcIpAddress("124.23.04.11");
@@ -58,7 +70,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         Iterable<PacketMetadata> packetMetadataList = packetMetadataRepository.findAll();
         System.out.println("PacketMetadata List : ");
         packetMetadataList.forEach(System.out::println);
-    }
+    }*/
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -71,7 +83,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         testAsyncCassandra();
-        testMongoDB();
+        //testMongoDB();
     }
 
 }
