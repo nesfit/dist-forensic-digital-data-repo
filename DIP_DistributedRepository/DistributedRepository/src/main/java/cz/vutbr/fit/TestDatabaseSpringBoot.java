@@ -3,25 +3,20 @@ package cz.vutbr.fit;
 import com.datastax.driver.core.utils.UUIDs;
 import cz.vutbr.fit.cassandra.entity.Packet;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
-import cz.vutbr.fit.mongodb.entity.PacketMetadata;
-import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.util.UUID;
 
 //@SpringBootApplication
 //@ComponentScan(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
 //@EnableJpaRepositories(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+@Deprecated
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Autowired

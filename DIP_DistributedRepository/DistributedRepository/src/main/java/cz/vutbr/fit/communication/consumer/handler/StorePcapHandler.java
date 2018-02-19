@@ -7,6 +7,7 @@ import communication.consumer.handler.ICommandHandler;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.common.util.FileManager;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
+import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.serialize.Serializer;
 import org.pcap4j.packet.Packet;
@@ -21,7 +22,10 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Autowired
     private PacketRepository packetRepository;
     @Autowired
+    private PacketMetadataRepository packetMetadataRepository;
+    @Autowired
     private IPcapParser pcapParser;
+
     private String tmpFile;
     private int count;
 
@@ -29,9 +33,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
 
-            processPayload(value);
-            processPackets(tmpFile);
-            FileManager.RemoveFile(tmpFile);
+            storePayloadIntoTmpFile(value);
+            processPackets();
+            deleteTmpFile();
 
             // TODO: Remove hardcoded values
             sendAcknowledgement(buildResponse(request), "Response OK".getBytes());
@@ -41,21 +45,26 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         }
     }
 
-    private void processPayload(byte[] value) throws IOException {
+    private void storePayloadIntoTmpFile(byte[] value) throws IOException {
         tmpFile = FileManager.GenerateTmpPath();
         FileManager.SaveContent(tmpFile, value);
     }
 
-    private void processPackets(String filepath) throws IOException {
-        List<Packet> packets = (List<Packet>) pcapParser.parseInput(filepath);
+    private void processPackets() throws IOException {
+        List<Packet> packets = (List<Packet>) pcapParser.parseInput(tmpFile);
         count = 0;
         for (Packet packet : packets) {
             cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet();
             p.setId(UUIDs.timeBased());
             p.setPacket(ByteBuffer.wrap(Serializer.Serialize(packet)));
-            packetRepository.save(p);
+            packetRepository.insertAsync(p);
+
             count++;
         }
+    }
+
+    private void deleteTmpFile() {
+        FileManager.RemoveFile(tmpFile);
     }
 
     private KafkaResponse buildResponse(KafkaRequest request) {
@@ -71,6 +80,10 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     public void setPacketRepository(PacketRepository packetRepository) {
         this.packetRepository = packetRepository;
+    }
+
+    public void setPacketMetadataRepository(PacketMetadataRepository packetMetadataRepository) {
+        this.packetMetadataRepository = packetMetadataRepository;
     }
 
     public void setPcapParser(IPcapParser pcapParser) {

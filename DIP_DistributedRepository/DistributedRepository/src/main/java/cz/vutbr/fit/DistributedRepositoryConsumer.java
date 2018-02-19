@@ -1,4 +1,4 @@
-package cz.vutbr.fit.communication.consumer;
+package cz.vutbr.fit;
 
 import communication.KafkaRequest;
 import communication.command.Command;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DistributedRepositoryConsumer {
-    // TODO: Generic consumer
 
     @Autowired
     private HandlerManager<KafkaRequest, byte[]> handlerManager;

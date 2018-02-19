@@ -11,6 +11,7 @@ import cz.vutbr.fit.common.properties.PropertyConstants;
 import cz.vutbr.fit.communication.consumer.handler.StorePcapHandler;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 
+@Deprecated
 public class DistributedRepository {
 
     public static void main(String[] args) {

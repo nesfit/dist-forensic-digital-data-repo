@@ -10,10 +10,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-public class DistributedRepositorySpringBoot implements CommandLineRunner {
+public class DistributedRepositorySpringBootStarter implements CommandLineRunner {
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(DistributedRepositorySpringBoot.class)
+        new SpringApplicationBuilder(DistributedRepositorySpringBootStarter.class)
                 .web(WebApplicationType.NONE)
                 .bannerMode(Banner.Mode.OFF)
                 .build()
