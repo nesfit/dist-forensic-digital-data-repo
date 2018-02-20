@@ -20,12 +20,9 @@ public class DistributedRepositoryConsumer {
     }
 
     private void consume(ConsumerRecord<KafkaRequest, byte[]> record) {
+        System.out.println("Record -> " + record.key());
         Command command = record.key().getCommand();
         handlerManager.handle(command, record.key(), record.value());
-    }
-
-    public void setHandlerManager(HandlerManager<KafkaRequest, byte[]> handlerManager) {
-        this.handlerManager = handlerManager;
     }
 
 }

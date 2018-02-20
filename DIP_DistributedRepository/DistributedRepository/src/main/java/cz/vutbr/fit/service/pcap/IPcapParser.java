@@ -1,10 +1,10 @@
 package cz.vutbr.fit.service.pcap;
 
 import java.io.IOException;
-import java.util.List;
 
-public interface IPcapParser {
+@FunctionalInterface
+public interface IPcapParser<T> {
 
-    public List<?> parseInput(String path) throws IOException;
+    public void parseInput(String path, OnPacketCallback<T> onPacketCallback) throws IOException;
 
 }

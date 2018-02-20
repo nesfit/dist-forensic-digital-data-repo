@@ -9,6 +9,10 @@ Docker:
 			export COMPOSE_CONVERT_WINDOWS_PATHS=1
 			mkdir /home/docker/Docker
 			sudo mount -t vboxsf -o uid=1000,gid=50 c/Docker /home/docker/Docker
+	
+	Stats
+		docker stats --format "table {{.ID}}\t{{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
+		docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
 
 Maven:
 	Spusteni maven clean install

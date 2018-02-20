@@ -9,13 +9,14 @@ import cz.vutbr.fit.common.util.FileManager;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
+import cz.vutbr.fit.service.pcap.OnPacketCallback;
 import cz.vutbr.fit.service.serialize.Serializer;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
+import java.util.Date;
 
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
@@ -51,15 +52,28 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     }
 
     private void processPackets() throws IOException {
-        List<Packet> packets = (List<Packet>) pcapParser.parseInput(tmpFile);
         count = 0;
-        for (Packet packet : packets) {
-            cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet();
-            p.setId(UUIDs.timeBased());
-            p.setPacket(ByteBuffer.wrap(Serializer.Serialize(packet)));
-            packetRepository.insertAsync(p);
+        Date start = new Date();
 
+        pcapParser.parseInput(tmpFile, new OnPacketCallbackImpl());
+
+        Date end = new Date();
+        System.out.println("Packets processed in " + (end.getTime() - start.getTime()) / 1000);
+    }
+
+    private class OnPacketCallbackImpl implements OnPacketCallback<Packet> {
+        @Override
+        public void processPacket(Packet packet) {
             count++;
+
+            try {
+                cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet();
+                p.setId(UUIDs.timeBased());
+                p.setPacket(ByteBuffer.wrap(Serializer.Serialize(packet)));
+                packetRepository.insertAsync(p);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package cz.vutbr.fit.service.pcap.org.pcap4j;
 
 import cz.vutbr.fit.service.pcap.IPcapParser;
+import cz.vutbr.fit.service.pcap.OnPacketCallback;
 import org.pcap4j.core.NotOpenException;
 import org.pcap4j.core.PcapHandle;
 import org.pcap4j.core.PcapNativeException;
@@ -9,17 +10,14 @@ import org.pcap4j.packet.Packet;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-public class PcapParser implements IPcapParser {
+public class PcapParser implements IPcapParser<Packet> {
 
     @Override
-    public List<Packet> parseInput(String path) throws IOException {
+    public void parseInput(String path, OnPacketCallback<Packet> onPacketCallback) throws IOException {
 
         PcapHandle handle;
-        List<Packet> packets = new ArrayList<>();
 
         try {
             handle = Pcaps.openOffline(path);
@@ -30,7 +28,7 @@ public class PcapParser implements IPcapParser {
         while (true) {
             try {
                 Packet packet = handle.getNextPacketEx();
-                packets.add(packet);
+                onPacketCallback.processPacket(packet);
             } catch (EOFException e) {
                 break;
             } catch (TimeoutException e) {
@@ -46,8 +44,6 @@ public class PcapParser implements IPcapParser {
         }
 
         handle.close();
-
-        return packets;
     }
 
 }
