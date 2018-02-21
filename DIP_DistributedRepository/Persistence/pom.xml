@@ -68,6 +68,13 @@
             <type>pom</type>
         </dependency>
 
+        <!-- MongoDB Async Driver
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-async</artifactId>
+            <version>3.6.3</version>
+        </dependency> -->
+
         <!-- JavaEE API
         <dependency>
             <groupId>javax</groupId>

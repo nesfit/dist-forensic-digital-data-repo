@@ -13,4 +13,8 @@ public enum ResponseCode {
         this.code = code;
     }
 
+    public String toString() {
+        return String.valueOf(code);
+    }
+
 }
