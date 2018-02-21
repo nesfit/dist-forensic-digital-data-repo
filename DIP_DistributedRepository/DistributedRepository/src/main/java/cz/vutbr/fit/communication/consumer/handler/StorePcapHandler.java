@@ -1,15 +1,14 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
 import com.datastax.driver.core.utils.UUIDs;
-import communication.KafkaRequest;
-import communication.KafkaResponse;
-import communication.consumer.handler.ICommandHandler;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
-import cz.vutbr.fit.common.util.FileManager;
+import cz.vutbr.fit.communication.KafkaRequest;
+import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.OnPacketCallback;
+import cz.vutbr.fit.util.FileManager;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
 

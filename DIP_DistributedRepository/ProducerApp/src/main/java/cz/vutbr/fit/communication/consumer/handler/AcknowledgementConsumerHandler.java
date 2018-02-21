@@ -1,7 +1,6 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
-import communication.KafkaResponse;
-import communication.consumer.handler.ICommandHandler;
+import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.stats.CollectStats;
 
 import java.util.Date;

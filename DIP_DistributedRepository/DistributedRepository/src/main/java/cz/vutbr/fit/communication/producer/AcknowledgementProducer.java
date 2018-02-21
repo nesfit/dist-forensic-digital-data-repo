@@ -1,8 +1,7 @@
 package cz.vutbr.fit.communication.producer;
 
-import communication.KafkaResponse;
-import communication.producer.Producer;
-import communication.serialization.KafkaResponseSerializer;
+import cz.vutbr.fit.communication.KafkaResponse;
+import cz.vutbr.fit.communication.serialization.KafkaResponseSerializer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 

@@ -1,6 +1,6 @@
 package cz.vutbr.fit.communication.producer;
 
-import communication.KafkaRequest;
+import cz.vutbr.fit.communication.KafkaRequest;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

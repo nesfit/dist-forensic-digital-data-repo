@@ -1,9 +1,9 @@
 package cz.vutbr.fit.communication.consumer.handler.beans;
 
-import communication.KafkaRequest;
-import communication.command.Command;
-import communication.consumer.handler.HandlerManager;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
+import cz.vutbr.fit.communication.KafkaRequest;
+import cz.vutbr.fit.communication.command.Command;
+import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
 import cz.vutbr.fit.communication.consumer.handler.StorePcapHandler;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;

@@ -1,8 +1,8 @@
 package cz.vutbr.fit;
 
-import communication.KafkaRequest;
-import communication.command.Command;
-import communication.consumer.handler.HandlerManager;
+import cz.vutbr.fit.communication.KafkaRequest;
+import cz.vutbr.fit.communication.command.Command;
+import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;

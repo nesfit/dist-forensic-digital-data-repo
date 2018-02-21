@@ -1,10 +1,10 @@
 package cz.vutbr.fit;
 
-import common.properties.Properties;
-import communication.KafkaRequest;
-import communication.command.Command;
-import cz.vutbr.fit.common.properties.PropertyConstants;
+import cz.vutbr.fit.communication.KafkaRequest;
+import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.producer.KafkaProducer;
+import cz.vutbr.fit.properties.Properties;
+import cz.vutbr.fit.properties.PropertyConstants;
 import cz.vutbr.fit.stats.CollectStats;
 import cz.vutbr.fit.stats.FileStats;
 import org.apache.kafka.clients.producer.ProducerRecord;

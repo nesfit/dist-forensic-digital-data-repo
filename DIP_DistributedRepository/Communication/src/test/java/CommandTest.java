@@ -1,6 +1,6 @@
-import communication.command.Command;
-import communication.command.DataType;
-import communication.command.Operation;
+import cz.vutbr.fit.communication.command.Command;
+import cz.vutbr.fit.communication.command.DataType;
+import cz.vutbr.fit.communication.command.Operation;
 
 public class CommandTest {
 

@@ -1,9 +1,9 @@
 package cz.vutbr.fit.communication.consumer.handler.configuration;
 
-import communication.KafkaResponse;
-import communication.command.Command;
-import communication.consumer.handler.HandlerManager;
+import cz.vutbr.fit.communication.KafkaResponse;
+import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.consumer.handler.AcknowledgementConsumerHandler;
+import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
