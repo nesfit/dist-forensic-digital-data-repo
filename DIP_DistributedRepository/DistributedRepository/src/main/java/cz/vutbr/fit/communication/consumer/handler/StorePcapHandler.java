@@ -1,13 +1,11 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
 import com.datastax.driver.core.utils.UUIDs;
-import cz.vutbr.fit.DatabaseType;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.ResponseCode;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
-import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.OnPacketCallback;
@@ -73,8 +71,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
                     .id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
             packetRepository.insertAsync(p);
 
-            PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
-            packetMetadataRepository.save(packetMetadata);
+            //PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
+            //packetMetadataRepository.save(packetMetadata);
         }
     }
 
@@ -92,18 +90,6 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         // TODO: Replace old producer with Spring producer
         AcknowledgementProducer acknowledgementProducer = new AcknowledgementProducer(response, value);
         acknowledgementProducer.acknowledge();
-    }
-
-    public void setPacketRepository(PacketRepository packetRepository) {
-        this.packetRepository = packetRepository;
-    }
-
-    public void setPacketMetadataRepository(PacketMetadataRepository packetMetadataRepository) {
-        this.packetMetadataRepository = packetMetadataRepository;
-    }
-
-    public void setPcapParser(IPcapParser<Packet> pcapParser) {
-        this.pcapParser = pcapParser;
     }
 
 }

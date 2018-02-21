@@ -5,6 +5,8 @@ import cz.vutbr.fit.communication.serialization.KafkaResponseSerializer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 
+@Deprecated
+// TODO: Remove this class
 public class AcknowledgementProducer {
 
     private Producer<KafkaResponse, byte[]> producer;

@@ -1,11 +1,9 @@
 package cz.vutbr.fit.communication.consumer.handler.beans;
 
-import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
 import cz.vutbr.fit.communication.consumer.handler.StorePcapHandler;
-import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.org.pcap4j.PcapParser;
 import org.pcap4j.packet.Packet;
@@ -17,13 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class HandlerManagerBeans {
 
     @Autowired
-    private PacketRepository packetRepository;
-    @Autowired
-    private PacketMetadataRepository packetMetadataRepository;
-    @Autowired
     private StorePcapHandler storePcapHandler;
-    @Autowired
-    private IPcapParser<Packet> pcapParser;
 
     @Bean
     public HandlerManager<KafkaRequest, byte[]> handlerManager() {
@@ -35,9 +27,6 @@ public class HandlerManagerBeans {
     @Bean
     public StorePcapHandler storePcapHandler() {
         StorePcapHandler storePcapHandler = new StorePcapHandler();
-        storePcapHandler.setPacketRepository(packetRepository);
-        storePcapHandler.setPacketMetadataRepository(packetMetadataRepository);
-        storePcapHandler.setPcapParser(pcapParser);
         return storePcapHandler;
     }
 
