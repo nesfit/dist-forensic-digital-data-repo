@@ -36,7 +36,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         packetList.forEach(System.out::println);
     }
 
-    public void testAsyncCassandra() {
+    public void testInsertAsyncCassandra() {
 
         Date start = new Date();
         // TODO: Do it in huge loop
@@ -77,7 +77,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        testAsyncCassandra();
+        testInsertAsyncCassandra();
         //testMongoDB();
     }
 
