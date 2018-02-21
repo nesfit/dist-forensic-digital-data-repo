@@ -3,6 +3,7 @@ package cz.vutbr.fit;
 import com.datastax.driver.core.utils.UUIDs;
 import cz.vutbr.fit.cassandra.entity.Packet;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
+import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +24,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     PacketRepository packetRepository;
 
     //@Autowired
-    //PacketMetadataRepository packetMetadataRepository;
+    PacketMetadataRepository packetMetadataRepository;
 
     public void testCassandra() {
         Packet packet = new Packet();

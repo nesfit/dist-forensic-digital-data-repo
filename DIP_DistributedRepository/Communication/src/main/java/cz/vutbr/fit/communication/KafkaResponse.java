@@ -9,7 +9,7 @@ public class KafkaResponse {
 
     private UUID id;
     private String responseTopic;
-    private int responseCode;
+    private ResponseCode responseCode;
     private String status;
     private String detailMessage;
 
@@ -29,11 +29,11 @@ public class KafkaResponse {
         this.responseTopic = responseTopic;
     }
 
-    public int getResponseCode() {
+    public ResponseCode getResponseCode() {
         return responseCode;
     }
 
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(ResponseCode responseCode) {
         this.responseCode = responseCode;
     }
 
@@ -75,7 +75,7 @@ public class KafkaResponse {
             return this;
         }
 
-        public Builder responseCode(int responseCode) {
+        public Builder responseCode(ResponseCode responseCode) {
             response.setResponseCode(responseCode);
             return this;
         }

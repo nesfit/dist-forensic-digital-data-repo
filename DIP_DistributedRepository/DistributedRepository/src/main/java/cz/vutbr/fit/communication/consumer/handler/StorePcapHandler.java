@@ -1,10 +1,13 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
 import com.datastax.driver.core.utils.UUIDs;
+import cz.vutbr.fit.DatabaseType;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.KafkaResponse;
+import cz.vutbr.fit.communication.ResponseCode;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
+import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.OnPacketCallback;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.UUID;
 
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
@@ -23,7 +27,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Autowired
     private PacketMetadataRepository packetMetadataRepository;
     @Autowired
-    private IPcapParser pcapParser;
+    private IPcapParser<Packet> pcapParser;
 
     private String tmpFile;
     private int count;
@@ -52,7 +56,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     private void processPackets() throws IOException {
         count = 0;
         Date startTime = new Date();
+
         pcapParser.parseInput(tmpFile, new OnPacketCallbackImpl());
+
         Date endTime = new Date();
         System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
     }
@@ -62,9 +68,13 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         public void processPacket(Packet packet) {
             count++;
 
+            UUID id = UUIDs.timeBased();
             cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet.Builder()
-                    .id(UUIDs.timeBased()).packet(ByteBuffer.wrap(packet.getRawData())).build();
+                    .id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
             packetRepository.insertAsync(p);
+
+            PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
+            packetMetadataRepository.save(packetMetadata);
         }
     }
 
@@ -74,11 +84,12 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     private KafkaResponse buildResponse(KafkaRequest request) {
         return new KafkaResponse.Builder()
-                .id(request.getId()).responseTopic(request.getResponseTopic()).responseCode(200)
+                .id(request.getId()).responseTopic(request.getResponseTopic()).responseCode(ResponseCode.OK)
                 .status("OK").detailMessage("Successfully stored " + count + " packets").build();
     }
 
     private void sendAcknowledgement(KafkaResponse response, byte[] value) {
+        // TODO: Replace old producer with Spring producer
         AcknowledgementProducer acknowledgementProducer = new AcknowledgementProducer(response, value);
         acknowledgementProducer.acknowledge();
     }
@@ -91,7 +102,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         this.packetMetadataRepository = packetMetadataRepository;
     }
 
-    public void setPcapParser(IPcapParser pcapParser) {
+    public void setPcapParser(IPcapParser<Packet> pcapParser) {
         this.pcapParser = pcapParser;
     }
 
