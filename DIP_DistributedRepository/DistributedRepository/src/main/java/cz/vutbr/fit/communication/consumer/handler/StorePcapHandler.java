@@ -10,7 +10,6 @@ import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.OnPacketCallback;
-import cz.vutbr.fit.service.serialize.Serializer;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,9 +33,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
 
-            storePayloadIntoTmpFile(value);
+            storePayload(value);
             processPackets();
-            deleteTmpFile();
+            removePayload();
 
             // TODO: Remove hardcoded values
             sendAcknowledgement(buildResponse(request), "Response OK".getBytes());
@@ -46,19 +45,17 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         }
     }
 
-    private void storePayloadIntoTmpFile(byte[] value) throws IOException {
+    private void storePayload(byte[] value) throws IOException {
         tmpFile = FileManager.GenerateTmpPath();
         FileManager.SaveContent(tmpFile, value);
     }
 
     private void processPackets() throws IOException {
         count = 0;
-        Date start = new Date();
-
+        Date startTime = new Date();
         pcapParser.parseInput(tmpFile, new OnPacketCallbackImpl());
-
-        Date end = new Date();
-        System.out.println("Packets processed in " + (end.getTime() - start.getTime()) / 1000);
+        Date endTime = new Date();
+        System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
     }
 
     private class OnPacketCallbackImpl implements OnPacketCallback<Packet> {
@@ -66,18 +63,13 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         public void processPacket(Packet packet) {
             count++;
 
-            try {
-                cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet();
-                p.setId(UUIDs.timeBased());
-                p.setPacket(ByteBuffer.wrap(Serializer.Serialize(packet)));
-                packetRepository.insertAsync(p);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet.Builder()
+                    .id(UUIDs.timeBased()).packet(ByteBuffer.wrap(packet.getRawData())).build();
+            packetRepository.insertAsync(p);
         }
     }
 
-    private void deleteTmpFile() {
+    private void removePayload() {
         FileManager.RemoveFile(tmpFile);
     }
 

@@ -18,7 +18,7 @@ public class PacketRepositoryImpl implements InsertAsync {
     private Session session;
     private AsyncCassandraTemplate asyncCassandraTemplate;
 
-    private static final String query = "INSERT INTO pcap (id, packet) VALUES(?, ?);";
+    private static final String query = "INSERT INTO packet (id, packet) VALUES(?, ?);";
     private PreparedStatement statement;
 
     @PostConstruct

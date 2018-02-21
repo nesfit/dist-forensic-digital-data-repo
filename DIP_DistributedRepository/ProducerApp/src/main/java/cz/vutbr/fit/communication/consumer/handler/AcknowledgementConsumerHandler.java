@@ -2,6 +2,7 @@ package cz.vutbr.fit.communication.consumer.handler;
 
 import communication.KafkaResponse;
 import communication.consumer.handler.ICommandHandler;
+import cz.vutbr.fit.stats.CollectStats;
 
 import java.util.Date;
 
@@ -9,9 +10,9 @@ public class AcknowledgementConsumerHandler implements ICommandHandler<KafkaResp
 
     @Override
     public void handleRequest(KafkaResponse response, byte[] s) {
-        System.out.println("Receive time" + new Date());
+        CollectStats.getInstance().setEndTime(response.getId(), new Date());
         System.out.println(response);
-        System.out.println(s);
+        CollectStats.getInstance().finalStats();
     }
 
 }
