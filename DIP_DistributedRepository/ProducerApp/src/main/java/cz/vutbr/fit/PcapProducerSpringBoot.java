@@ -7,7 +7,6 @@ import cz.vutbr.fit.properties.Properties;
 import cz.vutbr.fit.properties.PropertyConstants;
 import cz.vutbr.fit.stats.CollectStats;
 import cz.vutbr.fit.stats.FileStats;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -53,7 +52,7 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
             fileStats.setStartTime(new Date());
             CollectStats.getInstance().appendFile(request.getId(), fileStats);
 
-            producer.produce(new ProducerRecord<>(inputTopic, request, bytes));
+            producer.produce(inputTopic, request, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }

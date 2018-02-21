@@ -14,8 +14,8 @@ public class KafkaProducer {
     @Autowired
     private KafkaTemplate<KafkaRequest, byte[]> kafkaTemplate;
 
-    public void produce(ProducerRecord<KafkaRequest, byte[]> record) {
-        ListenableFuture<SendResult<KafkaRequest, byte[]>> future = kafkaTemplate.send(record);
+    public void produce(String topic, KafkaRequest request, byte[] value) {
+        ListenableFuture<SendResult<KafkaRequest, byte[]>> future = kafkaTemplate.send(new ProducerRecord<>(topic, request, value));
         future.addCallback(KafkaProducer::onSuccess, KafkaProducer::onFailure);
     }
 

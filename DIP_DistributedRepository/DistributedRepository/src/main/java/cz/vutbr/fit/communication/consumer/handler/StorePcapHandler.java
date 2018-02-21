@@ -27,6 +27,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Autowired
     private IPcapParser<Packet> pcapParser;
 
+    @Autowired
+    AcknowledgementProducer acknowledgementProducer;
+
     private String tmpFile;
     private int count;
 
@@ -87,9 +90,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     }
 
     private void sendAcknowledgement(KafkaResponse response, byte[] value) {
-        // TODO: Replace old producer with Spring producer
-        AcknowledgementProducer acknowledgementProducer = new AcknowledgementProducer(response, value);
-        acknowledgementProducer.acknowledge();
+        acknowledgementProducer.produce(response.getResponseTopic(), response, value);
     }
 
 }
