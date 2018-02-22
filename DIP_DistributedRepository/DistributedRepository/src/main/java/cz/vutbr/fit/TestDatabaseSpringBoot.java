@@ -3,6 +3,7 @@ package cz.vutbr.fit;
 import com.datastax.driver.core.utils.UUIDs;
 import cz.vutbr.fit.cassandra.entity.Packet;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
+import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
@@ -12,6 +13,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 //@SpringBootApplication
 //@ComponentScan(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
@@ -23,7 +26,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Autowired
     PacketRepository packetRepository;
 
-    //@Autowired
+    @Autowired
     PacketMetadataRepository packetMetadataRepository;
 
     public void testCassandra() {
@@ -40,7 +43,6 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     public void testInsertAsyncCassandra() {
 
         Date start = new Date();
-        // TODO: Do it in huge loop
         for (int i = 0; i < 5000; i++) {
             Packet packet = new Packet();
             packet.setId(UUIDs.timeBased());
@@ -56,17 +58,20 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         //System.out.println(packet);
     }
 
-    /*public void testMongoDB() {
-        PacketMetadata packetMetadata = new PacketMetadata();
-        packetMetadata.setRefId(UUID.randomUUID());
-        packetMetadata.setSrcIpAddress("124.23.04.11");
-        packetMetadata.setDstIpAddress("145.95.72.88");
-        packetMetadataRepository.save(packetMetadata);
+    public void testMongoDB() {
+        System.out.println("Save operation");
+        String someSrcIpAddress = "124.23.04.11";
+        String someDstIpAddress = "145.95.72.88";
+        PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(UUID.randomUUID())
+                .databaseType(DatabaseType.Cassandra).srcIpAddress(someSrcIpAddress).dstIpAddress(someDstIpAddress).build();
+        packetMetadataRepository.save(packetMetadata).block();
 
-        Iterable<PacketMetadata> packetMetadataList = packetMetadataRepository.findAll();
-        System.out.println("PacketMetadata List : ");
-        packetMetadataList.forEach(System.out::println);
-    }*/
+        System.out.println("Load operation");
+        List<PacketMetadata> list = packetMetadataRepository.findAll().collectList().block();
+        list.forEach(System.out::println);
+        //Flux<PacketMetadata> packetMetadataList = packetMetadataRepository.findAll();
+        //packetMetadataList.doOnEach(flux -> System.out.println(flux.get())).subscribe();
+    }
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -78,8 +83,8 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        testInsertAsyncCassandra();
-        //testMongoDB();
+        //testInsertAsyncCassandra();
+        testMongoDB();
     }
 
 }

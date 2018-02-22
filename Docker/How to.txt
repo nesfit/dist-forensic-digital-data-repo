@@ -31,6 +31,23 @@ Cassandra:
 	Otevreni CSLSH
 		$ docker run -it --net cassandracustom_default --link cassandra:cassandra --rm cassandra cqlsh cassandra
 
+MongoDB:
+	Otevreni shell
+		$ docker run -it --net mongodb_default --link mongodb:mongodb --rm mongo mongo 192.168.99.100:27017
+		
+		Vypsani databazi
+			> show dbs
+		Pouziti databaze
+			> use metadata
+		Vypsani kolekci v databazi
+			> db.getCollectionNames()
+		Vypsani obsahu kolekce
+			> db.packet_metadata.find().forEach(printjson)
+		Pocet polozek v kolekci
+			> db.packet_metadata.count()
+		Smazani kolekce
+			> db.packet_metadata.drop()
+
 Kafka:
 	
 	Vytvoreni topicu

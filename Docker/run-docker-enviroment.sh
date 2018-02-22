@@ -4,6 +4,10 @@ cd Environment/cassandra-custom
 docker-compose up -d
 cd ../..
 
+cd Environment/mongodb
+docker-compose up -d
+cd ../..
+
 cd Environment/kafka
 docker-compose up -d
 cd ../..

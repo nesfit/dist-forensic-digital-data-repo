@@ -1,11 +1,13 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
 import com.datastax.driver.core.utils.UUIDs;
+import cz.vutbr.fit.DatabaseType;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.ResponseCode;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
+import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
 import cz.vutbr.fit.service.pcap.OnPacketCallback;
@@ -15,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
@@ -29,6 +33,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     @Autowired
     AcknowledgementProducer acknowledgementProducer;
+
+    private List<PacketMetadata> packetMetadataList = new ArrayList<>();
 
     private String tmpFile;
     private int count;
@@ -58,7 +64,13 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         count = 0;
         Date startTime = new Date();
 
+        packetMetadataList.clear();
         pcapParser.parseInput(tmpFile, new OnPacketCallbackImpl());
+
+        //Flux<PacketMetadata> result =
+        packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
+        //result.doOnError(Throwable::printStackTrace);
+        //result.subscribe();
 
         Date endTime = new Date();
         System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
@@ -74,8 +86,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
                     .id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
             packetRepository.insertAsync(p);
 
-            //Flux<PacketMetadata> result = packetMetadataRepository.saveAll(Collections.emptyList());
-            //result.doOnError(Throwable::printStackTrace);
+            PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
+            packetMetadataList.add(packetMetadata);
 
             //PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
             //packetMetadataRepository.save(packetMetadata);
