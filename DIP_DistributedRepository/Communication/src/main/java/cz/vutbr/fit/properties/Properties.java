@@ -2,7 +2,7 @@ package cz.vutbr.fit.properties;
 
 public class Properties {
 
-    public static final String CONFIG_FILE = "config.properties";
+    public static final String CONFIG_FILE = "application.properties";
 
     private static volatile cz.vutbr.fit.properties.Properties instance = null;
 
