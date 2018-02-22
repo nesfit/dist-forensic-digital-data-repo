@@ -28,8 +28,7 @@ public class PacketMetadata {
     }
 
     @PersistenceConstructor
-    public PacketMetadata(String id, UUID refId, DatabaseType databaseType, String srcIpAddress, String dstIpAddress) {
-        this.id = id;
+    public PacketMetadata(UUID refId, DatabaseType databaseType, String srcIpAddress, String dstIpAddress) {
         this.refId = refId;
         this.databaseType = databaseType;
         this.srcIpAddress = srcIpAddress;

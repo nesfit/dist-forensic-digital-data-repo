@@ -74,6 +74,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
                     .id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
             packetRepository.insertAsync(p);
 
+            //Flux<PacketMetadata> result = packetMetadataRepository.saveAll(Collections.emptyList());
+            //result.doOnError(Throwable::printStackTrace);
+
             //PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
             //packetMetadataRepository.save(packetMetadata);
         }

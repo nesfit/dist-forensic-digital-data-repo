@@ -8,6 +8,7 @@
     <artifactId>persistence</artifactId>
     <version>1.0</version>
 
+    <!-- TODO: Check if Spring Boot starter parent is necessary -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,6 +22,13 @@
     </properties>
 
     <dependencies>
+
+        <!-- Reactive Core -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.1.4.RELEASE</version>
+        </dependency>
 
         <!-- Spring Data JPA -->
         <dependency>
@@ -66,6 +74,13 @@
             <artifactId>spring-data-mongodb</artifactId>
             <version>2.0.3.RELEASE</version>
             <type>pom</type>
+        </dependency>
+
+        <!-- MongoDB Reactive Streams Java Driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
+            <version>1.7.1</version>
         </dependency>
 
         <!-- MongoDB Async Driver

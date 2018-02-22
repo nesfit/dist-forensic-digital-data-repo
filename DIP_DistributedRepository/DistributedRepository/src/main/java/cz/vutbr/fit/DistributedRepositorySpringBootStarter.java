@@ -10,6 +10,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+//@EnableReactiveMongoRepositories
 public class DistributedRepositorySpringBootStarter implements CommandLineRunner {
 
     public static void main(String[] args) {
