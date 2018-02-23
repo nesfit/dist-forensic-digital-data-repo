@@ -14,7 +14,11 @@ import cz.vutbr.fit.service.pcap.OnPacketCallback;
 import cz.vutbr.fit.util.FileManager;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -22,22 +26,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     @Autowired
     private PacketRepository packetRepository;
     @Autowired
     private PacketMetadataRepository packetMetadataRepository;
+
     @Autowired
     private IPcapParser<Packet> pcapParser;
 
     @Autowired
     AcknowledgementProducer acknowledgementProducer;
 
-    private List<PacketMetadata> packetMetadataList = new ArrayList<>();
+    @Value("${packet.metadata.max.list.size}")
+    private int maxListSize;
+    private List<PacketMetadata> packetMetadataList;
 
-    private String tmpFile;
+    @Value("${tmp.directory}")
+    private String tmpDirectory;
+    private String processedTmpFile;
+
     private int count;
+
+    @PostConstruct
+    public void postConstructValidation() {
+        Assert.notNull(maxListSize, "packet.metadata.max.list.size property is empty");
+        Assert.notNull(tmpDirectory, "tmp.directory property is empty");
+    }
 
     @Override
     public void handleRequest(KafkaRequest request, byte[] value) {
@@ -56,21 +73,19 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     }
 
     private void storePayload(byte[] value) throws IOException {
-        tmpFile = FileManager.GenerateTmpPath();
-        FileManager.SaveContent(tmpFile, value);
+        processedTmpFile = FileManager.GenerateTmpPath(tmpDirectory);
+        FileManager.SaveContent(processedTmpFile, value);
     }
 
     private void processPackets() throws IOException {
         count = 0;
         Date startTime = new Date();
 
-        packetMetadataList.clear();
-        pcapParser.parseInput(tmpFile, new OnPacketCallbackImpl());
+        packetMetadataList = new ArrayList<>(maxListSize);
+        pcapParser.parseInput(processedTmpFile, new OnPacketCallbackImpl());
 
-        //Flux<PacketMetadata> result =
-        packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
-        //result.doOnError(Throwable::printStackTrace);
-        //result.subscribe();
+        // Saving the whole list of unknown count of packets demands lot of memory
+        //packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
 
         Date endTime = new Date();
         System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
@@ -88,14 +103,18 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
             PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
             packetMetadataList.add(packetMetadata);
+            if (packetMetadataList.size() == maxListSize) {
+                packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
+                packetMetadataList = new ArrayList<>(maxListSize);
+            }
 
-            //PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
-            //packetMetadataRepository.save(packetMetadata);
+            // Saving one by one is very slow
+            //packetMetadataRepository.save(packetMetadata).doOnError(Throwable::printStackTrace).subscribe();
         }
     }
 
     private void removePayload() {
-        FileManager.RemoveFile(tmpFile);
+        FileManager.RemoveFile(processedTmpFile);
     }
 
     private KafkaResponse buildResponse(KafkaRequest request) {
@@ -106,6 +125,14 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     private void sendAcknowledgement(KafkaResponse response, byte[] value) {
         acknowledgementProducer.produce(response.getResponseTopic(), response, value);
+    }
+
+    public void setMaxListSize(int maxListSize) {
+        this.maxListSize = maxListSize;
+    }
+
+    public void setTmpDirectory(String tmpDirectory) {
+        this.tmpDirectory = tmpDirectory;
     }
 
 }
