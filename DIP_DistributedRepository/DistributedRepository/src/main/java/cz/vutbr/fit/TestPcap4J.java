@@ -29,12 +29,13 @@ public class TestPcap4J {
 
     public void loadAndSavePcapFile(String input) throws IOException {
         PcapParser pcapParser = new PcapParser();
-        pcapParser.parseInput(input, new CallBack());
+        pcapParser.parseInput(input, new CallBack(), () -> {
+        });
     }
 
     private class CallBack implements OnPacketCallback<Packet> {
         @Override
-        public void processPacket(Packet packet) {
+        public void doOnPacket(Packet packet) {
             try {
                 dumper.dumpRaw(packet.getRawData());
             } catch (NotOpenException e) {

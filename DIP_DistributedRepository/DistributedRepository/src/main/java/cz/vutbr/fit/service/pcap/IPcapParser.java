@@ -5,6 +5,6 @@ import java.io.IOException;
 @FunctionalInterface
 public interface IPcapParser<T> {
 
-    public void parseInput(String path, OnPacketCallback<T> onPacketCallback) throws IOException;
+    public void parseInput(String path, OnPacketCallback<T> onPacketCallback, OnCompleteCallback onCompleteCallback) throws IOException;
 
 }

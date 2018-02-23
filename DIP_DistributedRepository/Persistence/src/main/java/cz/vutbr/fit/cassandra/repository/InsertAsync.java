@@ -1,9 +1,9 @@
 package cz.vutbr.fit.cassandra.repository;
 
-import cz.vutbr.fit.cassandra.entity.Packet;
+import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 
 public interface InsertAsync {
 
-    public void insertAsync(Packet packet);
+    public void insertAsync(CassandraPacket cassandraPacket);
 
 }

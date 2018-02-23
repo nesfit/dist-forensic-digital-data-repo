@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Table("packet")
 @Entity
-public class Packet {
+public class CassandraPacket {
 
     @PrimaryKey
     private UUID id;
@@ -34,31 +34,31 @@ public class Packet {
 
     public static class Builder {
 
-        private Packet packet;
+        private CassandraPacket cassandraPacket;
 
         public Builder() {
-            packet = new Packet();
+            cassandraPacket = new CassandraPacket();
         }
 
         public Builder id(UUID id) {
-            this.packet.setId(id);
+            this.cassandraPacket.setId(id);
             return this;
         }
 
         public Builder packet(ByteBuffer packet) {
-            this.packet.setPacket(packet);
+            this.cassandraPacket.setPacket(packet);
             return this;
         }
 
-        public Packet build() {
-            return this.packet;
+        public CassandraPacket build() {
+            return this.cassandraPacket;
         }
 
     }
 
     @Override
     public String toString() {
-        return "[id=" + id + ", packet=" + new String(packet.array()) + "]";
+        return "[id=" + id + ", cassandraPacket=" + packet.array() + "]";
     }
 
 }

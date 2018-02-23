@@ -2,6 +2,7 @@ package cz.vutbr.fit.communication.consumer.handler;
 
 import com.datastax.driver.core.utils.UUIDs;
 import cz.vutbr.fit.DatabaseType;
+import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.KafkaResponse;
@@ -10,7 +11,6 @@ import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.IPcapParser;
-import cz.vutbr.fit.service.pcap.OnPacketCallback;
 import cz.vutbr.fit.util.FileManager;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         Date startTime = new Date();
 
         packetMetadataList = new ArrayList<>(maxListSize);
-        pcapParser.parseInput(processedTmpFile, new OnPacketCallbackImpl());
+        pcapParser.parseInput(processedTmpFile, this::processPacket, this::storeMetadata);
 
         // Saving the whole list of unknown count of packets demands lot of memory
         //packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
@@ -91,26 +91,38 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
     }
 
-    private class OnPacketCallbackImpl implements OnPacketCallback<Packet> {
-        @Override
-        public void processPacket(Packet packet) {
-            count++;
+    public void processPacket(Packet packet) {
+        count++;
 
-            UUID id = UUIDs.timeBased();
-            cz.vutbr.fit.cassandra.entity.Packet p = new cz.vutbr.fit.cassandra.entity.Packet.Builder()
-                    .id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
-            packetRepository.insertAsync(p);
+        UUID id = UUIDs.timeBased();
+        CassandraPacket cassandraPacket = new CassandraPacket.Builder().id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
+        packetRepository.insertAsync(cassandraPacket);
 
-            PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
-            packetMetadataList.add(packetMetadata);
-            if (packetMetadataList.size() == maxListSize) {
-                packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
-                packetMetadataList = new ArrayList<>(maxListSize);
-            }
+        PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
+        packetMetadataList.add(packetMetadata);
 
-            // Saving one by one is very slow
-            //packetMetadataRepository.save(packetMetadata).doOnError(Throwable::printStackTrace).subscribe();
+        if (shouldStoreMetadata()) {
+            storeMetadata();
+            packetMetadataList = new ArrayList<>(maxListSize);
         }
+
+        // Saving one by one is very slow
+        //packetMetadataRepository.save(packetMetadata).doOnError(Throwable::printStackTrace).subscribe();
+    }
+
+    private boolean shouldStoreMetadata() {
+        return (packetMetadataList.size() == maxListSize);
+    }
+
+    private void storeMetadata() {
+        List<PacketMetadata> metadataList = packetMetadataList;
+        packetMetadataRepository
+                .saveAll(metadataList)
+                .doOnError(Throwable::printStackTrace)
+                .doOnComplete(() -> {
+                    metadataList.clear();
+                })
+                .subscribe();
     }
 
     private void removePayload() {

@@ -1,7 +1,7 @@
 package cz.vutbr.fit;
 
 import com.datastax.driver.core.utils.UUIDs;
-import cz.vutbr.fit.cassandra.entity.Packet;
+import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
@@ -30,12 +30,12 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     PacketMetadataRepository packetMetadataRepository;
 
     public void testCassandra() {
-        Packet packet = new Packet();
+        CassandraPacket packet = new CassandraPacket();
         packet.setId(UUIDs.timeBased());
         packet.setPacket(ByteBuffer.wrap("237283278".getBytes()));
         packetRepository.save(packet);
 
-        Iterable<Packet> packetList = packetRepository.findAll();
+        Iterable<CassandraPacket> packetList = packetRepository.findAll();
         System.out.println("Packet List : ");
         packetList.forEach(System.out::println);
     }
@@ -44,7 +44,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
         Date start = new Date();
         for (int i = 0; i < 5000; i++) {
-            Packet packet = new Packet();
+            CassandraPacket packet = new CassandraPacket();
             packet.setId(UUIDs.timeBased());
             packet.setPacket(ByteBuffer.wrap("237283278".getBytes()));
             packetRepository.insertAsync(packet);

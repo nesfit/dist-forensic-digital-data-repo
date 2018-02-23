@@ -3,7 +3,7 @@ package cz.vutbr.fit.cassandra.repository;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import cz.vutbr.fit.cassandra.entity.Packet;
+import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.AsyncCassandraTemplate;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -28,9 +28,9 @@ public class PacketRepositoryImpl implements InsertAsync {
     }
 
     @Override
-    public void insertAsync(Packet packet) {
-        //insertAsyncSpringData(packet);
-        insertAsync(packet.getId(), packet.getPacket());
+    public void insertAsync(CassandraPacket cassandraPacket) {
+        //insertAsyncSpringData(cassandraPacket);
+        insertAsync(cassandraPacket.getId(), cassandraPacket.getPacket());
     }
 
     private void insertAsync(UUID id, ByteBuffer packet) {
@@ -39,13 +39,13 @@ public class PacketRepositoryImpl implements InsertAsync {
         session.executeAsync(boundStatement);
     }
 
-    private void insertAsyncSpringData(Packet packet) {
+    private void insertAsyncSpringData(CassandraPacket cassandraPacket) {
         // TODO: Add callback as a parameter
-        ListenableFuture<Packet> listenableFuture = asyncCassandraTemplate.insert(packet);
+        ListenableFuture<CassandraPacket> listenableFuture = asyncCassandraTemplate.insert(cassandraPacket);
         listenableFuture.addCallback(PacketRepositoryImpl::onSuccess, PacketRepositoryImpl::onFailure);
     }
 
-    private static void onSuccess(Packet packet) {
+    private static void onSuccess(CassandraPacket cassandraPacket) {
 
     }
 
