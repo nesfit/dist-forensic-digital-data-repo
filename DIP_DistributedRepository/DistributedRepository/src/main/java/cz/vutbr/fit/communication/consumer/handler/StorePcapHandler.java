@@ -38,7 +38,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     private IPcapParser<Packet> pcapParser;
 
     @Autowired
-    AcknowledgementProducer acknowledgementProducer;
+    private AcknowledgementProducer acknowledgementProducer;
 
     @Value("${packet.metadata.max.list.size}")
     private int maxListSize;

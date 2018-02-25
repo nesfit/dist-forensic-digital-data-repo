@@ -34,11 +34,14 @@ public class CollectStats {
     public void setEndTime(UUID uuid, Date endTime) {
         FileStats fileStats = fileStatsMap.get(uuid);
 
+        long duration;
         if (lastEndTime != null) {
-            fileStats.setDuration((endTime.getTime() - lastEndTime.getTime()) / 1000);
+            duration = (endTime.getTime() - lastEndTime.getTime()) / 1000;
         } else {
-            fileStats.setDuration((endTime.getTime() - fileStats.getStartTime().getTime()) / 1000);
+            duration = (endTime.getTime() - fileStats.getStartTime().getTime()) / 1000;
         }
+
+        fileStats.setDuration(duration);
 
         lastEndTime = endTime;
         receivedResponses++;

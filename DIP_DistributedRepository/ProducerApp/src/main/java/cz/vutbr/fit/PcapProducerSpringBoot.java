@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SpringBootApplication
 public class PcapProducerSpringBoot implements CommandLineRunner {
@@ -29,6 +31,8 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
     private static final String CAP_FILE = ".cap";
     private String outputTopic = Properties.getInstance().loadProperty(PropertyConstants.OUTPUT_TOPIC);
     private String inputTopic = Properties.getInstance().loadProperty(PropertyConstants.INPUT_TOPIC);
+
+    private final Lock _mutex = new ReentrantLock(Boolean.TRUE);
 
     @Autowired
     KafkaProducer producer;
@@ -43,16 +47,24 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
 
     public void runProducer(String file) {
         try {
+
+            _mutex.lock();
+            System.out.println("\tLocked: sending file " + file);
+
             byte[] bytes = Files.readAllBytes(Paths.get(file));
             KafkaRequest request = new KafkaRequest.Builder().command(Command.STORE_PCAP)
                     .awaitsResponse(Boolean.TRUE).responseTopic(outputTopic).id(UUID.randomUUID()).build();
 
-            FileStats fileStats = new FileStats();
-            fileStats.setFilename(file);
-            fileStats.setStartTime(new Date());
+            FileStats fileStats = new FileStats.Builder().filename(file).startTime(new Date()).build();
             CollectStats.getInstance().appendFile(request.getId(), fileStats);
 
-            producer.produce(inputTopic, request, bytes);
+            //producer.produce(inputTopic, request, bytes);
+
+            producer.produce(inputTopic, request, bytes, result -> {
+                _mutex.unlock();
+                System.out.println("\t Unlocked: file " + file + " sent successfully");
+            }, Throwable::printStackTrace);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
