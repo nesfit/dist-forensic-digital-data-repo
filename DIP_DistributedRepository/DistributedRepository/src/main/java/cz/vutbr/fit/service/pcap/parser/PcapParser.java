@@ -1,9 +1,9 @@
-package cz.vutbr.fit.service.pcap;
+package cz.vutbr.fit.service.pcap.parser;
 
 import java.io.IOException;
 
 @FunctionalInterface
-public interface IPcapParser<T> {
+public interface PcapParser<T> {
 
     public void parseInput(String path, OnPacketCallback<T> onPacketCallback, OnCompleteCallback onCompleteCallback) throws IOException;
 

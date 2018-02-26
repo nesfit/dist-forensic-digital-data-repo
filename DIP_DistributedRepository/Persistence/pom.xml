@@ -63,7 +63,6 @@
             <version>2.0.3.RELEASE</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
@@ -96,6 +95,12 @@
             <artifactId>mongodb-driver-async</artifactId>
             <version>3.6.3</version>
         </dependency> -->
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+        </dependency>
 
         <!-- JavaEE API
         <dependency>

@@ -10,7 +10,8 @@ import cz.vutbr.fit.communication.ResponseCode;
 import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
-import cz.vutbr.fit.service.pcap.IPcapParser;
+import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
+import cz.vutbr.fit.service.pcap.parser.PcapParser;
 import cz.vutbr.fit.util.FileManager;
 import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +30,33 @@ import java.util.UUID;
 @Component
 public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
+    // Repository
     @Autowired
     private PacketRepository packetRepository;
     @Autowired
     private PacketMetadataRepository packetMetadataRepository;
 
+    // Parser
     @Autowired
-    private IPcapParser<Packet> pcapParser;
+    private PcapParser<Packet> pcapParser;
 
+    // Packet metadata extractor
+    private PacketExtractor<Packet, PacketMetadata.Builder> packetExtractor;
+    @Autowired
+    private PacketExtractor<Packet, PacketMetadata.Builder> pcap4JIpExtractor;
+    @Autowired
+    private PacketExtractor<Packet, PacketMetadata.Builder> pcap4JEthernetExtractor;
+
+    // Response producer
     @Autowired
     private AcknowledgementProducer acknowledgementProducer;
 
+    // Batch metadata
     @Value("${packet.metadata.max.list.size}")
     private int maxListSize;
     private List<PacketMetadata> packetMetadataList;
 
+    // Pcap4J workaround
     @Value("${tmp.directory}")
     private String tmpDirectory;
     private String processedTmpFile;
@@ -51,9 +64,19 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     private int count;
 
     @PostConstruct
-    public void postConstructValidation() {
+    public void init() {
+        postConstructValidation();
+        postConstructInitialization();
+    }
+
+    private void postConstructValidation() {
         Assert.notNull(maxListSize, "packet.metadata.max.list.size property is empty");
         Assert.notNull(tmpDirectory, "tmp.directory property is empty");
+    }
+
+    private void postConstructInitialization() {
+        packetExtractor = pcap4JEthernetExtractor;
+        packetExtractor.setSuccessor(pcap4JIpExtractor);
     }
 
     @Override
@@ -98,7 +121,10 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         CassandraPacket cassandraPacket = new CassandraPacket.Builder().id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
         packetRepository.insertAsync(cassandraPacket);
 
-        PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(id).databaseType(DatabaseType.Cassandra).build();
+        PacketMetadata.Builder builder = new PacketMetadata.Builder();
+        packetExtractor.extractMetadata(packet, builder);
+
+        PacketMetadata packetMetadata = builder.refId(id).databaseType(DatabaseType.Cassandra).build();
         packetMetadataList.add(packetMetadata);
 
         if (shouldStoreMetadata()) {
@@ -130,8 +156,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     }
 
     private KafkaResponse buildResponse(KafkaRequest request) {
-        return new KafkaResponse.Builder()
-                .id(request.getId()).responseTopic(request.getResponseTopic()).responseCode(ResponseCode.OK)
+        return new KafkaResponse.Builder().id(request.getId())
+                .responseTopic(request.getResponseTopic()).responseCode(ResponseCode.OK)
                 .status("OK").detailMessage("Successfully stored " + count + " packets").build();
     }
 

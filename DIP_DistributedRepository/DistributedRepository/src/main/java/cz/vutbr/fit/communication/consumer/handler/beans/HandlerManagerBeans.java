@@ -4,9 +4,6 @@ import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
 import cz.vutbr.fit.communication.consumer.handler.StorePcapHandler;
-import cz.vutbr.fit.service.pcap.IPcapParser;
-import cz.vutbr.fit.service.pcap.org.pcap4j.PcapParser;
-import org.pcap4j.packet.Packet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,15 +21,10 @@ public class HandlerManagerBeans {
         return handlerManager;
     }
 
+    // TODO: Should be in different class
     @Bean
     public StorePcapHandler storePcapHandler() {
-        StorePcapHandler storePcapHandler = new StorePcapHandler();
-        return storePcapHandler;
-    }
-
-    @Bean
-    public IPcapParser<Packet> pcapParser() {
-        return new PcapParser();
+        return new StorePcapHandler();
     }
 
 }

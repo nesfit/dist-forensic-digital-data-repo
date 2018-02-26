@@ -1,7 +1,6 @@
 package cz.vutbr.fit;
 
-import cz.vutbr.fit.service.pcap.OnPacketCallback;
-import cz.vutbr.fit.service.pcap.org.pcap4j.PcapParser;
+import cz.vutbr.fit.service.pcap.parser.Pcap4JParser;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.namednumber.DataLinkType;
@@ -28,19 +27,16 @@ public class TestPcap4J {
     }
 
     public void loadAndSavePcapFile(String input) throws IOException {
-        PcapParser pcapParser = new PcapParser();
-        pcapParser.parseInput(input, new CallBack(), () -> {
+        Pcap4JParser pcapParser = new Pcap4JParser();
+        pcapParser.parseInput(input, this::doOnPacket, () -> {
         });
     }
 
-    private class CallBack implements OnPacketCallback<Packet> {
-        @Override
-        public void doOnPacket(Packet packet) {
-            try {
-                dumper.dumpRaw(packet.getRawData());
-            } catch (NotOpenException e) {
-                e.printStackTrace();
-            }
+    public void doOnPacket(Packet packet) {
+        try {
+            dumper.dumpRaw(packet.getRawData());
+        } catch (NotOpenException e) {
+            e.printStackTrace();
         }
     }
 

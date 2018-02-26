@@ -1,8 +1,5 @@
-package cz.vutbr.fit.service.pcap.org.pcap4j;
+package cz.vutbr.fit.service.pcap.parser;
 
-import cz.vutbr.fit.service.pcap.IPcapParser;
-import cz.vutbr.fit.service.pcap.OnCompleteCallback;
-import cz.vutbr.fit.service.pcap.OnPacketCallback;
 import org.pcap4j.core.NotOpenException;
 import org.pcap4j.core.PcapHandle;
 import org.pcap4j.core.PcapNativeException;
@@ -13,7 +10,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class PcapParser implements IPcapParser<Packet> {
+public class Pcap4JParser implements PcapParser<Packet> {
 
     @Override
     public void parseInput(String path, OnPacketCallback<Packet> onPacketCallback, OnCompleteCallback onCompleteCallback) throws IOException {

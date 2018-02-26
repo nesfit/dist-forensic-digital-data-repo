@@ -1,4 +1,4 @@
-package cz.vutbr.fit.service.pcap;
+package cz.vutbr.fit.service.pcap.parser;
 
 @FunctionalInterface
 public interface OnPacketCallback<T> {
