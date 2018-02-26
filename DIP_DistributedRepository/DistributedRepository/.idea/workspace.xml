@@ -28,11 +28,36 @@
       <file leaf-file-name="StorePcapHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/StorePcapHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-127">
-              <caret line="114" column="34" lean-forward="false" selection-start-line="114" selection-start-column="34" selection-end-line="114" selection-end-column="34" />
+            <state relative-caret-position="142">
+              <caret line="67" column="44" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="44" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#2067#2068#0" expanded="true" />
                 <element signature="e#2108#2109#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DistributedRepositorySpringBootStarter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/DistributedRepositorySpringBootStarter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HandlerBeans.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerBeans.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#344#345#0" expanded="true" />
+                <element signature="e#389#390#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,7 +75,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>templa</find>
       <find>save</find>
       <find>consumer</find>
       <find>clear()</find>
@@ -61,7 +85,6 @@
       <find>packetMetadataList</find>
       <find>packetMetadataRepository</find>
       <find>//</find>
-      <find>packet.metadata.max.list.size</find>
       <find>PostConstruct</find>
       <find>System.out</find>
       <find>packet</find>
@@ -80,6 +103,8 @@
       <find>TODO</find>
       <find>kafka</find>
       <find>tostring</find>
+      <find>int</find>
+      <find>packet.metadata.max.list.size</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Martin Josefik\IdeaProjects\DistributedRepository</dir>
@@ -97,8 +122,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/configuration/StorePcapHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/DistributedRepositoryConsumerContext.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/configuration/DistributedRepositoryConsumerContext.java" />
         <option value="$MAVEN_REPOSITORY$/cz/vutbr/fit/persistence/1.0/persistence-1.0.jar!/cz/vutbr/fit/cassandra/repository/PacketRepository.class" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/DistributedRepositorySpringBoot.java" />
@@ -137,7 +160,6 @@
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/parser/IPcapParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/parser/PcapParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/parser/beans/Beans.java" />
-        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerManagerBeans.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/extractor/beans/Beans.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/extractor/beans/ParserBeans.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/parser/beans/ParserBeans.java" />
@@ -147,6 +169,9 @@
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/extractor/PacketExtractor.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/extractor/Pcap4JEthernetExtractor.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/extractor/Pcap4JIpExtractor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerManagerBeans.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerBeans.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/beans/HandlerManagerBeans.java" />
         <option value="$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/StorePcapHandler.java" />
       </list>
     </option>
@@ -191,7 +216,7 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-3" />
     <option name="width" value="1378" />
     <option name="height" value="780" />
@@ -245,111 +270,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="fit" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="communication" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="communication" type="462c0819:PsiDirectoryNode" />
-              <item name="handler" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="communication" type="462c0819:PsiDirectoryNode" />
-              <item name="handler" type="462c0819:PsiDirectoryNode" />
-              <item name="beans" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="communication" type="462c0819:PsiDirectoryNode" />
-              <item name="producer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="pcap" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="pcap" type="462c0819:PsiDirectoryNode" />
-              <item name="extractor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="pcap" type="462c0819:PsiDirectoryNode" />
-              <item name="extractor" type="462c0819:PsiDirectoryNode" />
-              <item name="beans" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="pcap" type="462c0819:PsiDirectoryNode" />
-              <item name="parser" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DistributedRepository" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="fit" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="pcap" type="462c0819:PsiDirectoryNode" />
-              <item name="parser" type="462c0819:PsiDirectoryNode" />
-              <item name="beans" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DistributedRepository" type="b2602c69:ProjectViewProjectNode" />
@@ -715,12 +635,12 @@
       <workItem from="1519669443138" duration="775000" />
       <workItem from="1519670253107" duration="17000" />
       <workItem from="1519670425043" duration="153000" />
-      <workItem from="1519672039565" duration="2355000" />
+      <workItem from="1519672039565" duration="3507000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="205674000" />
+    <option name="totallyTimeSpent" value="206826000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -732,7 +652,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1066" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32850242" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -748,7 +669,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32850242" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1671875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1671875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32690248" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -793,41 +714,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/com/datastax/cassandra/cassandra-driver-core/3.3.1/cassandra-driver-core-3.3.1.jar!/com/datastax/driver/core/PoolingOptions.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4284">
-          <caret line="255" column="0" lean-forward="false" selection-start-line="255" selection-start-column="0" selection-end-line="255" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-9/lib/src.zip!/java.base/java/lang/Runnable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="457">
-          <caret line="67" column="25" lean-forward="false" selection-start-line="67" selection-start-column="25" selection-end-line="67" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/pcap4j/pcap4j-core/1.7.3/pcap4j-core-1.7.3.jar!/org/pcap4j/packet/PacketIterator.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="14" column="11" lean-forward="false" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/pcap4j/pcap4j-core/1.7.3/pcap4j-core-1.7.3.jar!/org/pcap4j/packet/AbstractPacket.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="98" column="27" lean-forward="true" selection-start-line="98" selection-start-column="27" selection-end-line="98" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/pcap4j/pcap4j-core/1.7.3/pcap4j-core-1.7.3.jar!/org/pcap4j/packet/Packet.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="5" column="23" lean-forward="false" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/pcap4j/pcap4j-core/1.7.3/pcap4j-core-1.7.3.jar!/org/pcap4j/packet/namednumber/ProtocolFamily.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -994,14 +880,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/Beans.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerManagerBeans.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="14" lean-forward="false" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/service/pcap/parser/beans/ParserBeans.java" />
     <entry file="jar://$MAVEN_REPOSITORY$/cz/vutbr/fit/persistence/1.0/persistence-1.0.jar!/cz/vutbr/fit/mongodb/entity/PacketMetadata.class">
       <provider selected="true" editor-type-id="text-editor">
@@ -1160,11 +1038,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/DistributedRepositoryConsumer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="26" column="29" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/5.0.2.RELEASE/spring-core-5.0.2.RELEASE.jar!/org/springframework/util/Assert.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="34" column="23" lean-forward="false" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#11361#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/beans/HandlerManagerBeans.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/DistributedRepositorySpringBootStarter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/beans/HandlerBeans.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#344#345#0" expanded="true" />
+            <element signature="e#389#390#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/cz/vutbr/fit/communication/consumer/handler/StorePcapHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-127">
-          <caret line="114" column="34" lean-forward="false" selection-start-line="114" selection-start-column="34" selection-end-line="114" selection-end-column="34" />
+        <state relative-caret-position="142">
+          <caret line="67" column="44" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="44" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2067#2068#0" expanded="true" />
             <element signature="e#2108#2109#0" expanded="true" />
           </folding>

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.communication.consumer.handler.beans;
+package cz.vutbr.fit.beans;
 
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
@@ -19,12 +19,6 @@ public class HandlerManagerBeans {
         HandlerManager<KafkaRequest, byte[]> handlerManager = new HandlerManager<>();
         handlerManager.attachHandler(Command.STORE_PCAP, storePcapHandler);
         return handlerManager;
-    }
-
-    // TODO: Should be in different class
-    @Bean
-    public StorePcapHandler storePcapHandler() {
-        return new StorePcapHandler();
     }
 
 }

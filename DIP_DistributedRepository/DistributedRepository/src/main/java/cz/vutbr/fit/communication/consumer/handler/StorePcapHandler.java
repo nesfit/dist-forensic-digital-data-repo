@@ -66,8 +66,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     }
 
     private void postConstructValidation() {
-        Assert.notNull(maxListSize, "packet.metadata.max.list.size property is empty");
-        Assert.notNull(tmpDirectory, "tmp.directory property is empty");
+        Assert.isTrue(!(maxListSize == 0), "packet.metadata.max.list.size property is not set");
+        Assert.notNull(tmpDirectory, "tmp.directory property is not set");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
     }
 
-    public void processPacket(Packet packet) {
+    private void processPacket(Packet packet) {
         count++;
 
         UUID id = UUIDs.timeBased();
@@ -136,9 +136,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         packetMetadataRepository
                 .saveAll(metadataList)
                 .doOnError(Throwable::printStackTrace)
-                .doOnComplete(() -> {
-                    metadataList.clear();
-                })
+                .doOnComplete(metadataList::clear)
                 .subscribe();
     }
 
@@ -154,14 +152,6 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     private void sendAcknowledgement(KafkaResponse response, byte[] value) {
         acknowledgementProducer.produce(response.getResponseTopic(), response, value);
-    }
-
-    public void setMaxListSize(int maxListSize) {
-        this.maxListSize = maxListSize;
-    }
-
-    public void setTmpDirectory(String tmpDirectory) {
-        this.tmpDirectory = tmpDirectory;
     }
 
 }
