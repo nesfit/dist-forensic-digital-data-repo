@@ -8,7 +8,7 @@ import org.pcap4j.util.MacAddress;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Pcap4JEthernetExtractor extends PacketExtractor<Packet, PacketMetadata.Builder> {
+public class Pcap4JEthernetExtractor implements PacketExtractor<Packet, PacketMetadata.Builder> {
 
     @Override
     public void extractMetadata(Packet packet, PacketMetadata.Builder packetMetadataBuilder) {
@@ -20,10 +20,6 @@ public class Pcap4JEthernetExtractor extends PacketExtractor<Packet, PacketMetad
 
             packetMetadataBuilder.ethernetTypeName(type.name()).ethernetTypeValue(type.value())
                     .srcLinkLayerAddress(srcAddr.toString()).dstLinkLayerAddress(dstAddr.toString());
-        }
-
-        if (successor != null) {
-            successor.extractMetadata(packet, packetMetadataBuilder);
         }
     }
 

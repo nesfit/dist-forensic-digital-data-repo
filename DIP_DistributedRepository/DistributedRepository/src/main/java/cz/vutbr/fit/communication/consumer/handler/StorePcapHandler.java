@@ -41,11 +41,8 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     private PcapParser<Packet> pcapParser;
 
     // Packet metadata extractor
-    private PacketExtractor<Packet, PacketMetadata.Builder> packetExtractor;
     @Autowired
-    private PacketExtractor<Packet, PacketMetadata.Builder> pcap4JIpExtractor;
-    @Autowired
-    private PacketExtractor<Packet, PacketMetadata.Builder> pcap4JEthernetExtractor;
+    private List<PacketExtractor<Packet, PacketMetadata.Builder>> packetExtractor;
 
     // Response producer
     @Autowired
@@ -66,17 +63,11 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @PostConstruct
     public void init() {
         postConstructValidation();
-        postConstructInitialization();
     }
 
     private void postConstructValidation() {
         Assert.notNull(maxListSize, "packet.metadata.max.list.size property is empty");
         Assert.notNull(tmpDirectory, "tmp.directory property is empty");
-    }
-
-    private void postConstructInitialization() {
-        packetExtractor = pcap4JEthernetExtractor;
-        packetExtractor.setSuccessor(pcap4JIpExtractor);
     }
 
     @Override
@@ -122,7 +113,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
         packetRepository.insertAsync(cassandraPacket);
 
         PacketMetadata.Builder builder = new PacketMetadata.Builder();
-        packetExtractor.extractMetadata(packet, builder);
+        packetExtractor.forEach(l -> l.extractMetadata(packet, builder));
 
         PacketMetadata packetMetadata = builder.refId(id).databaseType(DatabaseType.Cassandra).build();
         packetMetadataList.add(packetMetadata);

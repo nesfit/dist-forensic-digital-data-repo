@@ -8,7 +8,7 @@ import org.pcap4j.packet.namednumber.IpVersion;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Pcap4JIpExtractor extends PacketExtractor<Packet, PacketMetadata.Builder> {
+public class Pcap4JIpExtractor implements PacketExtractor<Packet, PacketMetadata.Builder> {
 
     @Override
     public void extractMetadata(Packet packet, PacketMetadata.Builder packetMetadataBuilder) {
@@ -22,10 +22,6 @@ public class Pcap4JIpExtractor extends PacketExtractor<Packet, PacketMetadata.Bu
             packetMetadataBuilder.ipProtocolName(protocol.name()).ipProtocolValue(protocol.value())
                     .ipVersionName(version.name()).ipVersionValue(version.value())
                     .srcIpAddress(srcAddr).dstIpAddress(dstAddr);
-        }
-
-        if (successor != null) {
-            successor.extractMetadata(packet, packetMetadataBuilder);
         }
     }
 
