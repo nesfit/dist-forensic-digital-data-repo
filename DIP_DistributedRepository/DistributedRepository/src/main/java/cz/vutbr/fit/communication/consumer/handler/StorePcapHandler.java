@@ -73,6 +73,7 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Override
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
+            // TODO: Read Data source: request.getCommand().getDataSource();
 
             storePayload(value);
             processPackets();

@@ -1,9 +1,11 @@
-version: '2.1'
+version: '2'
 services:
     hadoop:
         image: sequenceiq/hadoop-docker:latest
+        environment:
+            CORE_CONF_fs_defaultFS: hdfs://192.168.99.100:8020
         ports:
-            #- 8020:8020
+            - 8020:8020
             - 8042:8042
             - 8088:8088
             #- 9000:9000
