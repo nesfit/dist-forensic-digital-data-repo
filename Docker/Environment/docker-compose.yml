@@ -11,6 +11,7 @@ services:
     mongodb:
         image: mongo:latest
     hadoop:
+        #build: hadoop-custom
         image: sequenceiq/hadoop-docker:latest
     zookeeper:
         image: wurstmeister/zookeeper:latest

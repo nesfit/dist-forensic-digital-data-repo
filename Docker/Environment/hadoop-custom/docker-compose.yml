@@ -1,7 +1,8 @@
 version: '2'
 services:
     hadoop:
-        image: sequenceiq/hadoop-docker:latest
+        image: martinfit/hadoop:latest
+        build: .
         #environment:
         #    CORE_CONF_fs_defaultFS: hdfs://192.168.99.100:9000
         ports:

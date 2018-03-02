@@ -40,7 +40,7 @@ public class TestHadoopHDFS implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (FileStatus s : shell.lsr("/tmp")) {
+        for (FileStatus s : shell.lsr("/")) {
             System.out.println("> " + s.getPath());
         }
 

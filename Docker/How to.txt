@@ -77,6 +77,12 @@ Hadoop:
 		docker cp hadoop:/usr/local/hadoop/etc/hadoop/core-site.xml .
 		-- Uprava ve windows editoru
 		docker cp core-site.xml hadoop:/usr/local/hadoop/etc/hadoop/core-site.xml
+	
+	Kontrola beziciho HDFS:
+		$HADOOP_PREFIX/bin/hadoop dfsadmin -report
+	
+	Kontrola IP namenode:
+		echo $($HADOOP_PREFIX/bin/hdfs getconf -namenodes)
 
 	Ulozeni souboru do HDFS
 		bash-4.1# bin/hdfs dfs -copyFromLocal input/file01 input/file01
