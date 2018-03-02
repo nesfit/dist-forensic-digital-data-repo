@@ -30,6 +30,8 @@ public class TestHadoopHDFS implements CommandLineRunner {
     @Autowired
     private FsShell shell;
 
+    private org.apache.hadoop.fs.FsShell hdfsShell;
+
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestHadoopHDFS.class)
                 .web(WebApplicationType.NONE)
@@ -41,10 +43,20 @@ public class TestHadoopHDFS implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         for (FileStatus s : shell.lsr("/")) {
-            System.out.println("> " + s.getPath());
+            System.out.println("> " + s.getPath() + " " + s.getPermission());
         }
 
+        //shell.mkdir("tmp");
+        //shell.put("install.sh", "tmp/install.on.hdfs-20-54.sh");
+        shell.get("tmp/install.on.hdfs-20-54.sh", "install.on.hdfs-20-54.sh");
 
+        //shell.put("install.sh", "/user/install.on.hdfs.sh");
+        //shell.get("input/core-site.xml", "core-site-from-hdfs.xml");
+        //shell.copyToLocal("input/core-site.xml", "core-site-from-hdfs-copyToLocal.xml");
+
+        //hdfsShell = new org.apache.hadoop.fs.FsShell(configuration);
+        //int code = hdfsShell.run(new String[]{ "-put", "install.sh", "/user/install.sh" });
+        //System.out.println("> Code " + code);
     }
 
 }
