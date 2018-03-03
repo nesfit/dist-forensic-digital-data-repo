@@ -7,13 +7,13 @@ import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
 
 import java.io.EOFException;
-import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 public class Pcap4JParser implements PcapParser<Packet> {
 
     @Override
-    public void parseInput(String path, OnPacketCallback<Packet> onPacketCallback, OnCompleteCallback onCompleteCallback) throws IOException {
+    public void parseInput(String path, OnPacketCallback<Packet> onPacketCallback,
+                           OnCompleteCallback onCompleteCallback, OnFailureCallback onFailureCallback) {
 
         PcapHandle handle;
 
@@ -30,14 +30,8 @@ public class Pcap4JParser implements PcapParser<Packet> {
             } catch (EOFException e) {
                 onCompleteCallback.doOnComplete();
                 break;
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-                break;
-            } catch (PcapNativeException e) {
-                e.printStackTrace();
-                break;
-            } catch (NotOpenException e) {
-                e.printStackTrace();
+            } catch (TimeoutException | NotOpenException | PcapNativeException e) {
+                onFailureCallback.doOnFailure(e);
                 break;
             }
         }

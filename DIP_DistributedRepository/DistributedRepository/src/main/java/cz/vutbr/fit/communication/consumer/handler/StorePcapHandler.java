@@ -22,12 +22,11 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Component
-public class StorePcapHandler extends BaseHandler implements ICommandHandler<KafkaRequest, byte[]> {
+public class StorePcapHandler extends BaseHandler {
 
     // Parser
     @Autowired
@@ -53,6 +52,7 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
     private String tmpDirectory;
     private String processedTmpFile;
 
+    private KafkaRequest request;
     private int count;
 
     @PostConstruct
@@ -69,19 +69,24 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
 
-            storePayload(request, value);
+            bufferRequest(request);
+            storePayload(value);
             processPackets();
-            removePayload(request);
+            removePayload();
 
             String detailMessage = "Successfully stored " + count + " packets";
             sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
 
-        } catch (Exception e) {
-            sendAcknowledgement(buildFailureResponse(request, e.getMessage()), new byte[]{});
+        } catch (Exception exception) {
+            handleFailure(exception);
         }
     }
 
-    private void storePayload(KafkaRequest request, byte[] value) throws IOException {
+    private void bufferRequest(KafkaRequest request) {
+        this.request = request;
+    }
+
+    private void storePayload(byte[] value) throws IOException {
         processedTmpFile = FileManager.GenerateTmpPath(tmpDirectory);
 
         switch (request.getDataSource().getDataSourceStorage()) {
@@ -96,16 +101,9 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
 
     private void processPackets() throws IOException {
         count = 0;
-        Date startTime = new Date();
 
         packetMetadataList = new ArrayList<>(maxListSize);
-        pcapParser.parseInput(processedTmpFile, this::processPacket, this::storeMetadata);
-
-        // Saving the whole list of unknown count of packets demands lot of memory
-        //packetMetadataRepository.saveAll(packetMetadataList).doOnError(Throwable::printStackTrace).subscribe();
-
-        Date endTime = new Date();
-        System.out.println(count + " packets processed in " + ((endTime.getTime() - startTime.getTime()) / 1000) + " seconds");
+        pcapParser.parseInput(processedTmpFile, this::processPacket, this::storeMetadata, this::handleFailure);
     }
 
     private void processPacket(Packet packet) {
@@ -125,9 +123,6 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
             storeMetadata();
             packetMetadataList = new ArrayList<>(maxListSize);
         }
-
-        // Saving one by one is very slow
-        //packetMetadataRepository.save(packetMetadata).doOnError(Throwable::printStackTrace).subscribe();
     }
 
     private boolean shouldStoreMetadata() {
@@ -138,16 +133,20 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
         List<PacketMetadata> metadataList = packetMetadataList;
         packetMetadataRepository
                 .saveAll(metadataList)
-                .doOnError(Throwable::printStackTrace)
+                .doOnError(this::handleFailure)
                 .doOnComplete(metadataList::clear)
                 .subscribe();
     }
 
-    private void removePayload(KafkaRequest request) {
+    private void handleFailure(Throwable throwable) {
+        sendAcknowledgement(buildFailureResponse(request, throwable.getMessage()), new byte[]{});
+    }
+
+    private void removePayload() {
         DataSource dataSource = request.getDataSource();
-        boolean isHadoop = DataSourceStorage.HADOOP == dataSource.getDataSourceStorage();
-        boolean removeFromHadoop = dataSource.getRemoveAfterUse();
-        if (isHadoop && removeFromHadoop) {
+        boolean isHadoopDataSource = DataSourceStorage.HADOOP == dataSource.getDataSourceStorage();
+        boolean shouldRemoveFromHadoop = dataSource.getRemoveAfterUse();
+        if (isHadoopDataSource && shouldRemoveFromHadoop) {
             hdfsShell.rm(dataSource.getUri());
         }
         FileManager.RemoveFile(processedTmpFile);

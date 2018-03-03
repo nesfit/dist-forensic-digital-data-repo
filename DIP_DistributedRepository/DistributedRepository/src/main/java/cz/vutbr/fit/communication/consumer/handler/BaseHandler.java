@@ -7,7 +7,7 @@ import cz.vutbr.fit.communication.producer.ResponseProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.fs.FsShell;
 
-public abstract class BaseHandler {
+public abstract class BaseHandler implements ICommandHandler<KafkaRequest, byte[]> {
 
     // Response producer
     @Autowired

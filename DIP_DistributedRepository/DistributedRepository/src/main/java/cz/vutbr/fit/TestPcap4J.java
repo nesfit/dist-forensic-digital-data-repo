@@ -22,21 +22,22 @@ public class TestPcap4J {
             outputHandle = Pcaps.openDead(DataLinkType.EN10MB, 65536);
             dumper = outputHandle.dumpOpen(output);
         } catch (PcapNativeException | NotOpenException e) {
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
     public void loadAndSavePcapFile(String input) throws IOException {
         Pcap4JParser pcapParser = new Pcap4JParser();
         pcapParser.parseInput(input, this::doOnPacket, () -> {
-        });
+            System.out.println("Completed");
+        }, TestPcap4J::handleError);
     }
 
     public void doOnPacket(Packet packet) {
         try {
             dumper.dumpRaw(packet.getRawData());
         } catch (NotOpenException e) {
-            e.printStackTrace();
+            handleError(e);
         }
     }
 
@@ -48,8 +49,12 @@ public class TestPcap4J {
             TestPcap4J testPcap4J = new TestPcap4J(args[1]);
             testPcap4J.loadAndSavePcapFile(args[0]);
         } catch (IOException e) {
-            e.printStackTrace();
+            handleError(e);
         }
+    }
+
+    public static void handleError(Throwable throwable) {
+        throwable.printStackTrace();
     }
 
 }
