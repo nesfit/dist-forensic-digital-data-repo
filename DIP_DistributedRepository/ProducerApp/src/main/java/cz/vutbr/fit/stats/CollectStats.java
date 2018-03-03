@@ -1,11 +1,16 @@
 package cz.vutbr.fit.stats;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class CollectStats {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CollectStats.class);
 
     private Map<UUID, FileStats> fileStatsMap = new HashMap<>();
     private Date lastEndTime;
@@ -34,6 +39,11 @@ public class CollectStats {
     public void setEndTime(UUID uuid, Date endTime) {
         FileStats fileStats = fileStatsMap.get(uuid);
 
+        if (fileStats == null) {
+            // Exclude received old messages which were not set during current launch
+            return;
+        }
+
         long duration;
         if (lastEndTime != null) {
             duration = (endTime.getTime() - lastEndTime.getTime()) / 1000;
@@ -51,13 +61,13 @@ public class CollectStats {
         if (countOfFiles != receivedResponses) {
             return;
         }
-        System.out.println("----------------------------------------------");
-        fileStatsMap.forEach((key, value) -> System.out.println("Time: " + value.getDuration() + " " + value.getFilename()));
+        LOGGER.debug("----------------------------------------------");
+        fileStatsMap.forEach((key, value) -> LOGGER.debug("Time: " + value.getDuration() + " " + value.getFilename()));
         for (Map.Entry<UUID, FileStats> entry : fileStatsMap.entrySet()) {
             totalTime += entry.getValue().getDuration();
         }
-        System.out.println("---------------------");
-        System.out.println("Total time: " + totalTime);
+        LOGGER.debug("---------------------");
+        LOGGER.debug("Total time: " + totalTime);
     }
 
     public void setCountOfFiles(int countOfFiles) {

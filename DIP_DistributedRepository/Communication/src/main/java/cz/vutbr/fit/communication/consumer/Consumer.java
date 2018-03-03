@@ -106,7 +106,7 @@ public class Consumer<K, V> extends AbstractConsumer<K, V> {
         /*String msg = String.format("partition = %d | offset = %d | key = %s | value = %s\n",
                 record.partition(), record.offset(), record.key(), record.value());*/
         String msg = String.format("%s", record.key());
-        System.out.println(msg);
+        LOGGER.debug(msg);
     }
 
 }

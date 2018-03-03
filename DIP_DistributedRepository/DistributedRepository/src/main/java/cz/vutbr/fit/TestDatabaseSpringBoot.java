@@ -5,6 +5,8 @@ import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +24,8 @@ import java.util.UUID;
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabaseSpringBoot.class);
+
     @Autowired
     PacketRepository packetRepository;
 
@@ -35,12 +39,11 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         packetRepository.save(packet);
 
         Iterable<CassandraPacket> packetList = packetRepository.findAll();
-        System.out.println("Packet List : ");
-        packetList.forEach(System.out::println);
+        LOGGER.debug("Packet List : ");
+        packetList.forEach(record -> LOGGER.debug(record.toString()));
     }
 
     public void testInsertAsyncCassandra() {
-
         Date start = new Date();
         for (int i = 0; i < 5000; i++) {
             CassandraPacket packet = new CassandraPacket();
@@ -50,26 +53,22 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         }
         Date end = new Date();
 
-        System.out.println("Time consumed: " + (end.getTime() - start.getTime()) / 1000);
-
-        //packet = packetRepository.findByPacketId(packet.getId());
-        //System.out.println("Packet : ");
-        //System.out.println(packet);
+        LOGGER.debug("Time consumed: " + (end.getTime() - start.getTime()) / 1000);
     }
 
     public void testMongoDB() {
-        System.out.println("Save operation");
+        LOGGER.debug("Save operation");
         String someSrcIpAddress = "124.23.04.11";
         String someDstIpAddress = "145.95.72.88";
         PacketMetadata packetMetadata = new PacketMetadata.Builder().refId(UUID.randomUUID())
                 .databaseType(DatabaseType.Cassandra).srcIpAddress(someSrcIpAddress).dstIpAddress(someDstIpAddress).build();
         packetMetadataRepository.save(packetMetadata).block();
 
-        System.out.println("Load operation");
+        LOGGER.debug("Load operation");
         List<PacketMetadata> list = packetMetadataRepository.findAll().collectList().block();
-        list.forEach(System.out::println);
+        list.forEach(record -> LOGGER.debug(record.toString()));
         //Flux<PacketMetadata> packetMetadataList = packetMetadataRepository.findAll();
-        //packetMetadataList.doOnEach(flux -> System.out.println(flux.get())).subscribe();
+        //packetMetadataList.doOnEach(flux -> LOGGER.debug(flux.get())).subscribe();
     }
 
     public static void main(String[] args) {

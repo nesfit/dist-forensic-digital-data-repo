@@ -69,7 +69,7 @@ public class Producer<K, V> extends AbstractProducer<K, V> {
 
     private void debug(ProducerRecord<K, V> record) {
         String msg = String.format("key = %s | value = %s\n", record.key(), record.value());
-        System.out.println(msg);
+        LOGGER.debug(msg);
     }
 
 }

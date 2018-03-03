@@ -13,6 +13,8 @@ import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
 import cz.vutbr.fit.service.pcap.parser.PcapParser;
 import cz.vutbr.fit.util.FileManager;
 import org.pcap4j.packet.Packet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ import java.util.UUID;
 
 @Component
 public class StorePcapHandler extends BaseHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorePcapHandler.class);
 
     // Parser
     @Autowired
@@ -104,6 +108,8 @@ public class StorePcapHandler extends BaseHandler {
 
         packetMetadataList = new ArrayList<>(maxListSize);
         pcapParser.parseInput(processedTmpFile, this::processPacket, this::storeMetadata, this::handleFailure);
+
+        LOGGER.debug("Packets processed successfully.");
     }
 
     private void processPacket(Packet packet) {
@@ -139,6 +145,7 @@ public class StorePcapHandler extends BaseHandler {
     }
 
     private void handleFailure(Throwable throwable) {
+        LOGGER.error(throwable.getMessage(), throwable);
         sendAcknowledgement(buildFailureResponse(request, throwable.getMessage()), new byte[]{});
     }
 

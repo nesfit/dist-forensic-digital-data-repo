@@ -4,6 +4,8 @@ import cz.vutbr.fit.service.pcap.parser.Pcap4JParser;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.namednumber.DataLinkType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -13,6 +15,8 @@ import java.io.IOException;
  * is dumped inside output pcap file using dumper.dumpRaw(packet.getRawData()).
  */
 public class TestPcap4J {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestPcap4J.class);
 
     private PcapDumper dumper;
     private PcapHandle outputHandle;
@@ -29,7 +33,7 @@ public class TestPcap4J {
     public void loadAndSavePcapFile(String input) throws IOException {
         Pcap4JParser pcapParser = new Pcap4JParser();
         pcapParser.parseInput(input, this::doOnPacket, () -> {
-            System.out.println("Completed");
+            LOGGER.debug("Completed");
         }, TestPcap4J::handleError);
     }
 

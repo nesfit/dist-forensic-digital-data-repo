@@ -1,5 +1,7 @@
 package cz.vutbr.fit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -13,6 +15,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 //@EnableReactiveMongoRepositories
 public class DistributedRepositorySpringBootStarter implements CommandLineRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DistributedRepositorySpringBootStarter.class);
+
     // Hadoop 2.7 is not compatible with Java 9
     // https://issues.apache.org/jira/browse/HADOOP-14586
     private static final String JAVA_VERSION = "java.version";
@@ -20,7 +24,7 @@ public class DistributedRepositorySpringBootStarter implements CommandLineRunner
     static {
         if ("9".equals(System.getProperty(JAVA_VERSION))) {
             System.setProperty(JAVA_VERSION, "1.9");
-            System.out.println(System.getProperty(JAVA_VERSION));
+            LOGGER.info(System.getProperty(JAVA_VERSION));
         }
     }
 

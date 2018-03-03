@@ -7,6 +7,8 @@ import cz.vutbr.fit.communication.command.DataSourceStorage;
 import cz.vutbr.fit.communication.producer.KafkaProducer;
 import cz.vutbr.fit.stats.CollectStats;
 import cz.vutbr.fit.stats.FileStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
@@ -28,6 +30,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @SpringBootApplication
 public class PcapProducerSpringBoot implements CommandLineRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PcapProducerSpringBoot.class);
+
     // Hadoop 2.7 is not compatible with Java 9
     // https://issues.apache.org/jira/browse/HADOOP-14586
     private static final String JAVA_VERSION = "java.version";
@@ -35,7 +39,7 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
     static {
         if ("9".equals(System.getProperty(JAVA_VERSION))) {
             System.setProperty(JAVA_VERSION, "1.9");
-            System.out.println(System.getProperty(JAVA_VERSION));
+            LOGGER.info(System.getProperty(JAVA_VERSION));
         }
     }
 
@@ -72,7 +76,7 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
         try {
 
             _mutex.lock();
-            System.out.println("\tLocked: sending file " + file);
+            LOGGER.debug("\tLocked: sending file " + file);
 
             UUID requestId = UUID.randomUUID();
             DataSource dataSource = null;
@@ -96,7 +100,7 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
 
             producer.produce(inputTopic, request, bytes, result -> {
                 _mutex.unlock();
-                System.out.println("\t Unlocked: file " + file + " sent successfully");
+                LOGGER.debug("\t Unlocked: file " + file + " sent successfully");
             }, Throwable::printStackTrace);
 
         } catch (Exception e) {

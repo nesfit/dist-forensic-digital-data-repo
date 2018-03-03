@@ -1,6 +1,8 @@
 package cz.vutbr.fit;
 
 import org.apache.hadoop.fs.FileStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -14,6 +16,8 @@ import java.util.UUID;
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestHadoopHDFS implements CommandLineRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestHadoopHDFS.class);
+
     // Hadoop 2.7 is not compatible with Java 9
     // https://issues.apache.org/jira/browse/HADOOP-14586
     private static final String JAVA_VERSION = "java.version";
@@ -21,7 +25,6 @@ public class TestHadoopHDFS implements CommandLineRunner {
     static {
         if ("9".equals(System.getProperty(JAVA_VERSION))) {
             System.setProperty(JAVA_VERSION, "1.9");
-            System.out.println(System.getProperty(JAVA_VERSION));
         }
     }
 
@@ -42,9 +45,9 @@ public class TestHadoopHDFS implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("         BEFORE PUT");
+        LOGGER.debug("         BEFORE PUT");
         for (FileStatus s : shell.lsr("tmp/")) {
-            System.out.println("> " + s.getPath() + " " + s.getPermission());
+            LOGGER.debug("> " + s.getPath() + " " + s.getPermission());
         }
 
         //shell.mkdir("tmp");
@@ -54,21 +57,21 @@ public class TestHadoopHDFS implements CommandLineRunner {
         shell.put(localName, hdfsName);
         shell.get(hdfsName, localName + "_1");
 
-        System.out.println("         After PUT and GET / Before RM");
+        LOGGER.debug("         After PUT and GET / Before RM");
         for (FileStatus s : shell.lsr("tmp/")) {
-            System.out.println("> " + s.getPath() + " " + s.getPermission());
+            LOGGER.debug("> " + s.getPath() + " " + s.getPermission());
         }
 
         shell.rm(hdfsName);
 
-        System.out.println("         After RM");
+        LOGGER.debug("         After RM");
         for (FileStatus s : shell.lsr("tmp/")) {
-            System.out.println("> " + s.getPath() + " " + s.getPermission());
+            LOGGER.debug("> " + s.getPath() + " " + s.getPermission());
         }
 
         //hdfsShell = new org.apache.hadoop.fs.FsShell(configuration);
         //int code = hdfsShell.run(new String[]{ "-put", "install.sh", "/user/install.sh" });
-        //System.out.println("> Code " + code);
+        //LOGGER.debug("> Code " + code);
     }
 
 }
