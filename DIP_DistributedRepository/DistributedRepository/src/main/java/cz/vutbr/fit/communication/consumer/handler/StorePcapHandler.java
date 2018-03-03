@@ -1,6 +1,10 @@
 package cz.vutbr.fit.communication.consumer.handler;
 
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
+import com.datastax.driver.core.utils.MoreFutures;
 import com.datastax.driver.core.utils.UUIDs;
+import com.google.common.util.concurrent.Futures;
 import cz.vutbr.fit.DatabaseType;
 import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
@@ -117,7 +121,13 @@ public class StorePcapHandler extends BaseHandler {
 
         UUID id = UUIDs.timeBased();
         CassandraPacket cassandraPacket = new CassandraPacket.Builder().id(id).packet(ByteBuffer.wrap(packet.getRawData())).build();
-        packetRepository.insertAsync(cassandraPacket);
+        ResultSetFuture resultSetFuture = packetRepository.insertAsync(cassandraPacket);
+        Futures.addCallback(resultSetFuture, new MoreFutures.FailureCallback<ResultSet>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                handleFailure(throwable);
+            }
+        });
 
         PacketMetadata.Builder builder = new PacketMetadata.Builder();
         packetExtractor.forEach(l -> l.extractMetadata(packet, builder));

@@ -6,6 +6,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import cz.vutbr.fit.cassandra.entity.CassandraPacket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.AsyncCassandraTemplate;
 import org.springframework.util.Assert;
@@ -17,6 +19,8 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 public class PacketRepositoryImpl implements InsertAsync {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketRepositoryImpl.class);
 
     @Autowired
     private Cluster cluster;
@@ -59,13 +63,12 @@ public class PacketRepositoryImpl implements InsertAsync {
     }
 
     @Override
-    public void insertAsync(CassandraPacket cassandraPacket) {
-        // TODO: Add callback as a parameter
+    public ResultSetFuture insertAsync(CassandraPacket cassandraPacket) {
         //insertAsyncSpringData(cassandraPacket);
-        insertAsync(cassandraPacket.getId(), cassandraPacket.getPacket());
+        return insertAsync(cassandraPacket.getId(), cassandraPacket.getPacket());
     }
 
-    private void insertAsync(UUID id, ByteBuffer packet) {
+    private ResultSetFuture insertAsync(UUID id, ByteBuffer packet) {
         lockSemaphore();
 
         // This approach with cached prepared statement is much faster
@@ -80,17 +83,18 @@ public class PacketRepositoryImpl implements InsertAsync {
 
             @Override
             public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
                 unlockSemaphore();
             }
         }, MoreExecutors.newDirectExecutorService());
+
+        return resultSetFuture;
     }
 
     private void lockSemaphore() {
         try {
             semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException exception) {
+            LOGGER.error(exception.getMessage(), exception);
         }
     }
 
@@ -110,7 +114,7 @@ public class PacketRepositoryImpl implements InsertAsync {
     }
 
     private void onFailure(Throwable throwable) {
-        throwable.printStackTrace();
+        LOGGER.error(throwable.getMessage(), throwable);
         unlockSemaphore();
     }
 
