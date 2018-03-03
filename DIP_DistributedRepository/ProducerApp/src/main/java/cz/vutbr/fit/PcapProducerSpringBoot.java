@@ -14,9 +14,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.data.hadoop.fs.FsShell;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -42,6 +42,11 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
     private static final String PCAP_FILE = ".pcap";
     private static final String CAP_FILE = ".cap";
 
+    private final Lock _mutex = new ReentrantLock(Boolean.TRUE);
+
+    @Autowired
+    private KafkaProducer producer;
+
     @Value("${input.topic}")
     private String inputTopic;
     @Value("${output.topic}")
@@ -49,10 +54,11 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
     @Value("${error.topic}")
     private String errorTopic;
 
-    private final Lock _mutex = new ReentrantLock(Boolean.TRUE);
+    @Value("${dataSourceStorage}")
+    private DataSourceStorage dataSourceStorage;
 
     @Autowired
-    private KafkaProducer producer;
+    protected FsShell hdfsShell;
 
     public void runMultipleProducer(String directoryName) {
         File directory = new File(directoryName);
@@ -68,30 +74,34 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
             _mutex.lock();
             System.out.println("\tLocked: sending file " + file);
 
-            byte[] bytes = Files.readAllBytes(Paths.get(file));
+            UUID requestId = UUID.randomUUID();
+            DataSource dataSource = null;
+            byte[] bytes = null;
+
+            if (dataSourceStorage == DataSourceStorage.HADOOP) {
+                hdfsShell.put(file, requestId.toString());
+                dataSource = new DataSource(dataSourceStorage, requestId.toString(), true);
+            } else {
+                bytes = Files.readAllBytes(Paths.get(file));
+                dataSource = new DataSource(dataSourceStorage, null, false);
+            }
+
             KafkaRequest request = new KafkaRequest.Builder().command(Command.STORE_PCAP)
-                    .dataSource(new DataSource(DataSourceStorage.KAFKA, ""))
-                    .awaitsResponse(Boolean.TRUE).responseTopic(outputTopic).errorTopic(errorTopic)
-                    .id(UUID.randomUUID()).build();
+                    .dataSource(dataSource).awaitsResponse(Boolean.TRUE)
+                    .responseTopic(outputTopic).errorTopic(errorTopic)
+                    .id(requestId).build();
 
             FileStats fileStats = new FileStats.Builder().filename(file).startTime(new Date()).build();
             CollectStats.getInstance().appendFile(request.getId(), fileStats);
-
-            //producer.produce(inputTopic, request, bytes);
 
             producer.produce(inputTopic, request, bytes, result -> {
                 _mutex.unlock();
                 System.out.println("\t Unlocked: file " + file + " sent successfully");
             }, Throwable::printStackTrace);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(PcapProducerSpringBoot.class)
-                .web(WebApplicationType.NONE).bannerMode(Banner.Mode.OFF).build().run(args);
     }
 
     @Override
@@ -100,6 +110,11 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
             System.exit(99);
         }
         runMultipleProducer(args[0]);
+    }
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(PcapProducerSpringBoot.class)
+                .web(WebApplicationType.NONE).bannerMode(Banner.Mode.OFF).build().run(args);
     }
 
 }

@@ -24,17 +24,17 @@ public class DistributedRepositorySpringBootStarter implements CommandLineRunner
         }
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+
+    }
+
     public static void main(String[] args) {
         new SpringApplicationBuilder(DistributedRepositorySpringBootStarter.class)
                 .web(WebApplicationType.NONE)
                 .bannerMode(Banner.Mode.OFF)
                 .build()
                 .run(args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-
     }
 
 }

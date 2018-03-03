@@ -85,11 +85,11 @@ public class StorePcapHandler extends BaseHandler implements ICommandHandler<Kaf
         processedTmpFile = FileManager.GenerateTmpPath(tmpDirectory);
 
         switch (request.getDataSource().getDataSourceStorage()) {
-            case KAFKA:
-                FileManager.SaveContent(processedTmpFile, value);
-                break;
             case HADOOP:
                 hdfsShell.get(request.getDataSource().getUri(), processedTmpFile);
+                break;
+            case KAFKA:
+                FileManager.SaveContent(processedTmpFile, value);
                 break;
         }
     }
