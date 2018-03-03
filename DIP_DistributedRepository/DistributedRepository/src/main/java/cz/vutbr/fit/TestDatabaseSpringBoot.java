@@ -20,7 +20,6 @@ import java.util.UUID;
 //@ComponentScan(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
 //@EnableJpaRepositories(basePackages = {"cz.vutbr.fit.cassandra.repository", "cz.vutbr.fit.mongodb.repository"})
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-@Deprecated
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Autowired

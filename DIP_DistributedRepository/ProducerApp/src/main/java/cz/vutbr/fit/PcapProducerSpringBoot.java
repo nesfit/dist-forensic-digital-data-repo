@@ -2,12 +2,13 @@ package cz.vutbr.fit;
 
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
+import cz.vutbr.fit.communication.command.DataSource;
+import cz.vutbr.fit.communication.command.DataSourceStorage;
 import cz.vutbr.fit.communication.producer.KafkaProducer;
-import cz.vutbr.fit.properties.Properties;
-import cz.vutbr.fit.properties.PropertyConstants;
 import cz.vutbr.fit.stats.CollectStats;
 import cz.vutbr.fit.stats.FileStats;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -27,15 +28,31 @@ import java.util.concurrent.locks.ReentrantLock;
 @SpringBootApplication
 public class PcapProducerSpringBoot implements CommandLineRunner {
 
+    // Hadoop 2.7 is not compatible with Java 9
+    // https://issues.apache.org/jira/browse/HADOOP-14586
+    private static final String JAVA_VERSION = "java.version";
+
+    static {
+        if ("9".equals(System.getProperty(JAVA_VERSION))) {
+            System.setProperty(JAVA_VERSION, "1.9");
+            System.out.println(System.getProperty(JAVA_VERSION));
+        }
+    }
+
     private static final String PCAP_FILE = ".pcap";
     private static final String CAP_FILE = ".cap";
-    private String outputTopic = Properties.getInstance().loadProperty(PropertyConstants.OUTPUT_TOPIC);
-    private String inputTopic = Properties.getInstance().loadProperty(PropertyConstants.INPUT_TOPIC);
+
+    @Value("${input.topic}")
+    private String inputTopic;
+    @Value("${output.topic}")
+    private String outputTopic;
+    @Value("${error.topic}")
+    private String errorTopic;
 
     private final Lock _mutex = new ReentrantLock(Boolean.TRUE);
 
     @Autowired
-    KafkaProducer producer;
+    private KafkaProducer producer;
 
     public void runMultipleProducer(String directoryName) {
         File directory = new File(directoryName);
@@ -53,7 +70,9 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
 
             byte[] bytes = Files.readAllBytes(Paths.get(file));
             KafkaRequest request = new KafkaRequest.Builder().command(Command.STORE_PCAP)
-                    .awaitsResponse(Boolean.TRUE).responseTopic(outputTopic).id(UUID.randomUUID()).build();
+                    .dataSource(new DataSource(DataSourceStorage.KAFKA, ""))
+                    .awaitsResponse(Boolean.TRUE).responseTopic(outputTopic).errorTopic(errorTopic)
+                    .id(UUID.randomUUID()).build();
 
             FileStats fileStats = new FileStats.Builder().filename(file).startTime(new Date()).build();
             CollectStats.getInstance().appendFile(request.getId(), fileStats);
@@ -80,7 +99,6 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
         if (args.length != 1) {
             System.exit(99);
         }
-        //runProducer("target/classes/PCAP/1_youtube.pcap");
         runMultipleProducer(args[0]);
     }
 

@@ -1,6 +1,7 @@
 package cz.vutbr.fit.communication;
 
 import cz.vutbr.fit.communication.command.Command;
+import cz.vutbr.fit.communication.command.DataSource;
 import cz.vutbr.fit.communication.command.DataType;
 import cz.vutbr.fit.communication.command.Operation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,10 +15,14 @@ public class KafkaRequest {
     private Operation operation;
     @Deprecated
     private DataType dataType;
+
     private Command command;
+    private DataSource dataSource;
 
     private Boolean awaitsResponse;
     private String responseTopic;
+    private String errorTopic;
+
     private UUID id;
     // TODO: Criteria
 
@@ -49,6 +54,14 @@ public class KafkaRequest {
         this.command = command;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public Boolean getAwaitsResponse() {
         return awaitsResponse;
     }
@@ -63,6 +76,14 @@ public class KafkaRequest {
 
     public void setResponseTopic(String responseTopic) {
         this.responseTopic = responseTopic;
+    }
+
+    public String getErrorTopic() {
+        return errorTopic;
+    }
+
+    public void setErrorTopic(String errorTopic) {
+        this.errorTopic = errorTopic;
     }
 
     public UUID getId() {
@@ -102,6 +123,11 @@ public class KafkaRequest {
             return this;
         }
 
+        public Builder dataSource(DataSource dataSource) {
+            request.setDataSource(dataSource);
+            return this;
+        }
+
         public Builder awaitsResponse(Boolean awaitsResponse) {
             request.setAwaitsResponse(awaitsResponse);
             return this;
@@ -109,6 +135,11 @@ public class KafkaRequest {
 
         public Builder responseTopic(String responseTopic) {
             request.setResponseTopic(responseTopic);
+            return this;
+        }
+
+        public Builder errorTopic(String errorTopic) {
+            request.setErrorTopic(errorTopic);
             return this;
         }
 

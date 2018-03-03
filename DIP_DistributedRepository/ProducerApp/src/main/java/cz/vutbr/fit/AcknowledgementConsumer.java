@@ -1,4 +1,4 @@
-package cz.vutbr.fit.communication.consumer;
+package cz.vutbr.fit;
 
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.command.Command;
@@ -14,7 +14,7 @@ public class AcknowledgementConsumer {
     @Autowired
     private HandlerManager<KafkaResponse, byte[]> handlerManager;
 
-    @KafkaListener(topics = "${output.topic}")
+    @KafkaListener(topics = {"${output.topic}", "${error.topic}"})
     public void listen(ConsumerRecord<KafkaResponse, byte[]> record) {
         consume(record);
     }
@@ -23,10 +23,6 @@ public class AcknowledgementConsumer {
         // TODO: Remove hardcoded Command
         Command command = Command.HANDLE_RESPONSE;
         handlerManager.handle(command, record.key(), record.value());
-    }
-
-    public void setHandlerManager(HandlerManager<KafkaResponse, byte[]> handlerManager) {
-        this.handlerManager = handlerManager;
     }
 
 }

@@ -5,9 +5,8 @@ import cz.vutbr.fit.DatabaseType;
 import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaRequest;
-import cz.vutbr.fit.communication.KafkaResponse;
-import cz.vutbr.fit.communication.ResponseCode;
-import cz.vutbr.fit.communication.producer.AcknowledgementProducer;
+import cz.vutbr.fit.communication.command.DataSource;
+import cz.vutbr.fit.communication.command.DataSourceStorage;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
@@ -28,7 +27,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
+public class StorePcapHandler extends BaseHandler implements ICommandHandler<KafkaRequest, byte[]> {
+
+    // Parser
+    @Autowired
+    private PcapParser<Packet> pcapParser;
 
     // Repository
     @Autowired
@@ -36,17 +39,9 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Autowired
     private PacketMetadataRepository packetMetadataRepository;
 
-    // Parser
-    @Autowired
-    private PcapParser<Packet> pcapParser;
-
     // Packet metadata extractor
     @Autowired
     private List<PacketExtractor<Packet, PacketMetadata.Builder>> packetExtractor;
-
-    // Response producer
-    @Autowired
-    private AcknowledgementProducer acknowledgementProducer;
 
     // Batch metadata
     @Value("${packet.metadata.max.list.size}")
@@ -73,23 +68,30 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
     @Override
     public void handleRequest(KafkaRequest request, byte[] value) {
         try {
-            // TODO: Read Data source: request.getCommand().getDataSource();
 
-            storePayload(value);
+            storePayload(request, value);
             processPackets();
-            removePayload();
+            removePayload(request);
 
-            // TODO: Remove hardcoded values
-            sendAcknowledgement(buildResponse(request), "Response OK".getBytes());
+            String detailMessage = "Successfully stored " + count + " packets";
+            sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            sendAcknowledgement(buildFailureResponse(request, e.getMessage()), new byte[]{});
         }
     }
 
-    private void storePayload(byte[] value) throws IOException {
+    private void storePayload(KafkaRequest request, byte[] value) throws IOException {
         processedTmpFile = FileManager.GenerateTmpPath(tmpDirectory);
-        FileManager.SaveContent(processedTmpFile, value);
+
+        switch (request.getDataSource().getDataSourceStorage()) {
+            case KAFKA:
+                FileManager.SaveContent(processedTmpFile, value);
+                break;
+            case HADOOP:
+                hdfsShell.get(request.getDataSource().getUri(), processedTmpFile);
+                break;
+        }
     }
 
     private void processPackets() throws IOException {
@@ -141,18 +143,14 @@ public class StorePcapHandler implements ICommandHandler<KafkaRequest, byte[]> {
                 .subscribe();
     }
 
-    private void removePayload() {
+    private void removePayload(KafkaRequest request) {
+        DataSource dataSource = request.getDataSource();
+        boolean isHadoop = DataSourceStorage.HADOOP == dataSource.getDataSourceStorage();
+        boolean removeFromHadoop = dataSource.getRemoveAfterUse();
+        if (isHadoop && removeFromHadoop) {
+            hdfsShell.rm(dataSource.getUri());
+        }
         FileManager.RemoveFile(processedTmpFile);
-    }
-
-    private KafkaResponse buildResponse(KafkaRequest request) {
-        return new KafkaResponse.Builder().id(request.getId())
-                .responseTopic(request.getResponseTopic()).responseCode(ResponseCode.OK)
-                .status("OK").detailMessage("Successfully stored " + count + " packets").build();
-    }
-
-    private void sendAcknowledgement(KafkaResponse response, byte[] value) {
-        acknowledgementProducer.produce(response.getResponseTopic(), response, value);
     }
 
 }

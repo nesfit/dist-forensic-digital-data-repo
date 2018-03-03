@@ -1,5 +1,8 @@
 package cz.vutbr.fit.communication.command;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Arrays;
 
 public enum Command {
@@ -35,6 +38,10 @@ public enum Command {
         return Arrays.stream(Command.values())
                 .filter(command -> (command.getOperation() == operation && command.getDataType() == dataType))
                 .findFirst().orElse(null);
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
 }

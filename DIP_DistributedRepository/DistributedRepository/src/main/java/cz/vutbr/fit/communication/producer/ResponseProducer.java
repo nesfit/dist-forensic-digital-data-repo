@@ -9,14 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 
 @Service
-public class AcknowledgementProducer {
+public class ResponseProducer {
+
+    // TODO: Add logger to onFailure callback
 
     @Autowired
     private KafkaTemplate<KafkaResponse, byte[]> kafkaTemplate;
 
     public void produce(String topic, KafkaResponse response, byte[] value) {
         ListenableFuture<SendResult<KafkaResponse, byte[]>> future = kafkaTemplate.send(new ProducerRecord<>(topic, response, value));
-        future.addCallback(AcknowledgementProducer::onSuccess, AcknowledgementProducer::onFailure);
+        future.addCallback(ResponseProducer::onSuccess, ResponseProducer::onFailure);
     }
 
     private static void onSuccess(SendResult<KafkaResponse, byte[]> result) {
