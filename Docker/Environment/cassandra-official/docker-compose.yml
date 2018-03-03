@@ -2,6 +2,7 @@ version: '2'
 services:
     cassandra:
         image: cassandra:latest
+        container_name: cassandra
         ports:
             - 7199:7199
             - 9042:9042
@@ -9,4 +10,3 @@ services:
         volumes:
             - /nosql/cassandra/data:/var/lib/cassandra
             #- $PWD/database-data:/var/lib/cassandra
-        container_name: cassandra

@@ -4,11 +4,15 @@ cd Environment/cassandra-custom
 docker-compose up -d
 cd ../..
 
-cd Environment/mongodb
+cd Environment/hadoop
 docker-compose up -d
 cd ../..
 
 cd Environment/kafka
+docker-compose up -d
+cd ../..
+
+cd Environment/mongodb
 docker-compose up -d
 cd ../..
 
@@ -17,7 +21,7 @@ cd ../..
 #for i in ./* ; do
 #  if [ -d "$i" ]; then
 #	cd $i
-#	./run.sh
+#	docker-compose up -d
 #	cd ..
 #  fi
 #done

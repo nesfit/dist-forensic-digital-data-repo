@@ -11,7 +11,6 @@ services:
     mongodb:
         image: mongo:latest
     hadoop:
-        #build: hadoop-custom
         image: sequenceiq/hadoop-docker:latest
     zookeeper:
         image: wurstmeister/zookeeper:latest
@@ -19,8 +18,3 @@ services:
         image: wurstmeister/kafka:latest
     maven:
         build: maven-jdk-9-slim-custom
-        #image: maven:3.5.2-jdk-9-slim
-    #ubuntu:
-        #image: harisekhon/ubuntu-dev:latest
-        #Empty Ubuntu
-        #image: ubuntu:latest

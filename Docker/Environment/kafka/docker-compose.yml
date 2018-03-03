@@ -2,11 +2,12 @@ version: '2'
 services:
     zookeeper:
         image: wurstmeister/zookeeper
+        container_name: zookeeper
         ports:
             - "2181:2181"
-        container_name: zookeeper
     kafka:
         image: wurstmeister/kafka
+        container_name: kafka
         ports:
             - "9092:9092"
         environment:
@@ -20,4 +21,3 @@ services:
             #KAFKA_HEAP_OPTS: -Xmx512M -Xms256M
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-        container_name: kafka

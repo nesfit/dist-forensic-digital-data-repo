@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.hadoop.fs.FsShell;
 
+import java.util.UUID;
+
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestHadoopHDFS implements CommandLineRunner {
@@ -47,12 +49,11 @@ public class TestHadoopHDFS implements CommandLineRunner {
         }
 
         //shell.mkdir("tmp");
-        //shell.put("install.sh", "tmp/install.on.hdfs-20-54.sh");
-        shell.get("tmp/install.on.hdfs-20-54.sh", "install.on.hdfs-20-54.sh");
-
-        //shell.put("install.sh", "/user/install.on.hdfs.sh");
-        //shell.get("input/core-site.xml", "core-site-from-hdfs.xml");
-        //shell.copyToLocal("input/core-site.xml", "core-site-from-hdfs-copyToLocal.xml");
+        UUID id = UUID.randomUUID();
+        String localName = "velky_cap.cap";
+        String hdfsName = "tmp/velky_cap" + id.toString() + ".cap";
+        shell.put(localName, hdfsName);
+        shell.get(hdfsName, localName + "_1");
 
         //hdfsShell = new org.apache.hadoop.fs.FsShell(configuration);
         //int code = hdfsShell.run(new String[]{ "-put", "install.sh", "/user/install.sh" });
