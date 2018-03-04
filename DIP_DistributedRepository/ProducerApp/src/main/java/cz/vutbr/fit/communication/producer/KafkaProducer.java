@@ -2,6 +2,8 @@ package cz.vutbr.fit.communication.producer;
 
 import cz.vutbr.fit.communication.KafkaRequest;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -13,6 +15,8 @@ import org.springframework.util.concurrent.SuccessCallback;
 
 @Service
 public class KafkaProducer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducer.class);
 
     @Autowired
     private KafkaTemplate<KafkaRequest, byte[]> kafkaTemplate;
@@ -39,7 +43,7 @@ public class KafkaProducer {
     }
 
     private static void onFailure(Throwable throwable) {
-        throwable.printStackTrace();
+        LOGGER.error(throwable.getMessage(), throwable);
     }
 
 }

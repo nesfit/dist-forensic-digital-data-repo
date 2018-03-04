@@ -13,7 +13,7 @@
 
     <bean id="ackConsumerHandler" class="cz.vutbr.fit.communication.consumer.handler.AcknowledgementConsumerHandler"/>
 
-    <bean id="handlerManager" class="communication.consumer.handler.HandlerManager">
+    <bean id="handlerManager" class="cz.vutbr.fit.communication.consumer.handler.HandlerManager">
         <util:map id="handlers"
                   key-type="communication.command.Command"
                   value-type="communication.consumer.handler.ICommandHandler">
@@ -21,6 +21,6 @@
         </util:map>
     </bean>
 
-    <bean id="commandBuilder" class="communication.command.builder.KafkaResponseCommandBuilder"/>
+    <bean id="commandBuilder" class="cz.vutbr.fit.communication.command.builder.KafkaResponseCommandBuilder"/>
 
 </beans>

@@ -28,6 +28,11 @@ public class PacketMetadata {
     private String srcIpAddress;
     private String dstIpAddress;
 
+    private short srcPortNum;
+    private short dstPortNum;
+    private String srcPortStr;
+    private String dstPortStr;
+
     // TODO: More fields
 
     public PacketMetadata() {
@@ -145,6 +150,38 @@ public class PacketMetadata {
         this.dstIpAddress = dstIpAddress;
     }
 
+    public short getSrcPortNum() {
+        return srcPortNum;
+    }
+
+    public void setSrcPortNum(short srcPortNum) {
+        this.srcPortNum = srcPortNum;
+    }
+
+    public short getDstPortNum() {
+        return dstPortNum;
+    }
+
+    public void setDstPortNum(short dstPortNum) {
+        this.dstPortNum = dstPortNum;
+    }
+
+    public String getSrcPortStr() {
+        return srcPortStr;
+    }
+
+    public void setSrcPortStr(String srcPortStr) {
+        this.srcPortStr = srcPortStr;
+    }
+
+    public String getDstPortStr() {
+        return dstPortStr;
+    }
+
+    public void setDstPortStr(String dstPortStr) {
+        this.dstPortStr = dstPortStr;
+    }
+
     public static class Builder {
 
         private PacketMetadata packetMetadata;
@@ -210,6 +247,26 @@ public class PacketMetadata {
 
         public Builder dstIpAddress(String dstIpAddress) {
             this.packetMetadata.setDstIpAddress(dstIpAddress);
+            return this;
+        }
+
+        public Builder srcPortNum(short srcPortNum) {
+            this.packetMetadata.setSrcPortNum(srcPortNum);
+            return this;
+        }
+
+        public Builder srcPortStr(String srcPortStr) {
+            this.packetMetadata.setSrcPortStr(srcPortStr);
+            return this;
+        }
+
+        public Builder dstPortNum(short dstPortNum) {
+            this.packetMetadata.setDstPortNum(dstPortNum);
+            return this;
+        }
+
+        public Builder dstPortStr(String dstPortStr) {
+            this.packetMetadata.setDstPortStr(dstPortStr);
             return this;
         }
 

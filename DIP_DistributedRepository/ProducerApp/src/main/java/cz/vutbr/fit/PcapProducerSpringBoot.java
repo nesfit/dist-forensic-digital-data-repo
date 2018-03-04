@@ -19,6 +19,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.hadoop.fs.FsShell;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -76,19 +77,11 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
         try {
 
             _mutex.lock();
-            LOGGER.debug("\tLocked: sending file " + file);
+            LOGGER.debug("Locked: sending file " + file);
 
             UUID requestId = UUID.randomUUID();
-            DataSource dataSource = null;
-            byte[] bytes = null;
-
-            if (dataSourceStorage == DataSourceStorage.HADOOP) {
-                hdfsShell.put(file, requestId.toString());
-                dataSource = new DataSource(dataSourceStorage, requestId.toString(), true);
-            } else {
-                bytes = Files.readAllBytes(Paths.get(file));
-                dataSource = new DataSource(dataSourceStorage, null, false);
-            }
+            DataSource dataSource = createDataSource(dataSourceStorage, requestId.toString());
+            byte[] bytes = preparePayload(dataSourceStorage, file, requestId.toString());
 
             KafkaRequest request = new KafkaRequest.Builder().command(Command.STORE_PCAP)
                     .dataSource(dataSource).awaitsResponse(Boolean.TRUE)
@@ -100,12 +93,33 @@ public class PcapProducerSpringBoot implements CommandLineRunner {
 
             producer.produce(inputTopic, request, bytes, result -> {
                 _mutex.unlock();
-                LOGGER.debug("\t Unlocked: file " + file + " sent successfully");
-            }, Throwable::printStackTrace);
+                LOGGER.debug("Unlocked: file " + file + " sent successfully");
+            }, PcapProducerSpringBoot::handleError);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            handleError(exception);
         }
+    }
+
+    private static DataSource createDataSource(DataSourceStorage dataSourceStorage, String uri) {
+        return (dataSourceStorage == DataSourceStorage.HADOOP) ?
+                new DataSource(dataSourceStorage, uri, true) :
+                new DataSource(dataSourceStorage, null, false);
+    }
+
+    private byte[] preparePayload(DataSourceStorage dataSourceStorage, String localFile, String dstFile) throws IOException {
+        byte[] bytes;
+        if (dataSourceStorage == DataSourceStorage.HADOOP) {
+            hdfsShell.put(localFile, dstFile);
+            bytes = new byte[]{};
+        } else {
+            bytes = Files.readAllBytes(Paths.get(localFile));
+        }
+        return bytes;
+    }
+
+    private static void handleError(Throwable throwable) {
+        LOGGER.error(throwable.getMessage(), throwable);
     }
 
     @Override
