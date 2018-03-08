@@ -16,7 +16,7 @@ import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
 import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
 import cz.vutbr.fit.service.pcap.parser.PcapParser;
 import cz.vutbr.fit.util.FileManager;
-import org.pcap4j.packet.Packet;
+import org.pcap4j.core.PcapPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class StorePcapHandler extends BaseHandler {
 
     // Parser
     @Autowired
-    private PcapParser<Packet> pcapParser;
+    private PcapParser<PcapPacket> pcapParser;
 
     // Repository
     @Autowired
@@ -48,7 +48,7 @@ public class StorePcapHandler extends BaseHandler {
 
     // Packet metadata extractor
     @Autowired
-    private List<PacketExtractor<Packet, PacketMetadata.Builder>> packetExtractor;
+    private List<PacketExtractor<PcapPacket, PacketMetadata.Builder>> packetExtractor;
 
     // Batch metadata
     @Value("${packet.metadata.max.list.size}")
@@ -116,7 +116,7 @@ public class StorePcapHandler extends BaseHandler {
         LOGGER.debug("Packets processed successfully.");
     }
 
-    private void processPacket(Packet packet) {
+    private void processPacket(PcapPacket packet) {
         count++;
 
         UUID id = UUIDs.timeBased();

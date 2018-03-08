@@ -1,11 +1,8 @@
 package cz.vutbr.fit.service.pcap.extractor.beans;
 
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
-import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
-import cz.vutbr.fit.service.pcap.extractor.Pcap4JEthernetExtractor;
-import cz.vutbr.fit.service.pcap.extractor.Pcap4JIpExtractor;
-import cz.vutbr.fit.service.pcap.extractor.Pcap4JTransportExtractor;
-import org.pcap4j.packet.Packet;
+import cz.vutbr.fit.service.pcap.extractor.*;
+import org.pcap4j.core.PcapPacket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,18 +10,23 @@ import org.springframework.context.annotation.Configuration;
 public class ExtractorBeans {
 
     @Bean
-    public PacketExtractor<Packet, PacketMetadata.Builder> pcap4JTransportExtractor() {
-        return new Pcap4JTransportExtractor();
+    public PacketExtractor<PcapPacket, PacketMetadata.Builder> pcap4JBaseExtractor() {
+        return new Pcap4JBaseExtractor();
     }
 
     @Bean
-    public PacketExtractor<Packet, PacketMetadata.Builder> pcap4JIpExtractor() {
+    public PacketExtractor<PcapPacket, PacketMetadata.Builder> pcap4JEthernetExtractor() {
+        return new Pcap4JEthernetExtractor();
+    }
+
+    @Bean
+    public PacketExtractor<PcapPacket, PacketMetadata.Builder> pcap4JIpExtractor() {
         return new Pcap4JIpExtractor();
     }
 
     @Bean
-    public PacketExtractor<Packet, PacketMetadata.Builder> pcap4JEthernetExtractor() {
-        return new Pcap4JEthernetExtractor();
+    public PacketExtractor<PcapPacket, PacketMetadata.Builder> pcap4JTransportExtractor() {
+        return new Pcap4JTransportExtractor();
     }
 
 }

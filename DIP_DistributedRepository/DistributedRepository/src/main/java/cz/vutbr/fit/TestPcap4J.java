@@ -2,7 +2,6 @@ package cz.vutbr.fit;
 
 import cz.vutbr.fit.service.pcap.parser.Pcap4JParser;
 import org.pcap4j.core.*;
-import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class TestPcap4J {
         }, TestPcap4J::handleError);
     }
 
-    public void doOnPacket(Packet packet) {
+    public void doOnPacket(PcapPacket packet) {
         try {
             dumper.dumpRaw(packet.getRawData());
         } catch (NotOpenException e) {
