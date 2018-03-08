@@ -16,26 +16,20 @@ public class Pcap4JTransportExtractor implements PacketExtractor<Packet, PacketM
     private void extractTcpMetadata(Packet packet, PacketMetadata.Builder packetMetadataBuilder) {
         if (packet.contains(TcpPacket.class)) {
             TcpPacket tcpPacket = packet.get(TcpPacket.class);
-            short srcPortNum = tcpPacket.getHeader().getSrcPort().value();
-            short dstPortNum = tcpPacket.getHeader().getDstPort().value();
-            String srcPortStr = tcpPacket.getHeader().getSrcPort().valueAsString();
-            String dstPortStr = tcpPacket.getHeader().getDstPort().valueAsString();
+            String srcPort = tcpPacket.getHeader().getSrcPort().valueAsString();
+            String dstPort = tcpPacket.getHeader().getDstPort().valueAsString();
 
-            packetMetadataBuilder.srcPortNum(srcPortNum).dstPortNum(dstPortNum)
-                    .srcPortStr(srcPortStr).dstPortStr(dstPortStr);
+            packetMetadataBuilder.srcPort(srcPort).dstPort(dstPort);
         }
     }
 
     private void extractUdpMetadata(Packet packet, PacketMetadata.Builder packetMetadataBuilder) {
         if (packet.contains(UdpPacket.class)) {
             UdpPacket udpPacket = packet.get(UdpPacket.class);
-            short srcPortNum = udpPacket.getHeader().getSrcPort().value();
-            short dstPortNum = udpPacket.getHeader().getDstPort().value();
-            String srcPortStr = udpPacket.getHeader().getSrcPort().valueAsString();
-            String dstPortStr = udpPacket.getHeader().getDstPort().valueAsString();
+            String srcPort = udpPacket.getHeader().getSrcPort().valueAsString();
+            String dstPort = udpPacket.getHeader().getDstPort().valueAsString();
 
-            packetMetadataBuilder.srcPortNum(srcPortNum).dstPortNum(dstPortNum)
-                    .srcPortStr(srcPortStr).dstPortStr(dstPortStr);
+            packetMetadataBuilder.srcPort(srcPort).dstPort(dstPort);
         }
     }
 

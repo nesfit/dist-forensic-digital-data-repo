@@ -19,8 +19,8 @@ public class Pcap4JIpExtractor implements PacketExtractor<Packet, PacketMetadata
             String srcAddr = ipPacket.getHeader().getSrcAddr().getHostAddress();
             String dstAddr = ipPacket.getHeader().getDstAddr().getHostAddress();
 
-            packetMetadataBuilder.ipProtocolName(protocol.name()).ipProtocolValue(protocol.value())
-                    .ipVersionName(version.name()).ipVersionValue(version.value())
+            packetMetadataBuilder.ipProtocolName(protocol.name()).ipProtocolValue(protocol.valueAsString())
+                    .ipVersionName(version.name()).ipVersionValue(version.valueAsString())
                     .srcIpAddress(srcAddr).dstIpAddress(dstAddr);
         }
     }

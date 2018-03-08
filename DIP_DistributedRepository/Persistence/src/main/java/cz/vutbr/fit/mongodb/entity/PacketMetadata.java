@@ -16,22 +16,20 @@ public class PacketMetadata {
     private UUID refId;
     private DatabaseType databaseType;
 
-    private short ethernetTypeValue;    // EtherType (value, name)
-    private String ethernetTypeName;
-    private String srcLinkLayerAddress;
-    private String dstLinkLayerAddress;
+    private String ethernetTypeValue;   // HEX string, for IPv4: 0x0800, for IPv6: 0x86dd, etc
+    private String ethernetTypeName;    // IPv4, IPv6, ARP, PPP, MPLS, etc
+    private String srcLinkLayerAddress; // In format: xx:xx:xx:xx:xx:xx
+    private String dstLinkLayerAddress; // In format: xx:xx:xx:xx:xx:xx
 
-    private byte ipProtocolValue;       // IpNumber (value, name)
-    private String ipProtocolName;
-    private byte ipVersionValue;        // IpVersion (value, name)
-    private String ipVersionName;
-    private String srcIpAddress;
-    private String dstIpAddress;
+    private String ipProtocolValue;     // For ICMPv4: 4, for IGMP: 2, for TCP: 6, for UDP: 17, etc
+    private String ipProtocolName;      // ICMPv4, IGMP, Stream, TCP, IGP, etc
+    private String ipVersionValue;      // For IPv4: 4, for ST: 5, for IPv6: 6, etc
+    private String ipVersionName;       // IPv4, ST, IPv6, etc
+    private String srcIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
+    private String dstIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
 
-    private short srcPortNum;
-    private short dstPortNum;
-    private String srcPortStr;
-    private String dstPortStr;
+    private String srcPort;
+    private String dstPort;
 
     // TODO: More fields
 
@@ -70,11 +68,11 @@ public class PacketMetadata {
         this.databaseType = databaseType;
     }
 
-    public short getEthernetTypeValue() {
+    public String getEthernetTypeValue() {
         return ethernetTypeValue;
     }
 
-    public void setEthernetTypeValue(short ethernetTypeValue) {
+    public void setEthernetTypeValue(String ethernetTypeValue) {
         this.ethernetTypeValue = ethernetTypeValue;
     }
 
@@ -102,11 +100,11 @@ public class PacketMetadata {
         this.dstLinkLayerAddress = dstLinkLayerAddress;
     }
 
-    public byte getIpProtocolValue() {
+    public String getIpProtocolValue() {
         return ipProtocolValue;
     }
 
-    public void setIpProtocolValue(byte ipProtocolValue) {
+    public void setIpProtocolValue(String ipProtocolValue) {
         this.ipProtocolValue = ipProtocolValue;
     }
 
@@ -118,11 +116,11 @@ public class PacketMetadata {
         this.ipProtocolName = ipProtocolName;
     }
 
-    public byte getIpVersionValue() {
+    public String getIpVersionValue() {
         return ipVersionValue;
     }
 
-    public void setIpVersionValue(byte ipVersionValue) {
+    public void setIpVersionValue(String ipVersionValue) {
         this.ipVersionValue = ipVersionValue;
     }
 
@@ -150,36 +148,20 @@ public class PacketMetadata {
         this.dstIpAddress = dstIpAddress;
     }
 
-    public short getSrcPortNum() {
-        return srcPortNum;
+    public String getSrcPort() {
+        return srcPort;
     }
 
-    public void setSrcPortNum(short srcPortNum) {
-        this.srcPortNum = srcPortNum;
+    public void setSrcPort(String srcPort) {
+        this.srcPort = srcPort;
     }
 
-    public short getDstPortNum() {
-        return dstPortNum;
+    public String getDstPort() {
+        return dstPort;
     }
 
-    public void setDstPortNum(short dstPortNum) {
-        this.dstPortNum = dstPortNum;
-    }
-
-    public String getSrcPortStr() {
-        return srcPortStr;
-    }
-
-    public void setSrcPortStr(String srcPortStr) {
-        this.srcPortStr = srcPortStr;
-    }
-
-    public String getDstPortStr() {
-        return dstPortStr;
-    }
-
-    public void setDstPortStr(String dstPortStr) {
-        this.dstPortStr = dstPortStr;
+    public void setDstPort(String dstPort) {
+        this.dstPort = dstPort;
     }
 
     public static class Builder {
@@ -200,7 +182,7 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder ethernetTypeValue(short ethernetTypeValue) {
+        public Builder ethernetTypeValue(String ethernetTypeValue) {
             this.packetMetadata.setEthernetTypeValue(ethernetTypeValue);
             return this;
         }
@@ -220,7 +202,7 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder ipProtocolValue(byte ipProtocolValue) {
+        public Builder ipProtocolValue(String ipProtocolValue) {
             this.packetMetadata.setIpProtocolValue(ipProtocolValue);
             return this;
         }
@@ -230,7 +212,7 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder ipVersionValue(byte ipVersionValue) {
+        public Builder ipVersionValue(String ipVersionValue) {
             this.packetMetadata.setIpVersionValue(ipVersionValue);
             return this;
         }
@@ -250,23 +232,13 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder srcPortNum(short srcPortNum) {
-            this.packetMetadata.setSrcPortNum(srcPortNum);
+        public Builder srcPort(String srcPort) {
+            this.packetMetadata.setSrcPort(srcPort);
             return this;
         }
 
-        public Builder srcPortStr(String srcPortStr) {
-            this.packetMetadata.setSrcPortStr(srcPortStr);
-            return this;
-        }
-
-        public Builder dstPortNum(short dstPortNum) {
-            this.packetMetadata.setDstPortNum(dstPortNum);
-            return this;
-        }
-
-        public Builder dstPortStr(String dstPortStr) {
-            this.packetMetadata.setDstPortStr(dstPortStr);
+        public Builder dstPort(String dstPort) {
+            this.packetMetadata.setDstPort(dstPort);
             return this;
         }
 
