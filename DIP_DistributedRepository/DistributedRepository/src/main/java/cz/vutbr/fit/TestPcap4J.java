@@ -38,7 +38,8 @@ public class TestPcap4J {
 
     public void doOnPacket(PcapPacket packet) {
         try {
-            dumper.dumpRaw(packet.getRawData());
+            dumper.dumpRaw(packet.getRawData(), packet.getTimestamp());
+            //dumper.dump(packet);
         } catch (NotOpenException e) {
             handleError(e);
         }

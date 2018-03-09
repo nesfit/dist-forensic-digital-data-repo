@@ -19,6 +19,7 @@ public class Pcap4JIpExtractor implements PacketExtractor<PcapPacket, PacketMeta
             String srcAddr = ipPacket.getHeader().getSrcAddr().getHostAddress();
             String dstAddr = ipPacket.getHeader().getDstAddr().getHostAddress();
 
+            // TODO: Is format of IP address suitable (IPv6)?
             packetMetadataBuilder.ipProtocolName(protocol.name()).ipProtocolValue(protocol.valueAsString())
                     .ipVersionName(version.name()).ipVersionValue(version.valueAsString())
                     .srcIpAddress(srcAddr).dstIpAddress(dstAddr);

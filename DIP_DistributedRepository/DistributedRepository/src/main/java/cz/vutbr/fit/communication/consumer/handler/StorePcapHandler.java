@@ -36,15 +36,15 @@ public class StorePcapHandler extends BaseHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorePcapHandler.class);
 
-    // Parser
-    @Autowired
-    private PcapParser<PcapPacket> pcapParser;
-
     // Repository
     @Autowired
     private PacketRepository packetRepository;
     @Autowired
     private PacketMetadataRepository packetMetadataRepository;
+
+    // Parser
+    @Autowired
+    private PcapParser<PcapPacket> pcapParser;
 
     // Packet metadata extractor
     @Autowired
@@ -55,12 +55,11 @@ public class StorePcapHandler extends BaseHandler {
     private int maxListSize;
     private List<PacketMetadata> packetMetadataList;
 
-    // Pcap4J workaround
+    // Pcap4J parsing workaround
     @Value("${tmp.directory}")
     private String tmpDirectory;
     private String processedTmpFile;
 
-    private KafkaRequest request;
     private int count;
 
     @PostConstruct
@@ -88,10 +87,6 @@ public class StorePcapHandler extends BaseHandler {
         } catch (Exception exception) {
             handleFailure(exception);
         }
-    }
-
-    private void bufferRequest(KafkaRequest request) {
-        this.request = request;
     }
 
     private void storePayload(byte[] value) throws IOException {

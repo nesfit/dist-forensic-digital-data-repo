@@ -17,6 +17,12 @@ public abstract class BaseHandler implements ICommandHandler<KafkaRequest, byte[
     @Autowired
     protected FsShell hdfsShell;
 
+    protected KafkaRequest request;
+
+    protected void bufferRequest(KafkaRequest request) {
+        this.request = request;
+    }
+
     protected void sendAcknowledgement(KafkaResponse response, byte[] value) {
         responseProducer.produce(response.getResponseTopic(), response, value);
     }

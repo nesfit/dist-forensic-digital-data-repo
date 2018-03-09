@@ -11,7 +11,8 @@ public class Pcap4JBaseExtractor implements PacketExtractor<PcapPacket, PacketMe
     public void extractMetadata(PcapPacket packet, PacketMetadata.Builder packetMetadataBuilder) {
         Instant timestamp = packet.getTimestamp();
         int originalLength = packet.getOriginalLength();
-        // TODO: Add timestamp and originalLength into builder
+
+        packetMetadataBuilder.timestamp(timestamp).originalLength(originalLength);
     }
 
 }

@@ -6,15 +6,20 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Document(collection = "packet_metadata")
 public class PacketMetadata {
 
     @Id
-    private String id;
-    private UUID refId;
-    private DatabaseType databaseType;
+    private String id;                  // ID in MongoDB
+    private UUID refId;                 // ID in Cassandra
+    private String uri;                 // ID or path to data in HDFS
+    private DatabaseType databaseType;  // Cassandra, HDFS, etc
+
+    private Instant timestamp;
+    private int originalLength;
 
     private String ethernetTypeValue;   // HEX string, for IPv4: 0x0800, for IPv6: 0x86dd, etc
     private String ethernetTypeName;    // IPv4, IPv6, ARP, PPP, MPLS, etc
@@ -36,14 +41,6 @@ public class PacketMetadata {
     public PacketMetadata() {
     }
 
-    /*@PersistenceConstructor
-    public PacketMetadata(UUID refId, DatabaseType databaseType, String srcIpAddress, String dstIpAddress) {
-        this.refId = refId;
-        this.databaseType = databaseType;
-        this.srcIpAddress = srcIpAddress;
-        this.dstIpAddress = dstIpAddress;
-    }*/
-
     public String getId() {
         return id;
     }
@@ -60,12 +57,36 @@ public class PacketMetadata {
         this.refId = refId;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     public DatabaseType getDatabaseType() {
         return databaseType;
     }
 
     public void setDatabaseType(DatabaseType databaseType) {
         this.databaseType = databaseType;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getOriginalLength() {
+        return originalLength;
+    }
+
+    public void setOriginalLength(int originalLength) {
+        this.originalLength = originalLength;
     }
 
     public String getEthernetTypeValue() {
@@ -177,8 +198,23 @@ public class PacketMetadata {
             return this;
         }
 
+        public Builder uri(String uri) {
+            this.packetMetadata.setUri(uri);
+            return this;
+        }
+
         public Builder databaseType(DatabaseType databaseType) {
             this.packetMetadata.setDatabaseType(databaseType);
+            return this;
+        }
+
+        public Builder timestamp(Instant timestamp) {
+            this.packetMetadata.setTimestamp(timestamp);
+            return this;
+        }
+
+        public Builder originalLength(int originalLength) {
+            this.packetMetadata.setOriginalLength(originalLength);
             return this;
         }
 

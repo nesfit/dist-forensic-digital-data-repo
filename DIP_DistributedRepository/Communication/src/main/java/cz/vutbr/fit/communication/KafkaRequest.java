@@ -7,6 +7,7 @@ import cz.vutbr.fit.communication.command.Operation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
 import java.util.UUID;
 
 public class KafkaRequest {
@@ -24,7 +25,8 @@ public class KafkaRequest {
     private String errorTopic;
 
     private UUID id;
-    // TODO: Criteria
+
+    private List<KafkaCriteria> criterias;
 
     @Deprecated
     public Operation getOperation() {
@@ -94,6 +96,14 @@ public class KafkaRequest {
         this.id = id;
     }
 
+    public List<KafkaCriteria> getCriterias() {
+        return criterias;
+    }
+
+    public void setCriterias(List<KafkaCriteria> criterias) {
+        this.criterias = criterias;
+    }
+
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
@@ -145,6 +155,11 @@ public class KafkaRequest {
 
         public Builder id(UUID id) {
             request.setId(id);
+            return this;
+        }
+
+        public Builder criterias(List<KafkaCriteria> criterias) {
+            request.setCriterias(criterias);
             return this;
         }
 
