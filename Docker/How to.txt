@@ -29,11 +29,11 @@ Maven:
 
 Cassandra:
 	Otevreni CSLSH
-		$ docker run -it --net cassandracustom_default --link cassandra:cassandra --rm cassandra cqlsh cassandra
+		$ docker run -it --link cassandra:cassandra --rm cassandra cqlsh cassandra
 
 MongoDB:
 	Otevreni shell
-		$ docker run -it --net mongodb_default --link mongodb:mongodb --rm mongo mongo 192.168.99.100:27017
+		$ docker run -it --link mongodb:mongodb --rm mongo mongo 192.168.99.100:27017
 		
 		Vypsani databazi
 			> show dbs
