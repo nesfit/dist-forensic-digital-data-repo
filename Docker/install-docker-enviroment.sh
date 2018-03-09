@@ -2,10 +2,10 @@
 
 cd Environment
 
-	docker-compose pull
+	docker-compose pull mongodb hadoop kafka zookeeper
 
 	cd cassandra-custom
-	docker build -t martinfit/cassandra .
+	docker build -t martinfit/cassandra:latest .
 	cd ..
 
 	cd maven-jdk-9-slim-custom

@@ -5,6 +5,7 @@ version: '3'
 
 services:
     cassandra:
+        build: ./cassandra-custom
         image: martinfit/cassandra:latest
         container_name: cassandra
         restart: unless-stopped
