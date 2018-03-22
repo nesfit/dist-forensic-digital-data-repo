@@ -1,6 +1,6 @@
 package cz.vutbr.fit;
 
-import cz.vutbr.fit.service.pcap.parser.Pcap4JParser;
+import cz.vutbr.fit.service.pcap.parser.org.pcap4j.ParserImpl;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class TestPcap4J {
     }
 
     public void loadAndSavePcapFile(String input) throws IOException {
-        Pcap4JParser pcapParser = new Pcap4JParser();
+        ParserImpl pcapParser = new ParserImpl();
         pcapParser.parseInput(input, this::doOnPacket, () -> {
             LOGGER.debug("Completed");
         }, TestPcap4J::handleError);

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.service.serialize;
+package cz.vutbr.fit.util.serialize;
 
 import java.io.*;
 

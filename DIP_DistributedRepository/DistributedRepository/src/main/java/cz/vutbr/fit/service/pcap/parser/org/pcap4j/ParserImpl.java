@@ -1,5 +1,9 @@
-package cz.vutbr.fit.service.pcap.parser;
+package cz.vutbr.fit.service.pcap.parser.org.pcap4j;
 
+import cz.vutbr.fit.service.pcap.parser.OnCompleteCallback;
+import cz.vutbr.fit.service.pcap.parser.OnFailureCallback;
+import cz.vutbr.fit.service.pcap.parser.OnPacketCallback;
+import cz.vutbr.fit.service.pcap.parser.PcapParser;
 import org.pcap4j.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,14 +11,13 @@ import org.slf4j.LoggerFactory;
 import java.io.EOFException;
 import java.util.concurrent.TimeoutException;
 
-public class Pcap4JParser implements PcapParser<PcapPacket> {
+public class ParserImpl implements PcapParser<PcapPacket> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pcap4JParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParserImpl.class);
 
     @Override
     public void parseInput(String path, OnPacketCallback<PcapPacket> onPacketCallback,
                            OnCompleteCallback onCompleteCallback, OnFailureCallback onFailureCallback) {
-
         PcapHandle handle;
 
         try {

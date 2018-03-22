@@ -1,6 +1,7 @@
-package cz.vutbr.fit.service.pcap.extractor;
+package cz.vutbr.fit.service.pcap.extractor.org.pcap4j;
 
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
+import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
 import org.pcap4j.core.PcapPacket;
 import org.pcap4j.packet.EthernetPacket;
 import org.pcap4j.packet.namednumber.EtherType;
@@ -8,7 +9,7 @@ import org.pcap4j.util.MacAddress;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Pcap4JEthernetExtractor implements PacketExtractor<PcapPacket, PacketMetadata.Builder> {
+public class EthernetPacketExtractor implements PacketExtractor<PcapPacket, PacketMetadata.Builder> {
 
     @Override
     public void extractMetadata(PcapPacket packet, PacketMetadata.Builder packetMetadataBuilder) {

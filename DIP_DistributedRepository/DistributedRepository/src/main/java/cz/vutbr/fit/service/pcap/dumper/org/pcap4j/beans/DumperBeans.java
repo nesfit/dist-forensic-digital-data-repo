@@ -1,7 +1,7 @@
-package cz.vutbr.fit.service.pcap.dumper.beans;
+package cz.vutbr.fit.service.pcap.dumper.org.pcap4j.beans;
 
-import cz.vutbr.fit.service.pcap.dumper.Pcap4JDumper;
 import cz.vutbr.fit.service.pcap.dumper.PcapDumper;
+import cz.vutbr.fit.service.pcap.dumper.org.pcap4j.DumperImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ public class DumperBeans {
 
     @Bean
     public PcapDumper<byte[]> pcapDumper() {
-        return new Pcap4JDumper();
+        return new DumperImpl();
     }
 
 }

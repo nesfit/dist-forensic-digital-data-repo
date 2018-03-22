@@ -1,5 +1,6 @@
-package cz.vutbr.fit.service.pcap.dumper;
+package cz.vutbr.fit.service.pcap.dumper.org.pcap4j;
 
+import cz.vutbr.fit.service.pcap.dumper.PcapDumper;
 import cz.vutbr.fit.service.pcap.parser.OnFailureCallback;
 import org.pcap4j.core.NotOpenException;
 import org.pcap4j.core.PcapHandle;
@@ -9,11 +10,10 @@ import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Pcap4JDumper implements PcapDumper<byte[]> {
+public class DumperImpl implements PcapDumper<byte[]> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pcap4JDumper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DumperImpl.class);
 
-    // TODO: Check if handle and dumper are thread safe.
     private PcapHandle outputHandle;
     private org.pcap4j.core.PcapDumper dumper;
 

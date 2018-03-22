@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class LoadPcapHandler extends BaseHandler {
@@ -68,37 +66,21 @@ public class LoadPcapHandler extends BaseHandler {
         sendAcknowledgement(buildFailureResponse(request, throwable.getMessage()), new byte[]{});
     }
 
-    // TODO: Move to separated class (can't be inside Persistence module because of KafkaCriteria parameter).
     private Criteria prepareCriteria(List<KafkaCriteria> kafkaCriterias) {
         Criteria criteria = new Criteria();
-        kafkaCriterias.stream().forEach(kafkaCriteria -> appendCriteria(criteria, kafkaCriteria));
+        kafkaCriterias.stream().forEach(
+                kafkaCriteria ->
+                        packetMetadataRepository.appendCriteria(
+                                criteria,
+                                kafkaCriteria.getField(),
+                                kafkaCriteria.getOperation().getOperationAsString(),
+                                kafkaCriteria.getOperation().isArrayRequired(),
+                                kafkaCriteria.getValue(),
+                                kafkaCriteria.getValues(),
+                                this::handleFailure)
+        );
+        //kafkaCriterias.stream().forEach(kafkaCriteria -> appendCriteria(criteria, kafkaCriteria));
         return criteria;
-    }
-
-    private Criteria appendCriteria(Criteria criteriaBuilder, KafkaCriteria kafkaCriteria) {
-        String and = "and";
-        try {
-            Method whichField = criteriaBuilder.getClass().getMethod(and, String.class);
-            criteriaBuilder = (Criteria) whichField.invoke(criteriaBuilder, kafkaCriteria.getField());
-            Method operation = getMethodOperation(criteriaBuilder, kafkaCriteria);
-            criteriaBuilder = invokeMethodOperation(operation, criteriaBuilder, kafkaCriteria);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
-            handleFailure(exception);
-        }
-        return criteriaBuilder;
-    }
-
-    private Method getMethodOperation(Criteria criteriaBuilder, KafkaCriteria kafkaCriteria) throws NoSuchMethodException {
-        Class<?> paramType = kafkaCriteria.getOperation().isArrayRequired() ? Object[].class : Object.class;
-        return criteriaBuilder.getClass().getMethod(kafkaCriteria.getOperation().getOperationAsString(), paramType);
-    }
-
-    private Criteria invokeMethodOperation(Method operation, Criteria criteriaBuilder, KafkaCriteria kafkaCriteria) throws InvocationTargetException, IllegalAccessException {
-        if (kafkaCriteria.getOperation().isArrayRequired()) {
-            return (Criteria) operation.invoke(criteriaBuilder, new Object[]{kafkaCriteria.getValues().toArray()});
-        } else {
-            return (Criteria) operation.invoke(criteriaBuilder, kafkaCriteria.getValue());
-        }
     }
 
 }
