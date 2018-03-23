@@ -1,7 +1,7 @@
-package cz.vutbr.fit.service.pcap.dumper.org.pcap4j.beans;
+package cz.vutbr.fit.service.pcap.dumper.pcap4j.beans;
 
 import cz.vutbr.fit.service.pcap.dumper.PcapDumper;
-import cz.vutbr.fit.service.pcap.dumper.org.pcap4j.DumperImpl;
+import cz.vutbr.fit.service.pcap.dumper.pcap4j.DumperImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

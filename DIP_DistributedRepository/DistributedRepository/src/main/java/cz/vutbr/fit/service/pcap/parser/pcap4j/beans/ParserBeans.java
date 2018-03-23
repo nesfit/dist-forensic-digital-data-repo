@@ -1,7 +1,7 @@
-package cz.vutbr.fit.service.pcap.parser.org.pcap4j.beans;
+package cz.vutbr.fit.service.pcap.parser.pcap4j.beans;
 
 import cz.vutbr.fit.service.pcap.parser.PcapParser;
-import cz.vutbr.fit.service.pcap.parser.org.pcap4j.ParserImpl;
+import cz.vutbr.fit.service.pcap.parser.pcap4j.ParserImpl;
 import org.pcap4j.core.PcapPacket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

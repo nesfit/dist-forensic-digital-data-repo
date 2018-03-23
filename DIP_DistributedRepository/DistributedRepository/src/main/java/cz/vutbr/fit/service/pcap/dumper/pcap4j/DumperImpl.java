@@ -1,4 +1,4 @@
-package cz.vutbr.fit.service.pcap.dumper.org.pcap4j;
+package cz.vutbr.fit.service.pcap.dumper.pcap4j;
 
 import cz.vutbr.fit.service.pcap.dumper.PcapDumper;
 import cz.vutbr.fit.service.pcap.parser.OnFailureCallback;
@@ -9,6 +9,8 @@ import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
 
 public class DumperImpl implements PcapDumper<byte[]> {
 
@@ -29,11 +31,9 @@ public class DumperImpl implements PcapDumper<byte[]> {
     }
 
     @Override
-    public void dumpOutput(byte[] packet, OnFailureCallback onFailureCallback) {
+    public void dumpOutput(byte[] packet, Instant timestamp, OnFailureCallback onFailureCallback) {
         try {
-            // TODO: Dumper logs packets, disable it.
-            // TODO: Add timestamp, call dumpRaw(byte[] packet, Instant timestamp).
-            dumper.dumpRaw(packet);
+            dumper.dumpRaw(packet, timestamp);
         } catch (NotOpenException exception) {
             LOGGER.error(exception.getMessage(), exception);
             onFailureCallback.doOnFailure(exception);

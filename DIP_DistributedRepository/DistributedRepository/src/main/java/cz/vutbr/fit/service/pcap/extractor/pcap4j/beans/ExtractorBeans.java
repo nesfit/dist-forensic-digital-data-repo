@@ -1,11 +1,11 @@
-package cz.vutbr.fit.service.pcap.extractor.org.pcap4j.beans;
+package cz.vutbr.fit.service.pcap.extractor.pcap4j.beans;
 
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;
-import cz.vutbr.fit.service.pcap.extractor.org.pcap4j.BasePacketExtractor;
-import cz.vutbr.fit.service.pcap.extractor.org.pcap4j.EthernetPacketExtractor;
-import cz.vutbr.fit.service.pcap.extractor.org.pcap4j.IpPacketExtractor;
-import cz.vutbr.fit.service.pcap.extractor.org.pcap4j.TransportPacketExtractor;
+import cz.vutbr.fit.service.pcap.extractor.pcap4j.BasePacketExtractor;
+import cz.vutbr.fit.service.pcap.extractor.pcap4j.EthernetPacketExtractor;
+import cz.vutbr.fit.service.pcap.extractor.pcap4j.IpPacketExtractor;
+import cz.vutbr.fit.service.pcap.extractor.pcap4j.TransportPacketExtractor;
 import org.pcap4j.core.PcapPacket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

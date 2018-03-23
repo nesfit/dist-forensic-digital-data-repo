@@ -1,4 +1,4 @@
-package cz.vutbr.fit.service.pcap.parser.org.pcap4j;
+package cz.vutbr.fit.service.pcap.parser.pcap4j;
 
 import cz.vutbr.fit.service.pcap.parser.OnCompleteCallback;
 import cz.vutbr.fit.service.pcap.parser.OnFailureCallback;

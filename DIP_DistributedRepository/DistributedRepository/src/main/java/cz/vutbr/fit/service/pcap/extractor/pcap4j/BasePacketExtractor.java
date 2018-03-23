@@ -1,4 +1,4 @@
-package cz.vutbr.fit.service.pcap.extractor.org.pcap4j;
+package cz.vutbr.fit.service.pcap.extractor.pcap4j;
 
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.service.pcap.extractor.PacketExtractor;

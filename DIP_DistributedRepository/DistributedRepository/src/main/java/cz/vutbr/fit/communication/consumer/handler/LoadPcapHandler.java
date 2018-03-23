@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.time.Instant;
 import java.util.List;
 
 public class LoadPcapHandler extends BaseHandler {
@@ -54,11 +55,11 @@ public class LoadPcapHandler extends BaseHandler {
     private void loadPacket(PacketMetadata packetMetadata) {
         // TODO: Think about async loading or batch reactive.
         packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(this::dumpPacket);
+                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()));
     }
 
-    private void dumpPacket(CassandraPacket packet) {
-        pcapDumper.dumpOutput(packet.getPacket().array(), this::handleFailure);
+    private void dumpPacket(CassandraPacket packet, Instant timestamp) {
+        pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
     }
 
     private void handleFailure(Throwable throwable) {
