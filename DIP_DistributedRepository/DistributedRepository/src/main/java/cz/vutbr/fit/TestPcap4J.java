@@ -1,6 +1,7 @@
 package cz.vutbr.fit;
 
 import cz.vutbr.fit.service.pcap.parser.pcap4j.ParserImpl;
+import cz.vutbr.fit.util.JavaEnvironment;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
@@ -23,15 +24,8 @@ public class TestPcap4J implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestPcap4J.class);
 
-    private static final String JAVA_VERSION = "java.version";
-    private static final String JAVA_VERSION_PROPERTY_VALUE_DEFAULT = "9";
-    private static final String JAVA_VERSION_PROPERTY_VALUE_CUSTOM = "1.9";
-
     static {
-        if (JAVA_VERSION_PROPERTY_VALUE_DEFAULT.equals(System.getProperty(JAVA_VERSION))) {
-            System.setProperty(JAVA_VERSION, JAVA_VERSION_PROPERTY_VALUE_CUSTOM);
-            LOGGER.info(JAVA_VERSION + "=" + System.getProperty(JAVA_VERSION));
-        }
+        JavaEnvironment.SetUp();
     }
 
     private PcapDumper dumper;
@@ -51,6 +45,7 @@ public class TestPcap4J implements CommandLineRunner {
         pcapParser.parseInput(input, this::doOnPacket, () -> {
             LOGGER.debug("Completed");
         }, TestPcap4J::handleError);
+        closeResources();
     }
 
     public void doOnPacket(PcapPacket packet) {
@@ -60,6 +55,11 @@ public class TestPcap4J implements CommandLineRunner {
         } catch (NotOpenException e) {
             handleError(e);
         }
+    }
+
+    private void closeResources() {
+        dumper.close();
+        outputHandle.close();
     }
 
     public static void handleError(Throwable throwable) {

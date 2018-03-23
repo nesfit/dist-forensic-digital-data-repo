@@ -10,4 +10,6 @@ public interface PcapDumper<T> {
 
     public void dumpOutput(T packet, Instant timestamp, OnFailureCallback onFailureCallback);
 
+    public void closeDumper();
+
 }

@@ -40,4 +40,10 @@ public class DumperImpl implements PcapDumper<byte[]> {
         }
     }
 
+    @Override
+    public void closeDumper() {
+        dumper.close();
+        outputHandle.close();
+    }
+
 }

@@ -5,15 +5,13 @@ import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.MetadataOperation;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
+import cz.vutbr.fit.util.JavaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 
@@ -21,21 +19,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+//@SpringBootApplication
+//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabaseSpringBoot.class);
 
-    private static final String JAVA_VERSION = "java.version";
-    private static final String JAVA_VERSION_PROPERTY_VALUE_DEFAULT = "9";
-    private static final String JAVA_VERSION_PROPERTY_VALUE_CUSTOM = "1.9";
-
     static {
-        if (JAVA_VERSION_PROPERTY_VALUE_DEFAULT.equals(System.getProperty(JAVA_VERSION))) {
-            System.setProperty(JAVA_VERSION, JAVA_VERSION_PROPERTY_VALUE_CUSTOM);
-            LOGGER.info(JAVA_VERSION + "=" + System.getProperty(JAVA_VERSION));
-        }
+        JavaEnvironment.SetUp();
     }
 
     @Autowired

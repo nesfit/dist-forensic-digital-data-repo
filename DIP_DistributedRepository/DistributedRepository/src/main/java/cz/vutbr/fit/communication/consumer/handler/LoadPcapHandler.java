@@ -29,12 +29,16 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
+    private int count;
+
     @Override
-    public void handleRequest(KafkaRequest kafkaRequest, byte[] bytes) {
+    public void handleRequest(KafkaRequest request, byte[] bytes) {
         try {
 
             bufferRequest(request);
             loadPacketsByCriteria();
+
+            // TODO: Store response PCAP payload into HDFS instead of local drive
 
         } catch (Exception exception) {
             handleFailure(exception);
@@ -49,10 +53,12 @@ public class LoadPcapHandler extends BaseHandler {
         packetMetadataRepository.findByDynamicCriteria(metadataCriteria)
                 .doOnError(this::handleFailure)
                 .doOnNext(this::loadPacket)
+                .doOnComplete(() -> acknowledge())      // TODO: Where should be acknowledgement sent?
                 .subscribe();
     }
 
-    public void loadPackets(List<PacketMetadata> packetMetadataList) {
+    @Deprecated
+    private void loadPackets(List<PacketMetadata> packetMetadataList) {
         packetMetadataList.forEach(
                 packetMetadata -> packetRepository.findById(packetMetadata.getRefId())
                         .doOnError(this::handleFailure)
@@ -62,6 +68,7 @@ public class LoadPcapHandler extends BaseHandler {
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
+        count++;
         // TODO: Think about async loading or batch reactive.
         packetRepository.findById(packetMetadata.getRefId())
                 .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
@@ -72,6 +79,11 @@ public class LoadPcapHandler extends BaseHandler {
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
     }
 
+    private void acknowledge() {
+        String detailMessage = "Successfully loaded " + count + " packets";
+        sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
+    }
+
     private void handleFailure(Throwable throwable) {
         LOGGER.error(throwable.getMessage(), throwable);
         sendAcknowledgement(buildFailureResponse(request, throwable.getMessage()), new byte[]{});
@@ -79,7 +91,7 @@ public class LoadPcapHandler extends BaseHandler {
 
     private Criteria prepareCriteria(List<KafkaCriteria> kafkaCriterias) {
         Criteria criteria = new Criteria();
-        kafkaCriterias.stream().forEach(
+        kafkaCriterias.forEach(
                 kafkaCriteria ->
                         packetMetadataRepository.appendCriteria(
                                 criteria,

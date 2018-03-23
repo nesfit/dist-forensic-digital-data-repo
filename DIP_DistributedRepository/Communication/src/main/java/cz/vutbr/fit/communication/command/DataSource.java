@@ -13,6 +13,10 @@ public class DataSource {
 
     }
 
+    public DataSource(DataSourceStorage dataSourceStorage) {
+        this(dataSourceStorage, null, false);
+    }
+
     public DataSource(DataSourceStorage dataSourceStorage, String uri) {
         this(dataSourceStorage, uri, false);
     }

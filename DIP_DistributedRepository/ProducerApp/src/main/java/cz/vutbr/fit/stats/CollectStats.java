@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated
 public class CollectStats {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectStats.class);

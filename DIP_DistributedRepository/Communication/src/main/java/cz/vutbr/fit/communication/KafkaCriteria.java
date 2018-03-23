@@ -1,5 +1,8 @@
 package cz.vutbr.fit.communication;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.List;
 
 public class KafkaCriteria {
@@ -39,6 +42,10 @@ public class KafkaCriteria {
 
     public void setValues(List<Object> values) {
         this.values = values;
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
     public static class Builder {
