@@ -52,10 +52,20 @@ public class LoadPcapHandler extends BaseHandler {
                 .subscribe();
     }
 
+    public void loadPackets(List<PacketMetadata> packetMetadataList) {
+        packetMetadataList.forEach(
+                packetMetadata -> packetRepository.findById(packetMetadata.getRefId())
+                        .doOnError(this::handleFailure)
+                        .doOnNext(cassandraPacket -> dumpPacket(cassandraPacket, packetMetadata.getTimestamp()))
+                        .subscribe()
+        );
+    }
+
     private void loadPacket(PacketMetadata packetMetadata) {
         // TODO: Think about async loading or batch reactive.
         packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()));
+                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
+                .subscribe();
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
@@ -80,7 +90,6 @@ public class LoadPcapHandler extends BaseHandler {
                                 kafkaCriteria.getValues(),
                                 this::handleFailure)
         );
-        //kafkaCriterias.stream().forEach(kafkaCriteria -> appendCriteria(criteria, kafkaCriteria));
         return criteria;
     }
 

@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
-public class PacketRepositoryImpl implements InsertAsync {
+public class PacketRepositoryImpl implements AsyncOperations {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PacketRepositoryImpl.class);
 
@@ -28,10 +28,14 @@ public class PacketRepositoryImpl implements InsertAsync {
     private Session session;
     private AsyncCassandraTemplate asyncCassandraTemplate;
 
-    private static final String query = "INSERT INTO packet (id, packet) VALUES(?, ?);";
-    private PreparedStatement statement;
+    private static final String INSERT_QUERY = "INSERT INTO packet (id, packet) VALUES(?, ?);";
+    private PreparedStatement insertPreparedStatement;
+
+    private static final String SELECT_QUERY = "SELECT * FROM packet WHERE id = ?";
+    private PreparedStatement selectPreparedStatement;
 
     private int maxRequestsPerConnection = 0;
+    private int maxConnectionsPerHost = 0;
     private Semaphore semaphore;
 
     @PostConstruct
@@ -46,25 +50,39 @@ public class PacketRepositoryImpl implements InsertAsync {
     }
 
     private void postConstructInitialization() {
-        asyncCassandraTemplate = new AsyncCassandraTemplate(session);
-        statement = session.prepare(query);
+        initAsyncCassandraTemplate();
+        initQueries();
+        initSemaphore();
+    }
 
+    private void initAsyncCassandraTemplate() {
+        asyncCassandraTemplate = new AsyncCassandraTemplate(session);
+    }
+
+    private void initQueries() {
+        insertPreparedStatement = session.prepare(INSERT_QUERY);
+        selectPreparedStatement = session.prepare(SELECT_QUERY);
+    }
+
+    private void initSemaphore() {
         LoadBalancingPolicy loadBalancingPolicy = cluster.getConfiguration().getPolicies().getLoadBalancingPolicy();
         PoolingOptions poolingOptions = cluster.getConfiguration().getPoolingOptions();
 
         session.getState().getConnectedHosts().forEach(host -> {
             HostDistance distance = loadBalancingPolicy.distance(host);
             // TODO: Take maxRequestsPerConnection for the current host
-            maxRequestsPerConnection += poolingOptions.getMaxRequestsPerConnection(distance);
+            maxRequestsPerConnection = poolingOptions.getMaxRequestsPerConnection(distance);
+            maxConnectionsPerHost = poolingOptions.getMaxConnectionsPerHost(distance);
         });
 
-        // TODO: Initialize semaphore to < maxConnectionsPerHost * maxRequestsPerConnection >
-        semaphore = new Semaphore(maxRequestsPerConnection);
+        // Initialize semaphore to < maxConnectionsPerHost * maxRequestsPerConnection >
+        int semaphorePermits = maxConnectionsPerHost * maxRequestsPerConnection;
+        semaphore = new Semaphore(semaphorePermits);
+        LOGGER.info(String.format("Semaphore initialized with %d permits.", semaphorePermits));
     }
 
     @Override
     public ResultSetFuture insertAsync(CassandraPacket cassandraPacket) {
-        //insertAsyncSpringData(cassandraPacket);
         return insertAsync(cassandraPacket.getId(), cassandraPacket.getPacket());
     }
 
@@ -72,7 +90,29 @@ public class PacketRepositoryImpl implements InsertAsync {
         lockSemaphore();
 
         // This approach with cached prepared statement is much faster
-        BoundStatement boundStatement = statement.bind(id, packet);
+        BoundStatement boundStatement = insertPreparedStatement.bind(id, packet);
+        ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
+
+        Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
+            @Override
+            public void onSuccess(ResultSet rows) {
+                unlockSemaphore();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                unlockSemaphore();
+            }
+        }, MoreExecutors.newDirectExecutorService());
+
+        return resultSetFuture;
+    }
+
+    @Override
+    public ResultSetFuture selectAsync(UUID id) {
+        lockSemaphore();
+
+        BoundStatement boundStatement = selectPreparedStatement.bind(id);
         ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
 
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {

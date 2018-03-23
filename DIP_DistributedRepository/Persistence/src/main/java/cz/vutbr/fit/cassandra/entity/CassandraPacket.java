@@ -1,5 +1,6 @@
 package cz.vutbr.fit.cassandra.entity;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 public class CassandraPacket {
 
     @PrimaryKey
+    @Id
     private UUID id;
 
     private ByteBuffer packet;

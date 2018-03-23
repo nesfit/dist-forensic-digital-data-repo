@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 
@@ -18,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//@SpringBootApplication
-//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabaseSpringBoot.class);
@@ -53,15 +56,9 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         LOGGER.error(throwable.getMessage(), throwable);
     }
 
-    public void testReactiveMongoDB() {
-        packetMetadataRepository.findAll()
-                .doOnNext(packetMetadata -> LOGGER.debug(packetMetadata.toString()))
-                .subscribe();
-    }
-
     private Criteria prepareCriteria(List<KafkaCriteria> kafkaCriterias) {
         Criteria criteria = new Criteria();
-        kafkaCriterias.stream().forEach(
+        kafkaCriterias.forEach(
                 kafkaCriteria ->
                         packetMetadataRepository.appendCriteria(
                                 criteria,
@@ -77,9 +74,76 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     public void testDynamicCriteriaMongoDB(Criteria criteria) {
         List<PacketMetadata> list = packetMetadataRepository.findByDynamicCriteria(criteria)
-                .doOnEach(packetMetadata -> LOGGER.debug(packetMetadata.toString()))
+                .doOnError(this::handleFailure)
+                .doOnNext(packetMetadata -> LOGGER.debug(packetMetadata.toString()))
                 .collectList().block();
         LOGGER.debug("List size: " + list.size());
+    }
+
+    public void packetMetadataAndPacketSelectReactive(Criteria criteria) {
+        packetMetadataRepository.findByDynamicCriteria(criteria)
+                .doOnError(this::handleFailure)
+                .doOnNext(this::loadPacket)
+                .subscribe();
+    }
+
+    private void loadPacket(PacketMetadata packetMetadata) {
+        packetRepository.findById(packetMetadata.getRefId())
+                .doOnNext(cassandraPacket -> LOGGER.info("Raw packet length: " + cassandraPacket.getPacket().array().length))
+                .subscribe();
+    }
+
+    public void packetMetadataSelectReactive(Criteria criteria) {
+        List<PacketMetadata> packetMetadataList = new ArrayList<>();
+        packetMetadataRepository.findByDynamicCriteria(criteria)
+                .doOnError(this::handleFailure)
+                .doOnNext(packetMetadataList::add)
+                .doOnComplete(() -> {
+                    LOGGER.info("MongoDB records list size: " + packetMetadataList.size());
+                    packetSelectReactive(packetMetadataList);
+                })
+                .subscribe();
+    }
+
+    public void packetSelectReactive(List<PacketMetadata> packetMetadataList) {
+        packetMetadataList
+                .forEach(
+                        packetMetadata -> packetRepository.findById(packetMetadata.getRefId())
+                                .doOnError(this::handleFailure)
+                                .doOnNext(cassandraPacket -> LOGGER.info("Raw packet length: " + cassandraPacket.getPacket().array().length))
+                                .subscribe()
+                );
+        /*packetMetadataList
+                .forEach(
+                        packetMetadata -> {
+                            ResultSetFuture future = packetRepository.selectAsync(packetMetadata.getRefId());
+                            Futures.addCallback(future,
+                                    new FutureCallback<ResultSet>() {
+                                        @Override
+                                        public void onSuccess(ResultSet result) {
+                                            ByteBuffer rawPacket = result.one().get("packet", ByteBuffer.class);
+                                            LOGGER.info("Loaded: " + rawPacket.array());
+                                            System.out.println("Loaded - " + rawPacket);
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable throwable) {
+                                            handleFailure(throwable);
+                                        }
+                                    },
+                                    MoreExecutors.newDirectExecutorService());
+                        }
+                );*/
+
+        /*List<Row> cassandraPackets = packetMetadataList.stream()
+                .map(packetMetadata -> packetRepository.selectAsync(packetMetadata.getRefId()))
+                .collect(Collectors.toList())
+                .stream()
+                .map(ResultSetFuture::getUninterruptibly)
+                .map(ResultSet::all)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        LOGGER.info("Cassandra records list size: " + cassandraPackets.size());*/
     }
 
     private Criteria ipv6Criteria() {
@@ -108,8 +172,9 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        Criteria mongoCriteria = tcpAndPortCriteria();
-        testDynamicCriteriaMongoDB(mongoCriteria);
+        Criteria mongoCriteria = ipv6Criteria();
+        //testDynamicCriteriaMongoDB(mongoCriteria);
+        packetMetadataAndPacketSelectReactive(mongoCriteria);
         LOGGER.debug(mongoCriteria.getCriteriaObject().toJson());
     }
 
