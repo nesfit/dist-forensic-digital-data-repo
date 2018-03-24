@@ -6,6 +6,8 @@ import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.MetadataOperation;
 import cz.vutbr.fit.mongodb.entity.PacketMetadata;
 import cz.vutbr.fit.mongodb.repository.PacketMetadataRepository;
+import cz.vutbr.fit.service.pcap.dumper.PcapDumper;
+import cz.vutbr.fit.service.pcap.dumper.pcap4j.DumperImpl;
 import cz.vutbr.fit.util.JavaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +40,9 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Autowired
     PacketMetadataRepository packetMetadataRepository;
 
-    private int metadataLoadedCount;
+    private PcapDumper<byte[]> pcapDumper = new DumperImpl();
+
+    private int packetMetadataLoadedCount;
     private int packetLoadedCount;
 
     private Semaphore semaphore = new Semaphore(0);
@@ -70,36 +75,45 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         return criteria;
     }
 
-    public void packetMetadataAndPacketSelectReactive(Criteria criteria) {
+    public void loadPacketsByCriteria(Criteria criteria) {
+        packetMetadataLoadedCount = 0;
+        packetLoadedCount = 0;
+
+        pcapDumper.initDumper("file.pcap", this::handleFailure);
+
         packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
                 .doOnNext(this::loadPacket)
-                .doOnComplete(() -> blockUntilPacketsAreLoaded())
+                .doOnComplete(() -> blockIfNecessaryUntilPacketsAreLoaded())
                 .subscribe();
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
-        metadataLoadedCount++;
+        packetMetadataLoadedCount++;
         LOGGER.info("Loading packet with id " + packetMetadata.getRefId());
         packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(this::handlePacket)
+                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
                 .subscribe();
     }
 
-    private void handlePacket(CassandraPacket packet) {
+    private void dumpPacket(CassandraPacket packet, Instant timestamp) {
         packetLoadedCount++;
-        LOGGER.info("Raw packet length: " + packet.getPacket().array().length);
+        pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
 
         if (loadFinished()) {
-            unblockToSendAck();
+            pcapDumper.closeDumper();
+            unblockIfNecessaryToSendAck();
         }
     }
 
     private boolean loadFinished() {
-        return (metadataLoadedCount == packetLoadedCount);
+        return (packetMetadataLoadedCount == packetLoadedCount);
     }
 
-    private void blockUntilPacketsAreLoaded() {
+    private void blockIfNecessaryUntilPacketsAreLoaded() {
+        if (zeroRecords()) {
+            return;
+        }
         LOGGER.debug("BEFORE BLOCKING");
         try {
             semaphore.acquire();
@@ -109,10 +123,17 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         LOGGER.debug("CONTINUE");
     }
 
-    private void unblockToSendAck() {
+    private void unblockIfNecessaryToSendAck() {
+        if (zeroRecords()) {
+            return;
+        }
         LOGGER.debug("BEFORE RELEASING");
         semaphore.release();
         LOGGER.debug("AFTER RELEASING");
+    }
+
+    private boolean zeroRecords() {
+        return (packetMetadataLoadedCount == 0 && packetLoadedCount == 0);
     }
 
     private Criteria ipv6Criteria() {
@@ -142,7 +163,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         Criteria mongoCriteria = ipv6Criteria();
-        packetMetadataAndPacketSelectReactive(mongoCriteria);
+        loadPacketsByCriteria(mongoCriteria);
         LOGGER.debug(mongoCriteria.getCriteriaObject().toJson());
     }
 

@@ -30,10 +30,10 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
-    private int metadataLoadedCount;
+    private int packetMetadataLoadedCount;
     private int packetLoadedCount;
 
-    private Semaphore semaphore;
+    private Semaphore beforeAckSemaphore;
 
     @Override
     public void handleRequest(KafkaRequest request, byte[] bytes) {
@@ -52,27 +52,24 @@ public class LoadPcapHandler extends BaseHandler {
     }
 
     private void initializeSemaphore() {
-        semaphore = new Semaphore(0);
+        beforeAckSemaphore = new Semaphore(0);
     }
 
     private void loadPacketsByCriteria() {
-        // TODO: Think about how to hand over path of result PCAP, maybe datasource in request can be reused.
+        packetMetadataLoadedCount = 0;
+        packetLoadedCount = 0;
         pcapDumper.initDumper(request.getDataSource().getUri(), this::handleFailure);
 
         Criteria metadataCriteria = prepareCriteria(request.getCriterias());
         packetMetadataRepository.findByDynamicCriteria(metadataCriteria)
                 .doOnError(this::handleFailure)
                 .doOnNext(this::loadPacket)
-                .doOnComplete(() -> acknowledge())      // TODO: Where should be acknowledgement sent?
+                .doOnComplete(() -> acknowledge())
                 .subscribe();
     }
 
-    private boolean loadFinished() {
-        return (metadataLoadedCount == packetLoadedCount);
-    }
-
     private void loadPacket(PacketMetadata packetMetadata) {
-        metadataLoadedCount++;
+        packetMetadataLoadedCount++;
         packetRepository.findById(packetMetadata.getRefId())
                 .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
                 .subscribe();
@@ -82,28 +79,44 @@ public class LoadPcapHandler extends BaseHandler {
         packetLoadedCount++;
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
 
+        // TODO: Is this safe?
         if (loadFinished()) {
-            unblockToSendAck();
+            pcapDumper.closeDumper();
+            unblockIfNecessaryToSendAck();
         }
     }
 
-    private void acknowledge() {
-        blockUntilPacketsAreLoaded();
+    private boolean loadFinished() {
+        return (packetMetadataLoadedCount == packetLoadedCount);
+    }
 
-        String detailMessage = "Successfully loaded " + metadataLoadedCount + " packets";
+    private void acknowledge() {
+        blockIfNecessaryUntilPacketsAreLoaded();
+
+        String detailMessage = "Successfully loaded " + packetMetadataLoadedCount + " packets";
         sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
     }
 
-    private void blockUntilPacketsAreLoaded() {
+    private void blockIfNecessaryUntilPacketsAreLoaded() {
+        if (zeroRecords()) {
+            return;
+        }
         try {
-            semaphore.acquire();
+            beforeAckSemaphore.acquire();
         } catch (InterruptedException exception) {
             LOGGER.error(exception.getMessage(), exception);
         }
     }
 
-    private void unblockToSendAck() {
-        semaphore.release();
+    private void unblockIfNecessaryToSendAck() {
+        if (zeroRecords()) {
+            return;
+        }
+        beforeAckSemaphore.release();
+    }
+
+    private boolean zeroRecords() {
+        return (packetMetadataLoadedCount == 0 && packetLoadedCount == 0);
     }
 
     private void handleFailure(Throwable throwable) {
