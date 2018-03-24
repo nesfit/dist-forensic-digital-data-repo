@@ -125,16 +125,6 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
                                     MoreExecutors.newDirectExecutorService());
                         }
                 );*/
-
-        /*List<Row> cassandraPackets = packetMetadataList.stream()
-                .map(packetMetadata -> packetRepository.selectAsync(packetMetadata.getRefId()))
-                .collect(Collectors.toList())
-                .stream()
-                .map(ResultSetFuture::getUninterruptibly)
-                .map(ResultSet::all)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        LOGGER.info("Cassandra records list size: " + cassandraPackets.size());*/
     }
 
     private Criteria ipv6Criteria() {

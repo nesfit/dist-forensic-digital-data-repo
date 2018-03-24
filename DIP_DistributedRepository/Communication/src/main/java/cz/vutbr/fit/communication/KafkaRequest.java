@@ -2,8 +2,6 @@ package cz.vutbr.fit.communication;
 
 import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.command.DataSource;
-import cz.vutbr.fit.communication.command.DataType;
-import cz.vutbr.fit.communication.command.Operation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,11 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class KafkaRequest {
-
-    @Deprecated
-    private Operation operation;
-    @Deprecated
-    private DataType dataType;
 
     private Command command;
     private DataSource dataSource;
@@ -27,26 +20,6 @@ public class KafkaRequest {
     private UUID id;
 
     private List<KafkaCriteria> criterias;
-
-    @Deprecated
-    public Operation getOperation() {
-        return operation;
-    }
-
-    @Deprecated
-    public void setOperation(Operation operation) {
-        this.operation = operation;
-    }
-
-    @Deprecated
-    public DataType getDataType() {
-        return dataType;
-    }
-
-    @Deprecated
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
-    }
 
     public Command getCommand() {
         return command;
@@ -114,18 +87,6 @@ public class KafkaRequest {
 
         public Builder() {
             request = new KafkaRequest();
-        }
-
-        @Deprecated
-        public Builder operation(Operation operation) {
-            request.setOperation(operation);
-            return this;
-        }
-
-        @Deprecated
-        public Builder dataType(DataType dataType) {
-            request.setDataType(dataType);
-            return this;
         }
 
         public Builder command(Command command) {

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.properties;
+package cz.vutbr.fit.util;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

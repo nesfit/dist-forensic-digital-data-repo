@@ -26,7 +26,13 @@ public class PacketMetadataRepositoryImpl implements DynamicCriteria {
     }
 
     @Override
-    public Criteria appendCriteria(Criteria criteriaBuilder, String field, String operationName, boolean arrayRequired, Object value, List<Object> values, Consumer<? super Throwable> onError) {
+    public Criteria appendCriteria(Criteria criteriaBuilder,
+                                   String field,
+                                   String operationName,
+                                   boolean arrayRequired,
+                                   Object value,
+                                   List<Object> values,
+                                   Consumer<? super Throwable> onError) {
         String and = "and";
         try {
             Method whichField = criteriaBuilder.getClass().getMethod(and, String.class);
@@ -46,11 +52,9 @@ public class PacketMetadataRepositoryImpl implements DynamicCriteria {
 
     private Criteria invokeMethodOperation(Method operation, Criteria criteriaBuilder, boolean arrayRequired, Object value, List<Object> values)
             throws InvocationTargetException, IllegalAccessException {
-        if (arrayRequired) {
-            return (Criteria) operation.invoke(criteriaBuilder, new Object[]{values.toArray()});
-        } else {
-            return (Criteria) operation.invoke(criteriaBuilder, value);
-        }
+        return arrayRequired ?
+                (Criteria) operation.invoke(criteriaBuilder, new Object[]{values.toArray()}) :
+                (Criteria) operation.invoke(criteriaBuilder, value);
     }
 
 }

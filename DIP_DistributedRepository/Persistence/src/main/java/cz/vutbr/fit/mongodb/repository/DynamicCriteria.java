@@ -12,6 +12,12 @@ public interface DynamicCriteria {
 
     public Flux<PacketMetadata> findByDynamicCriteria(CriteriaDefinition criteriaDefinition);
 
-    public Criteria appendCriteria(Criteria criteriaBuilder, String field, String operationName, boolean arrayRequired, Object value, List<Object> values, Consumer<? super Throwable> onError);
+    public Criteria appendCriteria(Criteria criteriaBuilder,
+                                   String field,
+                                   String operationName,
+                                   boolean arrayRequired,
+                                   Object value,
+                                   List<Object> values,
+                                   Consumer<? super Throwable> onError);
 
 }

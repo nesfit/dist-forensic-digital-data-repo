@@ -16,11 +16,10 @@ public class HandlerManager<K, V> {
     public void handle(Command command, K key, V value) {
         ICommandHandler<K, V> handler = handlers.get(command);
         if (handler == null) {
-            String errorMsg = "Command " + command + " not supported!";
-            LOGGER.error(errorMsg);
-            throw new RuntimeException(errorMsg);
+            handleError(command, key);
+        } else {
+            handler.handleRequest(key, value);
         }
-        handler.handleRequest(key, value);
     }
 
     public void attachHandler(Command command, ICommandHandler<K, V> handler) {
@@ -29,6 +28,11 @@ public class HandlerManager<K, V> {
 
     public void detachHandler(Command command, ICommandHandler<K, V> handler) {
         handlers.remove(command, handler);
+    }
+
+    private void handleError(Command command, K request) {
+        String errorMsg = String.format("Command %s is not supported, request will not be handled %s", command, request);
+        LOGGER.error(errorMsg);
     }
 
 }

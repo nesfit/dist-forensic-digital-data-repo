@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.util.Assert;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-//@SpringBootApplication
+@SpringBootApplication
 public class StorePcapProducerLauncher extends BaseProducerDemo implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorePcapProducerLauncher.class);
