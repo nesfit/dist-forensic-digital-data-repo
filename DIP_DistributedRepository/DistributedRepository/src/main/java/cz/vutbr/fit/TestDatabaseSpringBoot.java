@@ -1,5 +1,6 @@
 package cz.vutbr.fit;
 
+import cz.vutbr.fit.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.MetadataOperation;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 //@SpringBootApplication
 //@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
@@ -34,6 +36,11 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Autowired
     PacketMetadataRepository packetMetadataRepository;
+
+    private int metadataLoadedCount;
+    private int packetLoadedCount;
+
+    private Semaphore semaphore = new Semaphore(0);
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -63,68 +70,49 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         return criteria;
     }
 
-    public void testDynamicCriteriaMongoDB(Criteria criteria) {
-        List<PacketMetadata> list = packetMetadataRepository.findByDynamicCriteria(criteria)
-                .doOnError(this::handleFailure)
-                .doOnNext(packetMetadata -> LOGGER.debug(packetMetadata.toString()))
-                .collectList().block();
-        LOGGER.debug("List size: " + list.size());
-    }
-
     public void packetMetadataAndPacketSelectReactive(Criteria criteria) {
         packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
                 .doOnNext(this::loadPacket)
+                .doOnComplete(() -> blockUntilPacketsAreLoaded())
                 .subscribe();
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
+        metadataLoadedCount++;
+        LOGGER.info("Loading packet with id " + packetMetadata.getRefId());
         packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(cassandraPacket -> LOGGER.info("Raw packet length: " + cassandraPacket.getPacket().array().length))
+                .doOnNext(this::handlePacket)
                 .subscribe();
     }
 
-    public void packetMetadataSelectReactive(Criteria criteria) {
-        List<PacketMetadata> packetMetadataList = new ArrayList<>();
-        packetMetadataRepository.findByDynamicCriteria(criteria)
-                .doOnError(this::handleFailure)
-                .doOnNext(packetMetadataList::add)
-                .doOnComplete(() -> {
-                    LOGGER.info("MongoDB records list size: " + packetMetadataList.size());
-                    packetSelectReactive(packetMetadataList);
-                })
-                .subscribe();
+    private void handlePacket(CassandraPacket packet) {
+        packetLoadedCount++;
+        LOGGER.info("Raw packet length: " + packet.getPacket().array().length);
+
+        if (loadFinished()) {
+            unblockToSendAck();
+        }
     }
 
-    public void packetSelectReactive(List<PacketMetadata> packetMetadataList) {
-        packetMetadataList
-                .forEach(
-                        packetMetadata -> packetRepository.findById(packetMetadata.getRefId())
-                                .doOnError(this::handleFailure)
-                                .doOnNext(cassandraPacket -> LOGGER.info("Raw packet length: " + cassandraPacket.getPacket().array().length))
-                                .subscribe()
-                );
-        /*packetMetadataList
-                .forEach(
-                        packetMetadata -> {
-                            ResultSetFuture future = packetRepository.selectAsync(packetMetadata.getRefId());
-                            Futures.addCallback(future,
-                                    new FutureCallback<ResultSet>() {
-                                        @Override
-                                        public void onSuccess(ResultSet result) {
-                                            ByteBuffer rawPacket = result.one().get("packet", ByteBuffer.class);
-                                            LOGGER.info("Loaded: " + rawPacket.array());
-                                            System.out.println("Loaded - " + rawPacket);
-                                        }
+    private boolean loadFinished() {
+        return (metadataLoadedCount == packetLoadedCount);
+    }
 
-                                        @Override
-                                        public void onFailure(Throwable throwable) {
-                                            handleFailure(throwable);
-                                        }
-                                    },
-                                    MoreExecutors.newDirectExecutorService());
-                        }
-                );*/
+    private void blockUntilPacketsAreLoaded() {
+        LOGGER.debug("BEFORE BLOCKING");
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException exception) {
+            LOGGER.error(exception.getMessage(), exception);
+        }
+        LOGGER.debug("CONTINUE");
+    }
+
+    private void unblockToSendAck() {
+        LOGGER.debug("BEFORE RELEASING");
+        semaphore.release();
+        LOGGER.debug("AFTER RELEASING");
     }
 
     private Criteria ipv6Criteria() {
@@ -154,7 +142,6 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         Criteria mongoCriteria = ipv6Criteria();
-        //testDynamicCriteriaMongoDB(mongoCriteria);
         packetMetadataAndPacketSelectReactive(mongoCriteria);
         LOGGER.debug(mongoCriteria.getCriteriaObject().toJson());
     }

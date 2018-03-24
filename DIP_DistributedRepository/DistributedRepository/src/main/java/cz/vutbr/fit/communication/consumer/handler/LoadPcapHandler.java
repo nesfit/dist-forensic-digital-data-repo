@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class LoadPcapHandler extends BaseHandler {
 
@@ -29,11 +30,16 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
-    private int count;
+    private int metadataLoadedCount;
+    private int packetLoadedCount;
+
+    private Semaphore semaphore;
 
     @Override
     public void handleRequest(KafkaRequest request, byte[] bytes) {
         try {
+
+            initializeSemaphore();
 
             bufferRequest(request);
             loadPacketsByCriteria();
@@ -43,6 +49,10 @@ public class LoadPcapHandler extends BaseHandler {
         } catch (Exception exception) {
             handleFailure(exception);
         }
+    }
+
+    private void initializeSemaphore() {
+        semaphore = new Semaphore(0);
     }
 
     private void loadPacketsByCriteria() {
@@ -57,31 +67,43 @@ public class LoadPcapHandler extends BaseHandler {
                 .subscribe();
     }
 
-    @Deprecated
-    private void loadPackets(List<PacketMetadata> packetMetadataList) {
-        packetMetadataList.forEach(
-                packetMetadata -> packetRepository.findById(packetMetadata.getRefId())
-                        .doOnError(this::handleFailure)
-                        .doOnNext(cassandraPacket -> dumpPacket(cassandraPacket, packetMetadata.getTimestamp()))
-                        .subscribe()
-        );
+    private boolean loadFinished() {
+        return (metadataLoadedCount == packetLoadedCount);
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
-        count++;
-        // TODO: Think about async loading or batch reactive.
+        metadataLoadedCount++;
         packetRepository.findById(packetMetadata.getRefId())
                 .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
                 .subscribe();
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
+        packetLoadedCount++;
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
+
+        if (loadFinished()) {
+            unblockToSendAck();
+        }
     }
 
     private void acknowledge() {
-        String detailMessage = "Successfully loaded " + count + " packets";
+        blockUntilPacketsAreLoaded();
+
+        String detailMessage = "Successfully loaded " + metadataLoadedCount + " packets";
         sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
+    }
+
+    private void blockUntilPacketsAreLoaded() {
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException exception) {
+            LOGGER.error(exception.getMessage(), exception);
+        }
+    }
+
+    private void unblockToSendAck() {
+        semaphore.release();
     }
 
     private void handleFailure(Throwable throwable) {
