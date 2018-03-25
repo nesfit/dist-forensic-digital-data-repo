@@ -14,15 +14,16 @@ public class AcknowledgementConsumer {
     @Autowired
     private HandlerManager<KafkaResponse, byte[]> handlerManager;
 
+    @Autowired
+    private Command responseCommand;
+
     @KafkaListener(topics = {"${output.topic}", "${error.topic}"})
     public void listen(ConsumerRecord<KafkaResponse, byte[]> record) {
         consume(record);
     }
 
     private void consume(ConsumerRecord<KafkaResponse, byte[]> record) {
-        // TODO: Remove hardcoded Command
-        Command command = Command.HANDLE_RESPONSE;
-        handlerManager.handle(command, record.key(), record.value());
+        handlerManager.handle(responseCommand, record.key(), record.value());
     }
 
 }

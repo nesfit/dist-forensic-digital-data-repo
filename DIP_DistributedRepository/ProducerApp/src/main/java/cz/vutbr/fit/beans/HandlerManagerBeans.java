@@ -21,4 +21,9 @@ public class HandlerManagerBeans {
         return handlerManager;
     }
 
+    @Bean
+    public Command responseCommand() {
+        return Command.HANDLE_RESPONSE;
+    }
+
 }

@@ -1,4 +1,4 @@
-package cz.vutbr.fit;
+package cz.vutbr.fit.demo;
 
 import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.KafkaRequest;
@@ -6,29 +6,19 @@ import cz.vutbr.fit.communication.MetadataOperation;
 import cz.vutbr.fit.communication.command.Command;
 import cz.vutbr.fit.communication.command.DataSource;
 import cz.vutbr.fit.communication.command.DataSourceStorage;
-import cz.vutbr.fit.demo.BaseProducerDemo;
-import cz.vutbr.fit.util.JavaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.Banner;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@SpringBootApplication
-public class LoadPcapProducerLauncher extends BaseProducerDemo implements CommandLineRunner {
+@Component
+public class LoadPcapProducerDemo extends BaseProducerDemo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoadPcapProducerLauncher.class);
-
-    static {
-        JavaEnvironment.SetUp();
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoadPcapProducerDemo.class);
 
     @Value("${cz.vutbr.fit.LoadPcapProducerLauncher.dataSourceStorage}")
     private DataSourceStorage dataSourceStorage;
@@ -59,19 +49,6 @@ public class LoadPcapProducerLauncher extends BaseProducerDemo implements Comman
         criteria.add(ipVersionName);
         criteria.add(dstIpAddress);
         return criteria;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        runProducer();
-    }
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(LoadPcapProducerLauncher.class)
-                .web(WebApplicationType.NONE)
-                .bannerMode(Banner.Mode.OFF)
-                .build()
-                .run(args);
     }
 
 }

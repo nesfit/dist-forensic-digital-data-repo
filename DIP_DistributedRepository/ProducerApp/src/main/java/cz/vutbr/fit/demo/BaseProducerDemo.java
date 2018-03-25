@@ -50,7 +50,9 @@ public class BaseProducerDemo {
                 .build();
     }
 
-    protected KafkaRequest buildKafkaRequestWithCriterias(DataSource dataSource, Command command, UUID requestId, List<KafkaCriteria> criterias) {
+    protected KafkaRequest buildKafkaRequestWithCriterias(DataSource dataSource,
+                                                          Command command, UUID requestId,
+                                                          List<KafkaCriteria> criterias) {
         return new KafkaRequest.Builder()
                 .command(command)
                 .dataSource(dataSource)
