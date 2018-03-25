@@ -1,6 +1,6 @@
 package cz.vutbr.fit;
 
-import cz.vutbr.fit.util.JavaEnvironment;
+import cz.vutbr.fit.distributedrepository.util.JavaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
