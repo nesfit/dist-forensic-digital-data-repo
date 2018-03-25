@@ -1,5 +1,6 @@
-package cz.vutbr.fit.distributedrepository;
+package cz.vutbr.fit;
 
+import com.datastax.driver.core.ResultSetFuture;
 import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.MetadataOperation;
 import cz.vutbr.fit.distributedrepository.service.pcap.dumper.PcapDumper;
@@ -15,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 
@@ -24,8 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-//@SpringBootApplication
-//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabaseSpringBoot.class);
@@ -46,6 +50,22 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     private int packetLoadedCount;
 
     private Semaphore semaphore = new Semaphore(0);
+
+    private synchronized void incPacketMetadataLoadedCount() {
+        packetMetadataLoadedCount++;
+    }
+
+    private synchronized void incPacketLoadedCount() {
+        packetLoadedCount++;
+    }
+
+    private synchronized int getPacketMetadataLoadedCount() {
+        return this.packetMetadataLoadedCount;
+    }
+
+    private synchronized int getPacketLoadedCount() {
+        return this.packetLoadedCount;
+    }
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -89,25 +109,29 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
-        packetMetadataLoadedCount++;
-        LOGGER.info("Loading packet with id " + packetMetadata.getRefId());
-        packetRepository.findById(packetMetadata.getRefId())
+        incPacketMetadataLoadedCount();
+
+        //LOGGER.info("Loading packet with id " + packetMetadata.getRefId());
+        /*packetRepository.findById(packetMetadata.getRefId())
                 .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
-                .subscribe();
+                .subscribe();*/
+        ResultSetFuture future = packetRepository.selectAsync(packetMetadata.getRefId(),
+                cassandraPacket -> dumpPacket(cassandraPacket, packetMetadata.getTimestamp()));
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
-        packetLoadedCount++;
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
+        incPacketLoadedCount();
 
         if (loadFinished()) {
-            pcapDumper.closeDumper();
+            LOGGER.warn("This should happen only once, packetMetadataLoadedCount=" + packetMetadataLoadedCount
+                    + " packetLoadedCount=" + packetLoadedCount);
             unblockIfNecessaryToSendAck();
         }
     }
 
     private boolean loadFinished() {
-        return (packetMetadataLoadedCount == packetLoadedCount);
+        return (getPacketMetadataLoadedCount() == getPacketLoadedCount());
     }
 
     private void blockIfNecessaryUntilPacketsAreLoaded() {
@@ -121,6 +145,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
             LOGGER.error(exception.getMessage(), exception);
         }
         LOGGER.debug("CONTINUE");
+        pcapDumper.closeDumper();
     }
 
     private void unblockIfNecessaryToSendAck() {
@@ -133,7 +158,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     }
 
     private boolean zeroRecords() {
-        return (packetMetadataLoadedCount == 0 && packetLoadedCount == 0);
+        return (getPacketMetadataLoadedCount() == 0 && getPacketLoadedCount() == 0);
     }
 
     private Criteria ipv6Criteria() {
@@ -162,7 +187,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        Criteria mongoCriteria = ipv6Criteria();
+        Criteria mongoCriteria = tcpAndPortCriteria();
         loadPacketsByCriteria(mongoCriteria);
         LOGGER.debug(mongoCriteria.getCriteriaObject().toJson());
     }

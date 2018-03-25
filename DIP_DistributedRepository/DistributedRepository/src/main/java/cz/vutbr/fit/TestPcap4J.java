@@ -1,4 +1,4 @@
-package cz.vutbr.fit.distributedrepository;
+package cz.vutbr.fit;
 
 import cz.vutbr.fit.distributedrepository.service.pcap.parser.pcap4j.ParserImpl;
 import cz.vutbr.fit.distributedrepository.util.JavaEnvironment;

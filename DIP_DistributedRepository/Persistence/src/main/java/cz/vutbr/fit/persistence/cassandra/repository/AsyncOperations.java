@@ -9,6 +9,6 @@ public interface AsyncOperations {
 
     public ResultSetFuture insertAsync(CassandraPacket cassandraPacket);
 
-    public ResultSetFuture selectAsync(UUID id);
+    public ResultSetFuture selectAsync(UUID id, OnSuccessCallback onSuccessCallback);
 
 }

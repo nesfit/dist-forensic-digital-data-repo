@@ -109,13 +109,13 @@ public class PacketRepositoryImpl implements AsyncOperations {
     }
 
     @Override
-    public ResultSetFuture selectAsync(UUID id) {
+    public ResultSetFuture selectAsync(UUID id, OnSuccessCallback onSuccessCallback) {
         lockSemaphore();
 
         BoundStatement boundStatement = selectPreparedStatement.bind(id);
         ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
 
-        Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
+        /*Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override
             public void onSuccess(ResultSet rows) {
                 unlockSemaphore();
@@ -125,7 +125,30 @@ public class PacketRepositoryImpl implements AsyncOperations {
             public void onFailure(Throwable throwable) {
                 unlockSemaphore();
             }
-        }, MoreExecutors.newDirectExecutorService());
+        }, MoreExecutors.newDirectExecutorService());*/
+
+        Futures.addCallback(resultSetFuture,
+                new FutureCallback<ResultSet>() {
+                    @Override
+                    public void onSuccess(ResultSet result) {
+                        Row row = result.one();
+                        UUID id = row.get("id", UUID.class);
+                        ByteBuffer rawPacket = row.get("packet", ByteBuffer.class);
+
+                        unlockSemaphore();
+
+                        CassandraPacket packet = new CassandraPacket();
+                        packet.setId(id);
+                        packet.setPacket(rawPacket);
+                        onSuccessCallback.onSuccess(packet);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        unlockSemaphore();
+                    }
+                },
+                MoreExecutors.newDirectExecutorService());
 
         return resultSetFuture;
     }
