@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class LoadPcapHandler extends BaseHandler {
 
@@ -30,16 +29,13 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
-    private int packetMetadataLoadedCount;
-    private int packetLoadedCount;
-
-    private Semaphore beforeAckSemaphore;
+    private int packetsToLoad;
+    private int packetsLoaded;
+    private PacketMetadata lastPacketToLoad;
 
     @Override
     public void handleRequest(KafkaRequest request, byte[] bytes) {
         try {
-
-            initializeSemaphore();
 
             bufferRequest(request);
             loadPacketsByCriteria();
@@ -51,72 +47,61 @@ public class LoadPcapHandler extends BaseHandler {
         }
     }
 
-    private void initializeSemaphore() {
-        beforeAckSemaphore = new Semaphore(0);
-    }
-
     private void loadPacketsByCriteria() {
-        packetMetadataLoadedCount = 0;
-        packetLoadedCount = 0;
+        packetsToLoad = 0;
+        packetsLoaded = 0;
+        lastPacketToLoad = null;
+
         pcapDumper.initDumper(request.getDataSource().getUri(), this::handleFailure);
 
-        Criteria metadataCriteria = prepareCriteria(request.getCriterias());
-        packetMetadataRepository.findByDynamicCriteria(metadataCriteria)
+        Criteria criteria = prepareCriteria(request.getCriterias());
+        //lastPacketToLoad =
+        packetsToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
-                .doOnNext(this::loadPacket)
-                .doOnComplete(() -> acknowledge())
-                .subscribe();
+                .doOnNext(packetMetadata -> {
+                    //packetsToLoad++;
+                    loadPacket(packetMetadata);
+                })
+                .count().block().intValue();
+                //.blockLast();
+        /* The call blockLast() is very important - it waits until all items in Flux are emitted
+         (we can find out last record which needs to be loaded from Cassandra). */
+
+        LOGGER.info(String.format("LastPacketToLoad %s", lastPacketToLoad));
+        if (packetsToLoad == 0) {
+            LOGGER.info("Zero packets loaded, closing dumper.");
+            //pcapDumper.closeDumper();
+        }
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
-        packetMetadataLoadedCount++;
-        packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
-                .subscribe();
+        packetRepository.selectAsync(packetMetadata.getRefId(),
+                cassandraPacket -> {
+                    dumpPacket(cassandraPacket, packetMetadata.getTimestamp());
+                    packetsLoaded++;
+
+                    // TODO: Wrap into another callback... e.g. onSuccessLoad()
+                    //if (packetMetadata.equals(lastPacketToLoad)) {
+                    if (packetsToLoad != 0 && packetsToLoad == packetsLoaded) {
+                        LOGGER.info(String.format("Packets to load: %d, " +
+                                "successfully loaded %d packets, " +
+                                "PacketMetadata: %s, " +
+                                "closing dumper.", packetsToLoad, packetsLoaded, packetMetadata.toString()));
+                        pcapDumper.closeDumper();
+
+                        acknowledge();
+                        //System.exit(0);
+                    }
+                });
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
-        packetLoadedCount++;
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
-
-        // TODO: Is this safe?
-        if (loadFinished()) {
-            pcapDumper.closeDumper();
-            unblockIfNecessaryToSendAck();
-        }
-    }
-
-    private boolean loadFinished() {
-        return (packetMetadataLoadedCount == packetLoadedCount);
     }
 
     private void acknowledge() {
-        blockIfNecessaryUntilPacketsAreLoaded();
-
-        String detailMessage = "Successfully loaded " + packetMetadataLoadedCount + " packets";
+        String detailMessage = String.format("Successfully loaded %d packets.", packetsLoaded);
         sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
-    }
-
-    private void blockIfNecessaryUntilPacketsAreLoaded() {
-        if (zeroRecords()) {
-            return;
-        }
-        try {
-            beforeAckSemaphore.acquire();
-        } catch (InterruptedException exception) {
-            LOGGER.error(exception.getMessage(), exception);
-        }
-    }
-
-    private void unblockIfNecessaryToSendAck() {
-        if (zeroRecords()) {
-            return;
-        }
-        beforeAckSemaphore.release();
-    }
-
-    private boolean zeroRecords() {
-        return (packetMetadataLoadedCount == 0 && packetLoadedCount == 0);
     }
 
     private void handleFailure(Throwable throwable) {

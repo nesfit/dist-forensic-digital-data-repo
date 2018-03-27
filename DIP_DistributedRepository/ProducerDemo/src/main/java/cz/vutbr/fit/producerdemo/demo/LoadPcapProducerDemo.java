@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
 
             UUID requestId = UUID.randomUUID();
             DataSource dataSource = createDataSource(dataSourceStorage, requestId.toString(), Boolean.FALSE);
-            KafkaRequest request = buildKafkaRequestWithCriterias(dataSource, Command.LOAD_PCAP, requestId, ipv6Criteria());
+            KafkaRequest request = buildKafkaRequestWithCriterias(dataSource, Command.LOAD_PCAP, requestId, tcpAndPortCriteria());
             byte[] payload = null;
 
             producer.produce(inputTopic, request, payload,
@@ -48,6 +49,17 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
                 .field("dstIpAddress").operation(MetadataOperation.EQ).value("ff02:0:0:0:0:0:0:c").build();
         criteria.add(ipVersionName);
         criteria.add(dstIpAddress);
+        return criteria;
+    }
+
+    private List<KafkaCriteria> tcpAndPortCriteria() {
+        List<KafkaCriteria> criteria = new ArrayList<>();
+        KafkaCriteria tcp = new KafkaCriteria.Builder()
+                .field("ipProtocolName").operation(MetadataOperation.EQ).value("TCP").build();
+        KafkaCriteria portLte443 = new KafkaCriteria.Builder()
+                .field("dstPort").operation(MetadataOperation.IN).values(Arrays.asList("443", "80")).build();
+        criteria.add(tcp);
+        criteria.add(portLte443);
         return criteria;
     }
 

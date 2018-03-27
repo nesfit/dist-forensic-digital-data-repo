@@ -1,6 +1,5 @@
 package cz.vutbr.fit;
 
-import com.datastax.driver.core.ResultSetFuture;
 import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.MetadataOperation;
 import cz.vutbr.fit.distributedrepository.service.pcap.dumper.PcapDumper;
@@ -26,10 +25,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+//@SpringBootApplication
+//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabaseSpringBoot.class);
@@ -46,26 +44,9 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private PcapDumper<byte[]> pcapDumper = new DumperImpl();
 
-    private int packetMetadataLoadedCount;
-    private int packetLoadedCount;
-
-    private Semaphore semaphore = new Semaphore(0);
-
-    private synchronized void incPacketMetadataLoadedCount() {
-        packetMetadataLoadedCount++;
-    }
-
-    private synchronized void incPacketLoadedCount() {
-        packetLoadedCount++;
-    }
-
-    private synchronized int getPacketMetadataLoadedCount() {
-        return this.packetMetadataLoadedCount;
-    }
-
-    private synchronized int getPacketLoadedCount() {
-        return this.packetLoadedCount;
-    }
+    private int packetsToLoad;
+    private int packetsLoaded;
+    private PacketMetadata lastPacketToLoad;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -96,69 +77,41 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     }
 
     public void loadPacketsByCriteria(Criteria criteria) {
-        packetMetadataLoadedCount = 0;
-        packetLoadedCount = 0;
+        packetsToLoad = 0;
+        packetsLoaded = 0;
+        lastPacketToLoad = null;
 
         pcapDumper.initDumper("file.pcap", this::handleFailure);
 
-        packetMetadataRepository.findByDynamicCriteria(criteria)
+        lastPacketToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
-                .doOnNext(this::loadPacket)
-                .doOnComplete(() -> blockIfNecessaryUntilPacketsAreLoaded())
-                .subscribe();
+                .doOnNext(packetMetadata -> {
+                    packetsToLoad++;
+                    loadPacket(packetMetadata);
+                })
+                .blockLast();
+
+        if (packetsToLoad == 0) {
+            LOGGER.info("Zero packets loaded, closing dumper.");
+            pcapDumper.closeDumper();
+        }
     }
 
     private void loadPacket(PacketMetadata packetMetadata) {
-        incPacketMetadataLoadedCount();
+        packetRepository.selectAsync(packetMetadata.getRefId(),
+                cassandraPacket -> {
+                    dumpPacket(cassandraPacket, packetMetadata.getTimestamp());
+                    packetsLoaded++;
 
-        //LOGGER.info("Loading packet with id " + packetMetadata.getRefId());
-        /*packetRepository.findById(packetMetadata.getRefId())
-                .doOnNext(packet -> dumpPacket(packet, packetMetadata.getTimestamp()))
-                .subscribe();*/
-        ResultSetFuture future = packetRepository.selectAsync(packetMetadata.getRefId(),
-                cassandraPacket -> dumpPacket(cassandraPacket, packetMetadata.getTimestamp()));
+                    if (packetMetadata.equals(lastPacketToLoad)) {
+                        LOGGER.info(String.format("Successfully loaded %d packets, closing dumper.", packetsLoaded));
+                        pcapDumper.closeDumper();
+                    }
+                });
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
-        incPacketLoadedCount();
-
-        if (loadFinished()) {
-            LOGGER.warn("This should happen only once, packetMetadataLoadedCount=" + packetMetadataLoadedCount
-                    + " packetLoadedCount=" + packetLoadedCount);
-            unblockIfNecessaryToSendAck();
-        }
-    }
-
-    private boolean loadFinished() {
-        return (getPacketMetadataLoadedCount() == getPacketLoadedCount());
-    }
-
-    private void blockIfNecessaryUntilPacketsAreLoaded() {
-        if (zeroRecords()) {
-            return;
-        }
-        LOGGER.debug("BEFORE BLOCKING");
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException exception) {
-            LOGGER.error(exception.getMessage(), exception);
-        }
-        LOGGER.debug("CONTINUE");
-        pcapDumper.closeDumper();
-    }
-
-    private void unblockIfNecessaryToSendAck() {
-        if (zeroRecords()) {
-            return;
-        }
-        LOGGER.debug("BEFORE RELEASING");
-        semaphore.release();
-        LOGGER.debug("AFTER RELEASING");
-    }
-
-    private boolean zeroRecords() {
-        return (getPacketMetadataLoadedCount() == 0 && getPacketLoadedCount() == 0);
     }
 
     private Criteria ipv6Criteria() {

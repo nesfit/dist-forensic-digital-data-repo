@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 
-public class DumperImpl implements PcapDumper<byte[]> {
+public class DumperImpl implements PcapDumper<byte[]>, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DumperImpl.class);
 
@@ -42,6 +42,12 @@ public class DumperImpl implements PcapDumper<byte[]> {
 
     @Override
     public void closeDumper() {
+        dumper.close();
+        outputHandle.close();
+    }
+
+    @Override
+    public void close() throws Exception {
         dumper.close();
         outputHandle.close();
     }

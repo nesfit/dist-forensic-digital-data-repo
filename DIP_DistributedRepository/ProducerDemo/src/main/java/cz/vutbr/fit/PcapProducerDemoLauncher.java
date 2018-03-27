@@ -32,8 +32,8 @@ public class PcapProducerDemoLauncher implements CommandLineRunner {
             System.exit(99);
         }
         try {
-            String directoryWithPcaps = args[0];
-            storePcapProducerDemo.runMultipleProducer(directoryWithPcaps);
+            //String directoryWithPcaps = args[0];
+            //storePcapProducerDemo.runMultipleProducer(directoryWithPcaps);
 
             loadPcapProducerDemo.runProducer();
         } catch (Exception exception) {
