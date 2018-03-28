@@ -39,8 +39,6 @@ public class LoadPcapHandler extends BaseHandler {
             bufferRequest(request);
             loadPacketsByCriteria();
 
-            // TODO: Store response PCAP payload into HDFS instead of local drive
-
         } catch (Exception exception) {
             handleFailure(exception);
         }
@@ -70,13 +68,8 @@ public class LoadPcapHandler extends BaseHandler {
                     dumpPacket(cassandraPacket, packetMetadata.getTimestamp());
                     packetsLoaded++;
 
-                    // TODO: Wrap into another callback... e.g. onSuccessLoad()
                     if (loadingFinished()) {
-                        LOGGER.info(String.format("Packets to load: %d, successfully loaded %d packets, " +
-                                "closing dumper.", packetsToLoad, packetsLoaded));
-                        pcapDumper.closeDumper();
-
-                        acknowledge();
+                        onFinishLoaded();
                     }
                 });
     }
@@ -87,6 +80,23 @@ public class LoadPcapHandler extends BaseHandler {
 
     private boolean loadingFinished() {
         return packetsToLoad != 0 && packetsToLoad == packetsLoaded;
+    }
+
+    private void onFinishLoaded() {
+        LOGGER.debug(String.format("Packets to load: %d, successfully loaded %d packets, " +
+                "closing dumper.", packetsToLoad, packetsLoaded));
+        pcapDumper.closeDumper();
+
+        String localFile, dstFile;
+        localFile = dstFile = request.getDataSource().getUri();
+        storePayloadIntoHDFS(localFile, dstFile);
+
+        acknowledge();
+    }
+
+    private void storePayloadIntoHDFS(String localFile, String dstFile) {
+        hdfsShell.put(localFile, dstFile);
+        LOGGER.debug("Result PCAP file stored into HDFS.");
     }
 
     private void acknowledge() {

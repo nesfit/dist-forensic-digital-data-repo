@@ -33,7 +33,7 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
             byte[] payload = null;
 
             producer.produce(inputTopic, request, payload,
-                    kafkaRequestSendResult -> LOGGER.info(kafkaRequestSendResult.toString()),
+                    kafkaRequestSendResult -> LOGGER.info(kafkaRequestSendResult.getRecordMetadata().toString()),
                     BaseProducerDemo::handleError);
 
         } catch (Exception exception) {
