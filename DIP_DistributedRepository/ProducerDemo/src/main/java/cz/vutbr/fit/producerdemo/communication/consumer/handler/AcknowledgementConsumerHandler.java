@@ -15,7 +15,7 @@ public class AcknowledgementConsumerHandler implements ICommandHandler<KafkaResp
     private static final Logger LOGGER = LoggerFactory.getLogger(AcknowledgementConsumerHandler.class);
 
     @Override
-    public void handleRequest(KafkaResponse response, byte[] s) {
+    public void handleRequest(KafkaResponse response, byte[] bytes) {
         CollectStats.getInstance().setEndTime(response.getId(), new Date());
         LOGGER.debug(response.toString());
         CollectStats.getInstance().finalStats();

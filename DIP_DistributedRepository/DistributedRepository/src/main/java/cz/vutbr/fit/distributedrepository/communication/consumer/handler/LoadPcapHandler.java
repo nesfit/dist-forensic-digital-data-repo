@@ -29,9 +29,8 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
-    private int packetsToLoad;
-    private int packetsLoaded;
-    private PacketMetadata lastPacketToLoad;
+    private long packetsToLoad;
+    private long packetsLoaded;
 
     @Override
     public void handleRequest(KafkaRequest request, byte[] bytes) {
@@ -50,27 +49,18 @@ public class LoadPcapHandler extends BaseHandler {
     private void loadPacketsByCriteria() {
         packetsToLoad = 0;
         packetsLoaded = 0;
-        lastPacketToLoad = null;
 
         pcapDumper.initDumper(request.getDataSource().getUri(), this::handleFailure);
 
         Criteria criteria = prepareCriteria(request.getCriterias());
-        //lastPacketToLoad =
         packetsToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
-                .doOnNext(packetMetadata -> {
-                    //packetsToLoad++;
-                    loadPacket(packetMetadata);
-                })
-                .count().block().intValue();
-                //.blockLast();
-        /* The call blockLast() is very important - it waits until all items in Flux are emitted
-         (we can find out last record which needs to be loaded from Cassandra). */
+                .doOnNext(this::loadPacket)
+                .count().block();
 
-        LOGGER.info(String.format("LastPacketToLoad %s", lastPacketToLoad));
         if (packetsToLoad == 0) {
             LOGGER.info("Zero packets loaded, closing dumper.");
-            //pcapDumper.closeDumper();
+            pcapDumper.closeDumper();
         }
     }
 
@@ -81,22 +71,22 @@ public class LoadPcapHandler extends BaseHandler {
                     packetsLoaded++;
 
                     // TODO: Wrap into another callback... e.g. onSuccessLoad()
-                    //if (packetMetadata.equals(lastPacketToLoad)) {
-                    if (packetsToLoad != 0 && packetsToLoad == packetsLoaded) {
-                        LOGGER.info(String.format("Packets to load: %d, " +
-                                "successfully loaded %d packets, " +
-                                "PacketMetadata: %s, " +
-                                "closing dumper.", packetsToLoad, packetsLoaded, packetMetadata.toString()));
+                    if (loadingFinished()) {
+                        LOGGER.info(String.format("Packets to load: %d, successfully loaded %d packets, " +
+                                "closing dumper.", packetsToLoad, packetsLoaded));
                         pcapDumper.closeDumper();
 
                         acknowledge();
-                        //System.exit(0);
                     }
                 });
     }
 
     private void dumpPacket(CassandraPacket packet, Instant timestamp) {
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
+    }
+
+    private boolean loadingFinished() {
+        return packetsToLoad != 0 && packetsToLoad == packetsLoaded;
     }
 
     private void acknowledge() {

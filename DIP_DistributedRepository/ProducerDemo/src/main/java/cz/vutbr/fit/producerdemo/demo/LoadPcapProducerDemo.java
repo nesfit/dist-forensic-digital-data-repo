@@ -29,7 +29,7 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
 
             UUID requestId = UUID.randomUUID();
             DataSource dataSource = createDataSource(dataSourceStorage, requestId.toString(), Boolean.FALSE);
-            KafkaRequest request = buildKafkaRequestWithCriterias(dataSource, Command.LOAD_PCAP, requestId, tcpAndPortCriteria());
+            KafkaRequest request = buildKafkaRequestWithCriterias(dataSource, Command.LOAD_PCAP, requestId, ipv6Criteria());
             byte[] payload = null;
 
             producer.produce(inputTopic, request, payload,
@@ -39,6 +39,14 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
         } catch (Exception exception) {
             handleError(exception);
         }
+    }
+
+    private List<KafkaCriteria> onlyOneByRefId() {
+        List<KafkaCriteria> criteria = new ArrayList<>();
+        UUID refId = UUID.fromString("8659c8f5-313c-11e8-b0c6-77a556ade544");
+        KafkaCriteria refIdCriteria = new KafkaCriteria.Builder().field("refId").operation(MetadataOperation.EQ).value(refId).build();
+        criteria.add(refIdCriteria);
+        return criteria;
     }
 
     private List<KafkaCriteria> ipv6Criteria() {

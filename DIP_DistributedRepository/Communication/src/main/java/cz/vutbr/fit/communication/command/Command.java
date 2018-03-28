@@ -12,7 +12,8 @@ public enum Command {
     LOAD_PCAP(Operation.LOAD, DataType.PCAP),
     LOAD_PACKET(Operation.LOAD, DataType.PACKET),
 
-    HANDLE_RESPONSE;
+    HANDLE_SUCCESS_RESPONSE,
+    HANDLE_FAILURE_RESPONSE;
 
     private Operation operation;
     private DataType dataType;

@@ -9,13 +9,13 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AcknowledgementConsumer {
+public class ErrorConsumer {
 
     @Autowired
     private HandlerManager<KafkaResponse, byte[]> handlerManager;
 
     @Autowired
-    private Command responseSuccessCommand;
+    private Command responseFailureCommand;
 
     @KafkaListener(topics = {"${error.topic}"})
     public void listen(ConsumerRecord<KafkaResponse, byte[]> record) {
@@ -23,7 +23,7 @@ public class AcknowledgementConsumer {
     }
 
     private void consume(ConsumerRecord<KafkaResponse, byte[]> record) {
-        handlerManager.handle(responseSuccessCommand, record.key(), record.value());
+        handlerManager.handle(responseFailureCommand, record.key(), record.value());
     }
 
 }
