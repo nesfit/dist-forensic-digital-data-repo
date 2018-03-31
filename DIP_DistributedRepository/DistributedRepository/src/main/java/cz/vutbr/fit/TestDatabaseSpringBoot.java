@@ -129,7 +129,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
             dstIpAddress = new KafkaCriteria.Builder()
                     .field("dstIpAddress")
                     .operation(MetadataOperation.EQ)
-                    .value(InetAddress.getByName("192.168.1.1").toString())
+                    .value(InetAddress.getByName("192.168.1.1").getHostAddress())
                     .build();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -152,7 +152,7 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
             dstIpAddress = new KafkaCriteria.Builder()
                     .field("dstIpAddress")
                     .operation(MetadataOperation.EQ)
-                    .value(InetAddress.getByName("ff02::c").toString())
+                    .value(InetAddress.getByName("ff02::c").getHostAddress())
                     .build();
         } catch (UnknownHostException e) {
             e.printStackTrace();

@@ -27,8 +27,8 @@ public class IpPacketExtractor implements PacketExtractor<PcapPacket, PacketMeta
                     .ipProtocolValue(protocol.value())
                     .ipVersionName(version.name())
                     .ipVersionValue(version.value())
-                    .srcIpAddress(srcAddr.toString())
-                    .dstIpAddress(dstAddr.toString());
+                    .srcIpAddress(srcAddr.getHostAddress())
+                    .dstIpAddress(dstAddr.getHostAddress());
         }
     }
 

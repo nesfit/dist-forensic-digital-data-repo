@@ -63,7 +63,7 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
             dstIpAddress = new KafkaCriteria.Builder()
                     .field("dstIpAddress")
                     .operation(MetadataOperation.EQ)
-                    .value(InetAddress.getByName("ff02:0:0:0:0:0:0:c").toString())
+                    .value(InetAddress.getByName("ff02:0:0:0:0:0:0:c").getHostAddress())
                     .build();
         } catch (UnknownHostException e) {
             e.printStackTrace();

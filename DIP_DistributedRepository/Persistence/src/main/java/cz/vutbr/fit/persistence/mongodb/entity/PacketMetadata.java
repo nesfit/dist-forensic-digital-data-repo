@@ -31,7 +31,7 @@ public class PacketMetadata {
     private byte ipVersionValue;        // For IPv4: 4, for ST: 5, for IPv6: 6, etc
     private String ipVersionName;       // IPv4, ST, IPv6, etc
     // String of IP address can be obtained by
-    // InetAddress.getByName("string representation of IP address").toString()
+    // InetAddress.getByName("string representation of IP address").getHostAddress()
     private String srcIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
     private String dstIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
 
