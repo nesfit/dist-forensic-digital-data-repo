@@ -8,6 +8,8 @@ import org.pcap4j.packet.namednumber.IpNumber;
 import org.pcap4j.packet.namednumber.IpVersion;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
+
 @Component
 public class IpPacketExtractor implements PacketExtractor<PcapPacket, PacketMetadata.Builder> {
 
@@ -17,13 +19,16 @@ public class IpPacketExtractor implements PacketExtractor<PcapPacket, PacketMeta
             IpPacket ipPacket = packet.get(IpPacket.class);
             IpNumber protocol = ipPacket.getHeader().getProtocol();
             IpVersion version = ipPacket.getHeader().getVersion();
-            String srcAddr = ipPacket.getHeader().getSrcAddr().getHostAddress();
-            String dstAddr = ipPacket.getHeader().getDstAddr().getHostAddress();
+            InetAddress srcAddr = ipPacket.getHeader().getSrcAddr();
+            InetAddress dstAddr = ipPacket.getHeader().getDstAddr();
 
-            // TODO: Is format of IP address suitable (IPv6)?
-            packetMetadataBuilder.ipProtocolName(protocol.name()).ipProtocolValue(protocol.valueAsString())
-                    .ipVersionName(version.name()).ipVersionValue(version.valueAsString())
-                    .srcIpAddress(srcAddr).dstIpAddress(dstAddr);
+            packetMetadataBuilder
+                    .ipProtocolName(protocol.name())
+                    .ipProtocolValue(protocol.value())
+                    .ipVersionName(version.name())
+                    .ipVersionValue(version.value())
+                    .srcIpAddress(srcAddr.toString())
+                    .dstIpAddress(dstAddr.toString());
         }
     }
 

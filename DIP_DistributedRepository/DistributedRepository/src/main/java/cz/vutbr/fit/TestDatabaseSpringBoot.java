@@ -18,6 +18,8 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +43,8 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
 
     private PcapDumper<byte[]> pcapDumper = new DumperImpl();
 
-    private int packetsToLoad;
-    private int packetsLoaded;
-    private PacketMetadata lastPacketToLoad;
+    private long packetsToLoad;
+    private long packetsLoaded;
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(TestDatabaseSpringBoot.class)
@@ -76,20 +77,16 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
     public void loadPacketsByCriteria(Criteria criteria) {
         packetsToLoad = 0;
         packetsLoaded = 0;
-        lastPacketToLoad = null;
 
         pcapDumper.initDumper("file.pcap", this::handleFailure);
 
-        lastPacketToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
+        packetsToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
                 .doOnError(this::handleFailure)
-                .doOnNext(packetMetadata -> {
-                    packetsToLoad++;
-                    loadPacket(packetMetadata);
-                })
-                .blockLast();
+                .doOnNext(this::loadPacket)
+                .count().block();
 
         if (packetsToLoad == 0) {
-            LOGGER.info("Zero packets loaded, closing dumper.");
+            LOGGER.debug("Zero packets loaded, closing dumper.");
             pcapDumper.closeDumper();
         }
     }
@@ -100,9 +97,8 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
                     dumpPacket(cassandraPacket, packetMetadata.getTimestamp());
                     packetsLoaded++;
 
-                    if (packetMetadata.equals(lastPacketToLoad)) {
-                        LOGGER.info(String.format("Successfully loaded %d packets, closing dumper.", packetsLoaded));
-                        pcapDumper.closeDumper();
+                    if (loadingFinished()) {
+                        onFinishLoaded();
                     }
                 });
     }
@@ -111,12 +107,56 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         pcapDumper.dumpOutput(packet.getPacket().array(), timestamp, this::handleFailure);
     }
 
+    private boolean loadingFinished() {
+        return packetsToLoad != 0 && packetsToLoad == packetsLoaded;
+    }
+
+    private void onFinishLoaded() {
+        LOGGER.debug(String.format("Packets to load: %d, successfully loaded %d packets, " +
+                "closing dumper.", packetsToLoad, packetsLoaded));
+        pcapDumper.closeDumper();
+    }
+
+    private Criteria ipv4Criteria() {
+        List<KafkaCriteria> criteria = new ArrayList<>();
+        KafkaCriteria ipVersionName = new KafkaCriteria.Builder()
+                .field("ipVersionName")
+                .operation(MetadataOperation.EQ)
+                .value("IPv4")
+                .build();
+        KafkaCriteria dstIpAddress = null;
+        try {
+            dstIpAddress = new KafkaCriteria.Builder()
+                    .field("dstIpAddress")
+                    .operation(MetadataOperation.EQ)
+                    .value(InetAddress.getByName("192.168.1.1").toString())
+                    .build();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        criteria.add(ipVersionName);
+        criteria.add(dstIpAddress);
+        Criteria mongoCriteria = prepareCriteria(criteria);
+        return mongoCriteria;
+    }
+
     private Criteria ipv6Criteria() {
         List<KafkaCriteria> criteria = new ArrayList<>();
         KafkaCriteria ipVersionName = new KafkaCriteria.Builder()
-                .field("ipVersionName").operation(MetadataOperation.EQ).value("IPv6").build();
-        KafkaCriteria dstIpAddress = new KafkaCriteria.Builder()
-                .field("dstIpAddress").operation(MetadataOperation.EQ).value("ff02:0:0:0:0:0:0:c").build();
+                .field("ipVersionName")
+                .operation(MetadataOperation.EQ)
+                .value("IPv6")
+                .build();
+        KafkaCriteria dstIpAddress = null;
+        try {
+            dstIpAddress = new KafkaCriteria.Builder()
+                    .field("dstIpAddress")
+                    .operation(MetadataOperation.EQ)
+                    .value(InetAddress.getByName("ff02::c").toString())
+                    .build();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         criteria.add(ipVersionName);
         criteria.add(dstIpAddress);
         Criteria mongoCriteria = prepareCriteria(criteria);
@@ -127,17 +167,17 @@ public class TestDatabaseSpringBoot implements CommandLineRunner {
         List<KafkaCriteria> criteria = new ArrayList<>();
         KafkaCriteria tcp = new KafkaCriteria.Builder()
                 .field("ipProtocolName").operation(MetadataOperation.EQ).value("TCP").build();
-        KafkaCriteria portLte443 = new KafkaCriteria.Builder()
-                .field("dstPort").operation(MetadataOperation.IN).values(Arrays.asList("443", "80")).build();
+        KafkaCriteria ports = new KafkaCriteria.Builder()
+                .field("dstPort").operation(MetadataOperation.IN).values(Arrays.asList(443, 80)).build();
         criteria.add(tcp);
-        criteria.add(portLte443);
+        criteria.add(ports);
         Criteria mongoCriteria = prepareCriteria(criteria);
         return mongoCriteria;
     }
 
     @Override
     public void run(String... strings) throws Exception {
-        Criteria mongoCriteria = tcpAndPortCriteria();
+        Criteria mongoCriteria = ipv6Criteria();
         loadPacketsByCriteria(mongoCriteria);
         LOGGER.debug(mongoCriteria.getCriteriaObject().toJson());
     }

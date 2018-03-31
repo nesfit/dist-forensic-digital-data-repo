@@ -57,7 +57,7 @@ public class LoadPcapHandler extends BaseHandler {
                 .count().block();
 
         if (packetsToLoad == 0) {
-            LOGGER.info("Zero packets loaded, closing dumper.");
+            LOGGER.debug("Zero packets loaded, closing dumper.");
             pcapDumper.closeDumper();
         }
     }

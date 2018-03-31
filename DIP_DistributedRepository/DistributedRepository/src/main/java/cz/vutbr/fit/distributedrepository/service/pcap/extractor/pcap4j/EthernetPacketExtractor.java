@@ -19,8 +19,11 @@ public class EthernetPacketExtractor implements PacketExtractor<PcapPacket, Pack
             MacAddress srcAddr = ethernetPacket.getHeader().getSrcAddr();
             MacAddress dstAddr = ethernetPacket.getHeader().getDstAddr();
 
-            packetMetadataBuilder.ethernetTypeName(type.name()).ethernetTypeValue(type.valueAsString())
-                    .srcLinkLayerAddress(srcAddr.toString()).dstLinkLayerAddress(dstAddr.toString());
+            packetMetadataBuilder
+                    .ethernetTypeName(type.name())
+                    .ethernetTypeValue(type.valueAsString())
+                    .srcLinkLayerAddress(srcAddr.toString())
+                    .dstLinkLayerAddress(dstAddr.toString());
         }
     }
 

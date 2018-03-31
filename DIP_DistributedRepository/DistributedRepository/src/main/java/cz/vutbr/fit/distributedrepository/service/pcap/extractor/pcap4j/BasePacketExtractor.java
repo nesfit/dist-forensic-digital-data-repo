@@ -13,7 +13,9 @@ public class BasePacketExtractor implements PacketExtractor<PcapPacket, PacketMe
         Instant timestamp = packet.getTimestamp();
         int originalLength = packet.getOriginalLength();
 
-        packetMetadataBuilder.timestamp(timestamp).originalLength(originalLength);
+        packetMetadataBuilder
+                .timestamp(timestamp)
+                .originalLength(originalLength);
     }
 
 }

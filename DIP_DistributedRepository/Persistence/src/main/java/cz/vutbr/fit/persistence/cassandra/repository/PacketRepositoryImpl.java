@@ -115,18 +115,6 @@ public class PacketRepositoryImpl implements AsyncOperations {
         BoundStatement boundStatement = selectPreparedStatement.bind(id);
         ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
 
-        /*Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
-            @Override
-            public void onSuccess(ResultSet rows) {
-                unlockSemaphore();
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                unlockSemaphore();
-            }
-        }, MoreExecutors.newDirectExecutorService());*/
-
         Futures.addCallback(resultSetFuture,
                 new FutureCallback<ResultSet>() {
                     @Override

@@ -26,15 +26,17 @@ public class PacketMetadata {
     private String srcLinkLayerAddress; // In format: xx:xx:xx:xx:xx:xx
     private String dstLinkLayerAddress; // In format: xx:xx:xx:xx:xx:xx
 
-    private String ipProtocolValue;     // For ICMPv4: 4, for IGMP: 2, for TCP: 6, for UDP: 17, etc
+    private byte ipProtocolValue;       // For ICMPv4: 4, for IGMP: 2, for TCP: 6, for UDP: 17, etc
     private String ipProtocolName;      // ICMPv4, IGMP, Stream, TCP, IGP, etc
-    private String ipVersionValue;      // For IPv4: 4, for ST: 5, for IPv6: 6, etc
+    private byte ipVersionValue;        // For IPv4: 4, for ST: 5, for IPv6: 6, etc
     private String ipVersionName;       // IPv4, ST, IPv6, etc
+    // String of IP address can be obtained by
+    // InetAddress.getByName("string representation of IP address").toString()
     private String srcIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
     private String dstIpAddress;        // e.g. IPv4 192.168.1.147, IPv6 fe80:0:0:0:40ab:f9d1:bd06:214c
 
-    private String srcPort;
-    private String dstPort;
+    private int srcPort;
+    private int dstPort;
 
     // TODO: More fields
 
@@ -121,11 +123,11 @@ public class PacketMetadata {
         this.dstLinkLayerAddress = dstLinkLayerAddress;
     }
 
-    public String getIpProtocolValue() {
+    public byte getIpProtocolValue() {
         return ipProtocolValue;
     }
 
-    public void setIpProtocolValue(String ipProtocolValue) {
+    public void setIpProtocolValue(byte ipProtocolValue) {
         this.ipProtocolValue = ipProtocolValue;
     }
 
@@ -137,11 +139,11 @@ public class PacketMetadata {
         this.ipProtocolName = ipProtocolName;
     }
 
-    public String getIpVersionValue() {
+    public byte getIpVersionValue() {
         return ipVersionValue;
     }
 
-    public void setIpVersionValue(String ipVersionValue) {
+    public void setIpVersionValue(byte ipVersionValue) {
         this.ipVersionValue = ipVersionValue;
     }
 
@@ -169,19 +171,19 @@ public class PacketMetadata {
         this.dstIpAddress = dstIpAddress;
     }
 
-    public String getSrcPort() {
+    public int getSrcPort() {
         return srcPort;
     }
 
-    public void setSrcPort(String srcPort) {
+    public void setSrcPort(int srcPort) {
         this.srcPort = srcPort;
     }
 
-    public String getDstPort() {
+    public int getDstPort() {
         return dstPort;
     }
 
-    public void setDstPort(String dstPort) {
+    public void setDstPort(int dstPort) {
         this.dstPort = dstPort;
     }
 
@@ -238,7 +240,7 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder ipProtocolValue(String ipProtocolValue) {
+        public Builder ipProtocolValue(byte ipProtocolValue) {
             this.packetMetadata.setIpProtocolValue(ipProtocolValue);
             return this;
         }
@@ -248,7 +250,7 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder ipVersionValue(String ipVersionValue) {
+        public Builder ipVersionValue(byte ipVersionValue) {
             this.packetMetadata.setIpVersionValue(ipVersionValue);
             return this;
         }
@@ -268,12 +270,12 @@ public class PacketMetadata {
             return this;
         }
 
-        public Builder srcPort(String srcPort) {
+        public Builder srcPort(int srcPort) {
             this.packetMetadata.setSrcPort(srcPort);
             return this;
         }
 
-        public Builder dstPort(String dstPort) {
+        public Builder dstPort(int dstPort) {
             this.packetMetadata.setDstPort(dstPort);
             return this;
         }

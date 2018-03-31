@@ -17,20 +17,24 @@ public class TransportPacketExtractor implements PacketExtractor<PcapPacket, Pac
     private void extractTcpMetadata(PcapPacket packet, PacketMetadata.Builder packetMetadataBuilder) {
         if (packet.contains(TcpPacket.class)) {
             TcpPacket tcpPacket = packet.get(TcpPacket.class);
-            String srcPort = tcpPacket.getHeader().getSrcPort().valueAsString();
-            String dstPort = tcpPacket.getHeader().getDstPort().valueAsString();
+            int srcPort = tcpPacket.getHeader().getSrcPort().valueAsInt();
+            int dstPort = tcpPacket.getHeader().getDstPort().valueAsInt();
 
-            packetMetadataBuilder.srcPort(srcPort).dstPort(dstPort);
+            packetMetadataBuilder
+                    .srcPort(srcPort)
+                    .dstPort(dstPort);
         }
     }
 
     private void extractUdpMetadata(PcapPacket packet, PacketMetadata.Builder packetMetadataBuilder) {
         if (packet.contains(UdpPacket.class)) {
             UdpPacket udpPacket = packet.get(UdpPacket.class);
-            String srcPort = udpPacket.getHeader().getSrcPort().valueAsString();
-            String dstPort = udpPacket.getHeader().getDstPort().valueAsString();
+            int srcPort = udpPacket.getHeader().getSrcPort().valueAsInt();
+            int dstPort = udpPacket.getHeader().getDstPort().valueAsInt();
 
-            packetMetadataBuilder.srcPort(srcPort).dstPort(dstPort);
+            packetMetadataBuilder
+                    .srcPort(srcPort)
+                    .dstPort(dstPort);
         }
     }
 

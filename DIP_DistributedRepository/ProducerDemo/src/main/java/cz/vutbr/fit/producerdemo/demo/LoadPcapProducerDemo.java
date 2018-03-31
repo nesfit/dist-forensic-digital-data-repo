@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,9 +54,20 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
     private List<KafkaCriteria> ipv6Criteria() {
         List<KafkaCriteria> criteria = new ArrayList<>();
         KafkaCriteria ipVersionName = new KafkaCriteria.Builder()
-                .field("ipVersionName").operation(MetadataOperation.EQ).value("IPv6").build();
-        KafkaCriteria dstIpAddress = new KafkaCriteria.Builder()
-                .field("dstIpAddress").operation(MetadataOperation.EQ).value("ff02:0:0:0:0:0:0:c").build();
+                .field("ipVersionName")
+                .operation(MetadataOperation.EQ)
+                .value("IPv6")
+                .build();
+        KafkaCriteria dstIpAddress = null;
+        try {
+            dstIpAddress = new KafkaCriteria.Builder()
+                    .field("dstIpAddress")
+                    .operation(MetadataOperation.EQ)
+                    .value(InetAddress.getByName("ff02:0:0:0:0:0:0:c").toString())
+                    .build();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         criteria.add(ipVersionName);
         criteria.add(dstIpAddress);
         return criteria;
@@ -63,9 +76,15 @@ public class LoadPcapProducerDemo extends BaseProducerDemo {
     private List<KafkaCriteria> tcpAndPortCriteria() {
         List<KafkaCriteria> criteria = new ArrayList<>();
         KafkaCriteria tcp = new KafkaCriteria.Builder()
-                .field("ipProtocolName").operation(MetadataOperation.EQ).value("TCP").build();
+                .field("ipProtocolName")
+                .operation(MetadataOperation.EQ)
+                .value("TCP")
+                .build();
         KafkaCriteria portLte443 = new KafkaCriteria.Builder()
-                .field("dstPort").operation(MetadataOperation.IN).values(Arrays.asList("443", "80")).build();
+                .field("dstPort")
+                .operation(MetadataOperation.IN)
+                .values(Arrays.asList(443, 80))
+                .build();
         criteria.add(tcp);
         criteria.add(portLte443);
         return criteria;

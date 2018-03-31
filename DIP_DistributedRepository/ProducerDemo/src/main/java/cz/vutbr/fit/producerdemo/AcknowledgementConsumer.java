@@ -17,7 +17,7 @@ public class AcknowledgementConsumer {
     @Autowired
     private Command responseSuccessCommand;
 
-    @KafkaListener(topics = {"${error.topic}"})
+    @KafkaListener(topics = {"${output.topic}"})
     public void listen(ConsumerRecord<KafkaResponse, byte[]> record) {
         consume(record);
     }
