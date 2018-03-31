@@ -3,6 +3,7 @@ package cz.vutbr.fit.distributedrepository.communication.consumer.handler;
 import cz.vutbr.fit.communication.KafkaCriteria;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.distributedrepository.service.pcap.dumper.PcapDumper;
+import cz.vutbr.fit.distributedrepository.util.FileManager;
 import cz.vutbr.fit.persistence.cassandra.entity.CassandraPacket;
 import cz.vutbr.fit.persistence.cassandra.repository.PacketRepository;
 import cz.vutbr.fit.persistence.mongodb.entity.PacketMetadata;
@@ -91,12 +92,19 @@ public class LoadPcapHandler extends BaseHandler {
         localFile = dstFile = request.getDataSource().getUri();
         storePayloadIntoHDFS(localFile, dstFile);
 
+        removeTmpFile(localFile);
+
         acknowledge();
     }
 
     private void storePayloadIntoHDFS(String localFile, String dstFile) {
         hdfsShell.put(localFile, dstFile);
         LOGGER.debug("Result PCAP file stored into HDFS.");
+    }
+
+    private void removeTmpFile(String localFile) {
+        FileManager.RemoveFile(localFile);
+        LOGGER.debug("Tmp file removed.");
     }
 
     private void acknowledge() {
