@@ -65,14 +65,14 @@ public class BaseProducerDemo {
     }
 
     protected static DataSource createDataSource(DataSourceStorage dataSourceStorage, String uri, boolean removeAfterUse) {
-        return (dataSourceStorage == DataSourceStorage.HADOOP) ?
+        return (dataSourceStorage == DataSourceStorage.HDFS) ?
                 new DataSource(dataSourceStorage, uri, removeAfterUse) :
                 new DataSource(dataSourceStorage);
     }
 
     protected byte[] preparePayload(DataSourceStorage dataSourceStorage, String localFile, String dstFile) throws IOException {
         byte[] bytes = null;
-        if (dataSourceStorage == DataSourceStorage.HADOOP) {
+        if (dataSourceStorage == DataSourceStorage.HDFS) {
             hdfsShell.put(localFile, dstFile);
         } else {
             bytes = Files.readAllBytes(Paths.get(localFile));

@@ -93,7 +93,7 @@ public class StorePcapHandler extends BaseHandler {
         processedTmpFile = FileManager.GenerateTmpPath(tmpDirectory);
 
         switch (request.getDataSource().getDataSourceStorage()) {
-            case HADOOP:
+            case HDFS:
                 hdfsShell.get(request.getDataSource().getUri(), processedTmpFile);
                 break;
             case KAFKA:
@@ -156,7 +156,7 @@ public class StorePcapHandler extends BaseHandler {
 
     private void removePayload() {
         DataSource dataSource = request.getDataSource();
-        boolean isHadoopDataSource = DataSourceStorage.HADOOP == dataSource.getDataSourceStorage();
+        boolean isHadoopDataSource = DataSourceStorage.HDFS == dataSource.getDataSourceStorage();
         boolean shouldRemoveFromHadoop = dataSource.getRemoveAfterUse();
         if (isHadoopDataSource && shouldRemoveFromHadoop) {
             hdfsShell.rm(dataSource.getUri());

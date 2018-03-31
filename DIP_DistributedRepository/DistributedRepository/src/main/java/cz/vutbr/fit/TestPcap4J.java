@@ -6,10 +6,7 @@ import org.pcap4j.core.*;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.io.IOException;
 
@@ -67,15 +64,21 @@ public class TestPcap4J implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(TestPcap4J.class)
+        /*new SpringApplicationBuilder(TestPcap4J.class)
                 .web(WebApplicationType.NONE)
                 .bannerMode(Banner.Mode.OFF)
                 .build()
-                .run(args);
+                .run(args);*/
+        TestPcap4J testPcap4J = new TestPcap4J();
+        testPcap4J.runApp(args);
     }
 
     @Override
     public void run(String... args) throws Exception {
+        runApp(args);
+    }
+
+    public void runApp(String... args) {
         if (args.length != 2) {
             System.exit(1);
         }
