@@ -3,15 +3,23 @@
 
 
 \chapter{Úvod}
-Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a~dalších zařízení, či mobilních plateb a~on-line transakcí. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, nebo také vyšetřovat. Rozdílnost mezi digitálními daty, jejich nestrukturované vlastnosti a~prudký nárůst vyžadují mnoho rozličných přístupů a~technologií pro jejich zpracování.
+Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a~dalších zařízení, či mobilních plateb a~on-line transakcí. V podstatě ve všech oblastech jako je například věda, politika, strojírenství, medicína, doprava, energetika, se nevyhneme použití digitálních zařízení. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, a také vyšetřovat.
 
-Cílem této práce je navrhnout a~vytvořit distribuované úložiště pro digitální forenzní data. V~rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat, vysvětluje, jak probíhá a~co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a~existujícími systémy, které slouží k~uchování těchto dat a~důkazního materiálu. Je představen systém AFF4.
+Digitální zařízení se mohou stát terčem útoků, může se jednat o krádež citlivých dat, podvržení dat, sledování a další. Digitální zařízení mohou být také nástrojem zločinu.
 
-Kapitola \ref{chapter2} pojednává o~úložištích pro rozsáhlá strukturovaná i~nestrukturovaná data. V~jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a~nevýhod. Kapitola je završena popisem a~rozdělením NoSQL databází, na kterých bude úložiště distribuovaného repositáře založeno.
+Rozdílnost mezi formáty digitálních dat, jejich strukturované a~nestrukturované vlastnosti, a~také prudký nárůst vyžadují mnoho rozličných přístupů a~technologií pro jejich zpracování.
 
-Cílem praktické části práce je navrhnout a~implementovat distribuovaný repositář. V~kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a~také rozšiřitelnost pro nové druhy digitálních forenzních dat.
+Cílem této práce je navrhnout a~vytvořit distribuované úložiště pro digitální forenzní data. V~rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat, vysvětluje, jak probíhá a~co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a~existujícími systémy, které slouží k~uchování těchto dat a~důkazního materiálu. Následně je představen systém AFF4.
 
-Pro ověření základních aspektů návrhu byl také implementován prototyp distribuovaného repositáře, který řeší převážně rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracování požadavků od klienta. Prototypem se zabývá kapitola \ref{chapterPrototype}.
+Kapitola \ref{chapter2} pojednává o~úložištích pro rozsáhlá strukturovaná i~nestrukturovaná data. V~jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a~nevýhod. Kapitola je završena uvedením principů NoSQL databází, rozdělení podle typů, a srovnání s relačními databázemi. Na NoSQL databázích bude založeno úložiště distribuovaného repositáře.
+
+Cílem praktické části práce je navrhnout a~implementovat distribuovaný repositář. V~kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a~také rozšiřitelnost pro nové druhy digitálních forenzních dat. Systém využívá Big data technologie. Pro komunikaci s klientem jsou zprávy přenášeny tzv. \texttt{Message brokerem} Kafka. Jako úložiště slouží, v závislosti na tom, o jaký typ forenzních digitálních dat se jedná, NoSQL databáze a distribuovaný souborový systém HDFS.
+
+Kapitola \ref{chapter_impl} se zabývá implementací distribuovaného úložiště,  technickými detaily, způsobem asynchronní komunikace s databázemi, ukládáním a dotazováním nad daty (sekvenčním i náhodným). Systém pracuje nad frameworkem Spring, který usnadňuje konfiguraci a použití Big data komponent. Jako běhové prostředí byl zvolen projekt \texttt{Docker}, který poskytuje jednotné rozhraní pro izolaci aplikací do kontejnerů.
+
+Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, hardwarovým požadavkům a konfiguraci, a použití systému pro vybrané druhy digitálních forenzních dat.
+
+%Pro ověření základních aspektů návrhu byl také implementován prototyp distribuovaného repositáře, který řeší převážně rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracování požadavků od klienta. Prototypem se zabývá kapitola \ref{chapterPrototype}.
 
 \chapter{Forenzní analýza digitálních dat} \label{chapter1}
 Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a~předávající fakta ohledně digitálních důkazů nalezených v~počítačích nebo digitálních úložištích mediálních zařízení.
@@ -424,7 +432,7 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
     \centering
     \begin{tabular}{| l | l | l | l | l |}
     \hline
-    PCAP size (Bytes)   &   Count of packets   &   Avg. packet size &  Time (s) &   Packets/s \\ \hline
+    PCAP size (bytes)   &   Count of packets   &   Avg. packet size &  Time (s) &   Packets/s \\ \hline
     91 340 & 382 & 239,1099476 & 7 & 54,57142857 \\ \hline
     1 955 172 & 1360 & 1437,626471 & 13 & 104,6153846 \\ \hline
     412 254 & 1879 & 219,4007451 & 19 & 98,89473684 \\ \hline
@@ -436,11 +444,9 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
     \label{TablePerformance}
 \end{table}
 
-%\chapter{Implementace}
-%\section{Rozšiřitelnost, znovupoužitelnost}
+\chapter{Implementace} \label{chapter_impl}
 
-%\chapter{Testování}
-%\section{Výkon}
+\chapter{Výkon} \label{chapter_performance}
 
 \chapter{Závěr}
 V~rámci semestrálního projektu jsem se seznámil s~formáty digitálních forenzních dat a~způsoby jejich uložení. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s~distribuovanými databázemi a~NoSQL databázemi. Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní.
