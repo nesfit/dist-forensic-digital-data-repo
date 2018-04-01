@@ -48,10 +48,9 @@ Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevan
 \begin{figure}[!h]
   \centering
   \includegraphics[width=10.5cm]{template-fig/SlackSpace.pdf}
-  \caption{Příklad znázorňuje slack space pro parametry: sektory velikosti 512 bajtů v operačním systému jsou shluknuty do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů. Pro tento soubor byl alokován celý svazek 2048 bajtů, nevyužité místo je slack space, v tomto případě se jedná o 768 bajtů \cite{slacSpace}.}
+  \caption{Příklad znázorňuje slack space pro parametry: sektory velikosti 512 bajtů v operačním systému jsou shluknuty do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů (modrá barva). Pro tento soubor byl alokován celý svazek 2048 bajtů, nevyužité místo je slack space, v tomto případě se jedná o 768 bajtů \cite{slacSpace}.}
   \label{FIG_SlackSpace}
 \end{figure}
-
 
 \section{Formáty digitálních forenzních dat}
 Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z~\cite{forensicswikiForensicFF}.
@@ -225,7 +224,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=14cm]{template-fig/distributed_database_environments.pdf}
+  \includegraphics[width=14cm]{template-fig/DistributedDatabasesClassification.pdf}
   \caption{Distribuované databáze můžeme podle jejich vlastností dělit \cite{distributedDBMS}.}
   \label{FIG_DivDistrDB}
 \end{figure}
@@ -462,6 +461,59 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 \end{table}
 
 \chapter{Implementace} \label{chapter_impl}
+
+\section{Rozhraní pro dotazování dat}
+
+\section{Moduly, knihovny a frameworky}
+Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/Architecture.pdf}
+  \caption{Schéma závislostí systému.}
+  \label{FIG_Architecture}
+\end{figure}
+
+\subsection{Pcap4J}
+Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji \footnote{https://github.com/kaitoy/pcap4j}. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} podle operačního systému) přes JNA (\texttt{Java Native Access}) \footnote{https://github.com/java-native-access/jna} a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety.
+
+Při parsování paketů jsou všechny typy paketů přístupné přes bázovou třídu \texttt{PcapPacket}, každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}.
+
+Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
+
+\vspace{0.5cm}
+\texttt{boolean contains(Class<T> clazz)}
+
+\vspace{0.5cm}
+\noindent Ke konkrétnímu typu paketu, např. IP paket, TCP paket, se přistupuje pomocí reflexe voláním metody:
+
+\vspace{0.5cm}
+\texttt{T get(Class<T> clazz)}
+
+\vspace{0.5cm}
+\noindent Tedy například:
+
+\vspace{0.5cm}
+\texttt{IpPacket ipPacket = packet.get(IpPacket.class);}
+
+\vspace{0.5cm}
+\noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z konkrétního paketu už lze získávat potřebné informace, v případě IP paketu údaje z hlavičky jako zdrojová a cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i v případě ostatním typů paketů, Z TCP paketu lze získat údaje o portech, sekvenční čísla, checksum a další.
+
+\section{Scénáře}
+
+\subsection{Ukládání paketů}
+
+\subsection{Čtení paketů}
+
+\section{Komunikace s databázemi}
+
+\subsection{Reaktivní paradigma}
+
+\subsection{Asynchronní dotazy}
+
+\section{Logování}
+
+\section{Zpracování chyb}
 
 \chapter{Výkon} \label{chapter_performance}
 
