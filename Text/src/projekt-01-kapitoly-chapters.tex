@@ -23,23 +23,27 @@ Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, ha
 
 \chapter{Forenzní analýza digitálních dat} \label{chapter1}
 Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a~předávající fakta ohledně digitálních důkazů nalezených v~počítačích nebo digitálních úložištích mediálních zařízení.
-Nezabývá se tedy pouze počítači, ale také ostatními digitálními technologiemi včetně mobilních telefonů a~tabletů, mobilních sítí, internetového bankovnictví, datových médií apod. Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
+Nezabývá se tedy pouze počítači, ale také ostatními digitálními technologiemi včetně mobilních telefonů a~tabletů, mobilních sítí, internetového bankovnictví, datových médií apod.
+
+Forenzní analýza digitálních dat slouží k získání digitálního důkazního materiálu, který může být použit v soudní síni proti obviněnému. Nalezené výstupy nejsou omezeny k použití pouze u soudu. Častokrát může nějaká firma řešit interní záležitosti jako například porušení firemní politiky, kdy se zase musí najít (digitální) důkaz, který potvrzuje nebo vyvrací obvinění.
+
+Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
 \begin{itemize}
 \item Identifikace - Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
 
-\item Zachování - Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný.
+\item Zachování - Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s digitálním důkazem jako je přenos, úschova, kontrola a stav.
 
-\item Obnovení - Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory.
+\item Obnovení - Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory. I po obnovení smazaného souboru musí být stále zachována integrita.
 
-\item Analýza - Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů.
+\item Analýza - Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů. Prohledávána je paměť, registry, výpisy z logů aplikací, historie internetového prohlížeče apod. Podstatná je i dokumentace všech kroků, které byly provedeny.
 
-\item Předání - Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu.
+\item Předání - Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu. Po shromáždění všech nalezených informací může ale nemusí dojít k definitivnímu rozhodnutí. Co se s informacemi stane už není v rukou vyšetřovatele. Tady proces forenzní analýzy končí.
 \end{itemize}
 
-\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření a~prozkoumání obrazu disku. Obraz disku je kopie celého disku nebo jeho části bit po bitu. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
+\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření forenzní duplikace zkoumaného média. Provádí se proto, aby se neznehodnotil původní zdroj. Například dojde k vytvoření obrazu disku, který je kopie celého disku nebo jeho části bit po bitu. Neduplikuje se celý systém, pokud je prostor příliš velký. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
 
-Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, ale také nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní informace jako například smazané soubory, či jejich fragmenty. \cite{forensicImages}
+Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, ale také nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní artefakty a informace jako například smazané soubory, či jejich fragmenty. \cite{forensicImages}
 
 \section{Formáty digitálních forenzních dat}
 Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z~\cite{forensicswikiForensicFF}.
