@@ -475,17 +475,15 @@ Repositář je komplexní distribuovaný systém, který je postaven na framewor
 \end{figure}
 
 \subsection{Pcap4J}
-Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji \footnote{https://github.com/kaitoy/pcap4j}. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} podle operačního systému) přes JNA (\texttt{Java Native Access}) \footnote{https://github.com/java-native-access/jna} a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety.
-
-Při parsování paketů jsou všechny typy paketů přístupné přes bázovou třídu \texttt{PcapPacket}, každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}.
-
-Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
+Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} podle operačního systému) přes JNA (\texttt{Java Native Access})
+%\footnote{https://github.com/java-native-access/jna}
+a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
 
 \vspace{0.5cm}
 \texttt{boolean contains(Class<T> clazz)}
 
 \vspace{0.5cm}
-\noindent Ke konkrétnímu typu paketu, např. IP paket, TCP paket, se přistupuje pomocí reflexe voláním metody:
+\noindent Ke konkrétnímu typu paketu, např. IP paketu, se přistupuje pomocí reflexe voláním metody:
 
 \vspace{0.5cm}
 \texttt{T get(Class<T> clazz)}
@@ -494,10 +492,19 @@ Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typ
 \noindent Tedy například:
 
 \vspace{0.5cm}
-\texttt{IpPacket ipPacket = packet.get(IpPacket.class);}
+\texttt{IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);}
 
 \vspace{0.5cm}
 \noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z konkrétního paketu už lze získávat potřebné informace, v případě IP paketu údaje z hlavičky jako zdrojová a cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i v případě ostatním typů paketů, Z TCP paketu lze získat údaje o portech, sekvenční čísla, checksum a další.
+
+Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové datové jednotky (anglicky \texttt{Protocol Data Unit}) vyšší vrstvy do protokolové jednotky nižší vrstvy. Takže ethernetový paket může být současně i IP paketem a podobně.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=14.8cm]{template-fig/Pcap4JExample.pdf}
+  \caption{Schéma znázorňující výše uvedený příklad pro manipulaci s pakety \cite{gitPcap4J}.}
+  \label{FIG_Architecture}
+\end{figure}
 
 \section{Scénáře}
 
