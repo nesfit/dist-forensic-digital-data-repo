@@ -43,7 +43,15 @@ Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
 \noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření forenzní duplikace zkoumaného média. Provádí se proto, aby se neznehodnotil původní zdroj. Například dojde k vytvoření obrazu disku, který je kopie celého disku nebo jeho části bit po bitu. Neduplikuje se celý systém, pokud je prostor příliš velký. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
 
-Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, ale také nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní artefakty a informace jako například smazané soubory, či jejich fragmenty. \cite{forensicImages}
+Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, ale také nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní artefakty a informace jako například smazané soubory, či jejich fragmenty \cite{forensicImages}.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=10.5cm]{template-fig/SlackSpace.pdf}
+  \caption{Příklad znázorňuje slack space pro parametry: sektory velikosti 512 bajtů v operačním systému jsou shluknuty do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů. Pro tento soubor byl alokován celý svazek 2048 bajtů, nevyužité místo je slack space, v tomto případě se jedná o 768 bajtů \cite{slacSpace}.}
+  \label{FIG_SlackSpace}
+\end{figure}
+
 
 \section{Formáty digitálních forenzních dat}
 Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z~\cite{forensicswikiForensicFF}.
@@ -56,6 +64,10 @@ Mnoho forenzních počítačových programů používají své vlastní formáty
 \item Programově specifické - Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní, a~proto je pro přečtení potřeba unikátního nástroje.
 Zástupci jsou například \texttt{Encase image file format}, \texttt{ProDiscover image file format}, \texttt{IXimager file formats}.
 \end{itemize}
+
+\subsubsection{Identifikace formátu}
+%File Format Identification
+Identifikace formátu souboru je proces určení formátu nějaké sekvence bajtů. Operační systém toto typicky dělá rozpoznáním přípony souboru nebo podle zabudované \texttt{MIME} informace. Forenzní aplikace musí identifikovat typy souborů podle obsahu. Mezi existující systémy patří například tyto projekty \--\ \texttt{libmagic}, \texttt{PRONOM}, \texttt{Apache Tika} \footnote{http://tika.apache.org/} \cite{forensicswikiFFIdentification}.
 
 \section{Existující systémy}
 Vyznamným zástupcem pro uložení digitálních forenzních dat je systém AFF4, který bude popsán detailněji.
@@ -107,14 +119,15 @@ Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uloži
 \noindent Je možné převádět mezi oběma formáty z~jednoho na druhý, extrahovat zip archiv do adresáře a~vytvoření Directory volume.
 
 \subsubsection{Rozhraní Stream}
-Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a~\texttt{close}. Podporuje ještě \texttt{write}, ale ne k~modifikaci obrazu, nýbrž k~jeho vytvoření. Pokud nějaký AFF4 objektu podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z~nich jsou:
+Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a~\texttt{close}. Podporuje ještě \texttt{write}, ale ne k~modifikaci obrazu, nýbrž k~jeho vytvoření (kvůli výše uvedené integritě zdroje). Pokud nějaký AFF4 objekt podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z~nich jsou:
 
 \begin{itemize}
 \item \texttt{FileBackedObjects} - Stream, který ukládá data v~souboru v~souborovém systému, jehož pozice je určena URN souboru.
 
-\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes http bez potřeby celé kopie obrazu. Server musí být samozřejmě zabezpečen, ale to už AFF neřeší.
+\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah AFF4.
 
 \item \texttt{Segments} - Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v~komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a~ne forenzní obraz celkového systému.
+% Hodí se v situacích kdy je souborový systém příliš velký, a víme, že většina obsahu není relevantní. 
 
 \item \texttt{Image streams} - Tyto streamy jsou opakem segmentů. Pro velké obrazy nemůžeme použít segmenty, protože by nebyly zkomprimovány efektivně. Image stream ukládá obraz v~tzv. \texttt{chunks}.
 \end{itemize}
@@ -136,14 +149,14 @@ Objem takových dat rychle roste. Vyskytují se v~mnoha odvětvích, například
 
 \vspace{0.5cm}
 
-\noindent Pojem Big data je často definován jako 4V z~anglických slov Volume, Velocity, Variety a~Value: \cite{oracleBigData}
+\noindent Pojem Big data je často definován jako 4V z~anglických slov Volume, Velocity, Variety a~Value \cite{oracleBigData}:
 
 \begin{itemize}
 \item Volume – Značí množství nebo velikost dat. Je vyžadováno zpracování vysokých objemů dat neznámých hodnot, například síťový provoz, data sesbírána ze senzorů apod.
 
 \item Velocity – Vyjadřuje rychlost z~hlediska vzniku dat a~potřeby jejich analýzy, některá vyžadují zpracování v~reálném čase. Nejdůležitější data se zapisují přímo do paměti, a~ne na disk, z~důvodu co nejrychlejšího zpracování.
 
-\item Variety – Znamená různorodost typů. Jedná se především o~nestrukturovaná data, například text, audio, video, data o~geografické poloze a~další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost. \cite{oracleBigData}
+\item Variety – Znamená různorodost typů. Jedná se především o~nestrukturovaná data, například text, audio, video, data o~geografické poloze a~další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost \cite{oracleBigData}.
 
 \item Value – Data mají vlastní hodnotu, která musí být analyzována a~zjištěna. Nejedná se o~jednoduchý proces, je stále potřeba nových metod a~technik zpracování.
 \end{itemize}
@@ -151,7 +164,7 @@ Objem takových dat rychle roste. Vyskytují se v~mnoha odvětvích, například
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/big_data_exabytes.pdf}
-  \caption{S~přibývajícími novými technologiemi se masivně zvyšuje růst dat a~přibývají nové typy. \cite{rajeshBigData}}
+  \caption{S~přibývajícími novými technologiemi se masivně zvyšuje růst dat a~přibývají nové typy \cite{rajeshBigData}.}
   \label{FIG_BigDataExabytes}
 \end{figure}
 
@@ -182,7 +195,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 \begin{figure}[!h]
   \centering
   \includegraphics[width=13cm]{template-fig/Distributed_database.pdf}
-  \caption{Schéma distribuované databáze a~současný přístup více zařízení k~ní. \cite{distributedDBMSPic}}
+  \caption{Schéma distribuované databáze a~současný přístup více zařízení k~ní \cite{distributedDBMSPic}.}
   \label{FIG_DistrDB}
 \end{figure}
 
@@ -205,7 +218,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \item Komunikační režie – I~zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
 
-\item Cena – DSŘDB vyžaduje drahý a~složitý software ke koordinaci uzlů a~zajištění transparentnosti. \cite{distributedDBMS}
+\item Cena – DSŘDB vyžaduje drahý a~složitý software ke koordinaci uzlů a~zajištění transparentnosti \cite{distributedDBMS}.
 
 \item Mezi další patří – složitost, zabezpečení, řízení souběžného přístupu k~datům.
 \end{itemize}
@@ -213,7 +226,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 \begin{figure}[!h]
   \centering
   \includegraphics[width=14cm]{template-fig/distributed_database_environments.pdf}
-  \caption{Distribuované databáze můžeme podle jejich vlastností dělit. \cite{distributedDBMS}}
+  \caption{Distribuované databáze můžeme podle jejich vlastností dělit \cite{distributedDBMS}.}
   \label{FIG_DivDistrDB}
 \end{figure}
 
@@ -228,7 +241,7 @@ Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají in
 \noindent Neautonomní - Data jsou distribuována napříč homogenními uzly. O~aktualizaci a~správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
 
 \subsubsection{Heterogenní}
-Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování. \cite{wikiDBMS} Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
+Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování \cite{wikiDBMS}. Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
 
 \vspace{0.5cm}
 \noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, multi-databázová architektura.
@@ -237,7 +250,7 @@ Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibil
 V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je mezi nimi rozdíl a~jaká jsou jejich úložiště.
 
 \subsection{Strukturovaná data}
-Strukturovanými daty jsou libovolná data, pro která lze sestavit datový model. Datový model přesně organizuje jednotlivé elementy dat a~specifikuje, jak spolu elementy souvisí, jaké mají vazby, jak budou uloženy, přístup k~nim, a~jak souvisí s~jednotlivými elementy reálného světa. \cite{structData} Typickým úložištěm strukturovaných dat je relační databáze. Pro čtení a~dotazování byl vytvořen dotazovací jazyk SQL.
+Strukturovanými daty jsou libovolná data, pro která lze sestavit datový model. Datový model přesně organizuje jednotlivé elementy dat a~specifikuje, jak spolu elementy souvisí, jaké mají vazby, jak budou uloženy, přístup k~nim, a~jak souvisí s~jednotlivými elementy reálného světa \cite{structData}. Typickým úložištěm strukturovaných dat je relační databáze. Pro čtení a~dotazování byl vytvořen dotazovací jazyk SQL.
 
 \subsection{Nestrukturovaná data}
 Jak už bylo zmíněno v~sekci \ref{bigDataSection}, Big data patří převážně mezi nestrukturovaná data. Data nemají přesně definovanou strukturu, neexistuje datový model, který by definoval jednotlivé dílčí elementy a~jejich vztahy. Mezi typické zástupce patří: videa, obrázky, audio, webové stránky, text, obsah e-mailové komunikace apod. Mezi vhodná úložiště mohou patřit disková úložiště, NAS (celým názvem \texttt{Network Attached Storage}), HDFS (\texttt{Hadoop Distributed File System}) a~NoSQL databáze.
@@ -307,7 +320,7 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/Kafka_architecture.pdf}
-  \caption{Diagram zobrazující klíčové komponenty systému Kafka. \cite{kafkaTutorialsPoint}}
+  \caption{Diagram zobrazující klíčové komponenty systému Kafka \cite{kafkaTutorialsPoint}.}
   \label{FIG_KafkaArchitecture}
 \end{figure}
 
