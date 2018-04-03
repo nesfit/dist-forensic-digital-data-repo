@@ -193,14 +193,14 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=13cm]{template-fig/Distributed_database.pdf}
+  \includegraphics[width=13cm]{template-fig/DistributedDatabase.pdf}
   \caption{Schéma distribuované databáze a~současný přístup více zařízení k~ní \cite{distributedDBMSPic}.}
   \label{FIG_DistrDB}
 \end{figure}
 
 \noindent Výhody
 \begin{itemize}
-\item Rozšiřitelnost – Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a~lokální data v~nové pozici, a~nakonec je připojit k~distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Podobný postup je při odebrání uzlu.
+\item Rozšiřitelnost – Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a~lokální data v~nové pozici, a~nakonec je připojit k~distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Analogický postup je při odebrání uzlu.
 
 \item Spolehlivost – Když nějaký z~připojených uzlů selže, nepřestane distribuovaná databáze fungovat, sníží se maximálně výkon.
 
@@ -224,7 +224,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=14cm]{template-fig/DistributedDatabasesClassification.pdf}
+  \includegraphics[width=14.2cm]{template-fig/DistributedDatabasesClassification.pdf}
   \caption{Distribuované databáze můžeme podle jejich vlastností dělit \cite{distributedDBMS}.}
   \label{FIG_DivDistrDB}
 \end{figure}
@@ -243,7 +243,7 @@ Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají in
 Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování \cite{wikiDBMS}. Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
 
 \vspace{0.5cm}
-\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, multi-databázová architektura.
+\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a multi-databázová architektura.
 
 \section{Úložiště}
 V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je mezi nimi rozdíl a~jaká jsou jejich úložiště.
@@ -255,21 +255,54 @@ Strukturovanými daty jsou libovolná data, pro která lze sestavit datový mode
 Jak už bylo zmíněno v~sekci \ref{bigDataSection}, Big data patří převážně mezi nestrukturovaná data. Data nemají přesně definovanou strukturu, neexistuje datový model, který by definoval jednotlivé dílčí elementy a~jejich vztahy. Mezi typické zástupce patří: videa, obrázky, audio, webové stránky, text, obsah e-mailové komunikace apod. Mezi vhodná úložiště mohou patřit disková úložiště, NAS (celým názvem \texttt{Network Attached Storage}), HDFS (\texttt{Hadoop Distributed File System}) a~NoSQL databáze.
 
 \subsubsection{NoSQL databáze}
-%noSqlOverview
-%noSqlIntro
 Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jedná se o~databázový koncept, ve kterém datové úložiště i~zpracování dat používají jiné prostředky než tabulková schémata tradiční relační databáze \cite{noSqlWiki}. NoSQL databáze jsou navrženy pro distribuovaná ukládání a~dotazování dat, souběžný přístup, a~manipulaci s~obrovským objemem dat. Mezi výhody patří: horizontální i~vertikální škálovatelnost, distribuovaný přístup, flexibilita schématu, dynamičnost. Nevýhodami však mohou být: absence standardizace, omezené schopnosti dotazování, konzistence \cite{noSqlIntro}.
 
 \vspace{0.5cm}
 \noindent NoSQL databáze mohou být rozděleny do čtyř kategorií \cite{noSqlOverview}:
 \begin{itemize}
-    \item Klíč-hodnota (angl. Key-Value databases) - Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
+    \item Klíč-hodnota (angl. Key-Value databases) - Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z několika částí, které lze použít jako ID do struktury a ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
     
-    \item Dokumentové (angl. Document databases) - Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty typu XML a~JSON. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
+    \item Dokumentové (angl. Document databases) - Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
+    Databáze dokáže interpretovat strukturovanou hodnotu (dokument), toho lze efektivně využít hlavně při dotazování. Dotazy mohou být i složitější než přes klíče, např. pomocí XPath. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
     
-    \item Grafové (angl. Graph databases) - Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Zástupcem je \texttt{Neo4J}.
+    \item Grafové (angl. Graph databases) - Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
+    Zástupcem je \texttt{Neo4J}.
     
-    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Ukládají data ve sloupcích místo řádků, jsou optimalizovány pro dotazování nad velkými objemy dat. Zástupci jsou například \texttt{Cassandra} a~\texttt{HBase}.
+    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Organizace dat v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
 \end{itemize}
+
+\subsection{Srovnání relačních a NoSQL databází}
+Podle výše uvedených vlastností úložišť pro strukturovaná a nestrukturovaná data můžeme vidět tyto rozdíly:
+
+\begin{multicols}{2}
+
+Relační databáze
+
+\begin{itemize}
+    \item Datový model je formalizovaný, databáze umožňuje definovat integritní omezení, kontroly, model reflektuje elementy reálného světa.
+    
+    \item S daty lze provádět transformace v podobě spojení, agregací, řazení apod.
+    
+    \item Kvůli podpoře transakcí a ACID vlastností není úplně snadná škálovatelnost.
+    
+    \item Mají pevné schéma databáze. Vzniklé problémy po úpravách se musí řešit např. migračními skripty.
+\end{itemize}
+
+\columnbreak
+
+NoSQL databáze
+
+\begin{itemize}
+    \item Jedná se o nízkoúrovňové úložiště, kde ve většině případů databáze není schopna data interpretovat. Zajištění konzistence je ponecháno aplikaci. 
+    
+    \item Data lze dostat pouze v podobě, v jaké byla uložena.
+    
+    \item Jsou navrženy pro jednoduchou škálovatelnost.
+    
+    \item Mají dynamické schéma, které neomezuje definovat libovolnou strukturu a provádět flexibilní úpravy.
+\end{itemize}
+
+\end{multicols}
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
 Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána architektura systému včetně aplikačního rozhraní a~použité technologie pro vytvoření distribuovaného repositáře.
@@ -475,7 +508,7 @@ Repositář je komplexní distribuovaný systém, který je postaven na framewor
 \end{figure}
 
 \subsection{Pcap4J}
-Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} podle operačního systému) přes JNA (\texttt{Java Native Access})
+Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} v závislosti na operačním systému) přes JNA (\texttt{Java Native Access})
 %\footnote{https://github.com/java-native-access/jna}
 a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
 
@@ -506,17 +539,36 @@ Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové d
   \label{FIG_Architecture}
 \end{figure}
 
-\section{Scénáře}
+\section{Úložiště}
+Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště tvoří NoSQL databáze Cassandra a MongoDB, a distribuovaný souborový systém HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
 
-\subsection{Ukládání paketů}
+\subsection{Cassandra}
 
-\subsection{Čtení paketů}
+\subsubsection{Asynchronní dotazy}
+Distribuovaný repositář komunikuje s databází asynchronně z důvodu co největší propustnosti a rychlosti. Asynchronní komunikace je umožněna díky třídám a metodám ovladače pro jazyk Java od společnosti DataStax, který je stále ve vývoji \footnote{https://github.com/datastax/java-driver}. Tento ovladač používá asynchronní architekturu. Takový způsob komunikace dovoluje klientské aplikaci ukládat data a provádět nad nimi dotazy neblokujícím způsobem, díky tzv. \texttt{Future} instancím \cite{asyncQueriesCassandra}.
 
-\section{Komunikace s databázemi}
+Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a dále s ním pracovat.
+Až databáze dotaz dokončí a vrátí odpověď, ovladač avizuje ResponseHandler (obecně může být zaregistrováno mnoho takových obsluh pro různé dotazy, párování je provedeno pomocí unikátního ID \texttt{streamId}, které bylo zasláno s dotazem). Obsluha třídy ResponseHandler dokončí volání upozorněním objektu třídy ResultSetFuture.
+Klientský kód získá výsledek dotazu provedením metody \texttt{get} nad objektem ResultSetFuture. Volání této metody je blokující, pokud ještě nebyl nastaven výsledek objektu ResultSetFuture \cite{asyncQueriesCassandra}.
 
-\subsection{Reaktivní paradigma}
+Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i způsob bez blokování. V takovém případě musí klient k objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k dispozici.
+Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a jejich tříd \texttt{Futures} a \texttt{FutureCallback}.
 
-\subsection{Asynchronní dotazy}
+Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/CassandraAsyncQueries.pdf}
+  \caption{Sekvenční diagram znázorňující jednotlivá volání metod při vykonávání asynchronního dotazu do databáze Cassandra \cite{asyncQueriesCassandra}.}
+  \label{FIG_Architecture}
+\end{figure}
+
+
+\subsection{MongoDB}
+
+\subsubsection{Reaktivní paradigma}
+
+\subsection{HDFS}
 
 \section{Logování}
 
