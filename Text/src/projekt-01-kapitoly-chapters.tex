@@ -306,38 +306,44 @@ NoSQL databáze
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
 Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána architektura systému včetně aplikačního rozhraní a~použité technologie pro vytvoření distribuovaného repositáře.
-Systém bude založen na Big data technologiích - Kafka (společně se ZooKeeper), NoSQL databáze, případně Hadoop a~Spark. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
+Systém bude založen na Big data technologiích - Kafka (společně se ZooKeeper), NoSQL databáze a HDFS ze systému Hadoop. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
 
 \section{Aplikační rozhraní}
-Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Podle typu operace a~typu dat je určeno, jak se daný příkaz zpracuje. V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
+Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje. V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
 
 \subsection{Komunikace}
-Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a~řetězec dat. Atributy příkazu udávají následující informace:
+Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a~případně řetězec dat. Atributy příkazu udávají následující informace:
 
 \begin{itemize}
-    \item \texttt{operation} - o~jakou operaci se jedná, výchozí operace jsou \texttt{SAVE}, \texttt{LOAD},
+    %\item \texttt{operation} - o~jakou operaci se jedná, výchozí operace jsou \texttt{SAVE}, \texttt{LOAD},
     
-    \item \texttt{dataType} - typ dat,  výchozími typy jsou \texttt{Text}, \texttt{PCAP}, \texttt{Packet},
+    %\item \texttt{dataType} - typ dat,  výchozími typy jsou \texttt{Text}, \texttt{PCAP}, \texttt{Packet},
     
-    \item \texttt{id} - unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy,
+    \item \texttt{command} - určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
     
-    \item \texttt{awaitsResponse} - jestli klient/odesilatel zprávy očekává od repositáře odpověď,
+    \item \texttt{id} - unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
     
-    \item \texttt{responseTopic} - ve které frontě (angl. topic) je odpověď na straně klienta očekávána,
+    \item \texttt{awaitsResponse} - jestli klient/odesilatel zprávy očekává od repositáře odpověď.
     
-    \item případně další potřebné atributy.
+    \item \texttt{responseTopic} - ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
+    
+    \item \texttt{errorTopic} - na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
+    
+    \item \texttt{dataSource} - zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
+    
+    \item \texttt{criterias} - seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
 \end{itemize}
 
-\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy operací a typy dat lze libovolně přidávat.
+\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy příkazů, a v podstatě typy operací s typy dat lze libovolně přidávat.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=15cm]{template-fig/Kafka_communication.pdf}
-  \caption{Příklad komunikace - klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné - klient zjistí, ke kterému příkazu odpověď patří.}
+  \includegraphics[width=14.1cm]{template-fig/Kafka_communication.pdf}
+  \caption{Demonstrace komunikace - zaslání příkazu pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné - klient zjistí, ke kterému příkazu odpověď patří.}
   \label{FIG_KafkaCommunication}
 \end{figure}
 
-\subsubsection{Kafka}
+\subsection{Kafka}
 Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený na mechanismu \texttt{publish-subscribe} umožňující přenášet vysoké objemy dat. Kafka zprávy jsou perzistentně uloženy na disku a~replikovány v~rámci clusteru kvůli prevenci ztráty dat. Framework Kafka je postaven na synchronizační službě ZooKeeper \cite{kafkaTutorialsPoint}.
 
 \vspace{0.5cm}
@@ -395,7 +401,7 @@ V~rámci zpracování příchozí zprávy do repositáře informující o~operac
 
 Do repositáře bylo v~průběhu několika dnů uloženo mnoho milionů paketů, které obsahovaly síťovou komunikaci mezi několika komunikujícími stranami. Data paketů jsou uložena v~serializované podobě v~NoSQL databázi. Na úrovni databáze nedávají taková data žádný význam, pouze aplikace je dokáže správně interpretovat jako pakety. Po několika dnech by uživatel rád zjistil podrobnější informace o~komunikaci mezi uzly A~a~B. Nezbývalo by mu nic jiného, než všechna data z~NoSQL databáze načíst na aplikační úrovni a~analyzovat paket po paketu, aby zjistil minimálně IP adresy zdroje a~cíle. Takový způsob by byl velmi pomalý a~neefektivní.
 
-Následně uvažme, jak by vypadal postup pro zjištění informací o~komunikaci mezi uzly A~a~B, kdyby byla k~dispozici cache, či paměť metadat. Cache by mohla uchovávat základní informace o~dříve uložených paketech v~jednotně definované struktuře. Mezi tyto informace by patřily - zdrojová a~cílová IP adresa, zdrojová a~cílová MAC adresa, typ protokolu, timestamp a~další. Co je však důležité, u~těchto informací by bylo uvedeno ID záznamu z~NoSQL databáze, kde je uchován celý paket. Pro zjištění podrobnějších informací by uživatel mohl načíst pouze ty pakety, které jsou pro něj relevantní.
+Následně uvažme, jak by vypadal postup pro zjištění informací o~komunikaci mezi uzly A~a~B, kdyby byla k~dispozici cache, či paměť metadat. Cache by mohla uchovávat základní informace o~dříve uložených paketech v~jednotně definované struktuře. Mezi tyto informace by patřily - zdrojová a~cílová IP adresa, zdrojová a~cílová MAC adresa, typ protokolu, časové razítko a~další. Co je však důležité, u~těchto informací by bylo uvedeno ID záznamu z~NoSQL databáze, kde je uchován celý paket. Pro zjištění podrobnějších informací by uživatel mohl načíst pouze ty pakety, které jsou pro něj relevantní.
 
 Předzpracování dat je výhodné před jejich uložením, protože v~kontextu provádění aplikace jsou data interpretovatelná. Výtah základních informací z~nich nezpůsobí propad výkonu. Naopak se výkon zvýší pro případné operace čtení a~hledání.
 
