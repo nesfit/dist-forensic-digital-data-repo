@@ -394,7 +394,27 @@ V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou b
 Jedná se o~zástupce sloupcových NoSQL databází. Výhodami jsou předně: škálovatelnost, odolnost proti chybám, rychlost, distribuovanost, konzistence a~podpora transakcí. Cassandru využívají i~světoznámé společnosti Facebook, Twitter, Cisco, ebay, Twitter, Netflix a~další. Cílem Cassandry je zvládat vysoké objemy dat napříč mnoha uzly. Data jsou pak distribuována na všech uzlech clusteru. Uzly lze libovolně přidávat. Každý uzel je nezávislý a~zároveň propojený s~ostatními. Každý uzel v~clusteru se může podílet na požadavcích čtení a~zápisu nezávisle na tom, kde jsou data skutečně uložena. Když uzel selže, požadavky čtení a~zápisu mohou být obslouženy jinými uzly sítě \cite{cassandraTutorialsPoint}.
 
 \subsection{Nestrukturovaná data}
-Pro uchování nestrukturovaných dat typu například audio a~video bude sloužit distribuovaný souborový systém, například HDFS. Taková data mohou mít velký objem, a~bylo by plýtvání výkonem provádět jejich serializaci nebo rozdělování na části při ukládání do NoSQL databází.
+Pro uchování nestrukturovaných dat typu například audio, video, logů, a obecně binárních dat bude sloužit distribuovaný souborový systém HDFS. Taková data mohou mít velký objem, a~bylo by plýtvání výkonem provádět jejich serializaci nebo rozdělování na části při ukládání do NoSQL databází.
+
+\subsubsection{Hadoop a HDFS}
+Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop}, který je navržen pro ukládání a zpracování obrovského množství dat v distribuovaném prostřední napříč mnoha počítači. Počítá se škálovatelností od jednoho serveru po tisíce strojů, kde každý z nich nabízí lokální úložiště a výpočetní zdroje \cite{hadoopTutorialsPoint}.
+
+\vspace{0.5cm}
+\noindent Platforma Hadoop zahrnuje tyto moduly:
+
+\begin{itemize}
+    \item \texttt{Hadoop Common} - Knihovny a pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a operačního systému potřebné pro jazyk Java, a skripty nutné pro spuštění Hadoop-u.
+    
+    \item \texttt{Hadoop YARN} - Jedná se o framework pro plánování úloh a správu zdrojů.
+    
+    \item \texttt{HDFS} - Distribuovaný souborový systém poskytující vysokou propustnost přístupu k aplikačním datům, škálovatelnost, odolnost proti chybám a efektivní správu zdrojů.
+    
+    \item \texttt{Hadoop MapReduce} - Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
+\end{itemize}
+
+\noindent HDFS je založen na \texttt{GFS} (Google File System) a lze jej provozovat na rozsáhlých seskupeních počítačů. Používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat souborového systému. Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech \cite{hadoopHortonworks}. O mapování bloků datovým uzlům se stará NameNode.
+
+HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
 
 \subsection{Metadata} \label{metadata}
 V~rámci zpracování příchozí zprávy do repositáře informující o~operaci uložení, by bylo vhodné provést předzpracování dat za účelem vhodnější indexace a~rychlejšího nalezení pro budoucí operace čtení. Jednalo by se tak o~mechanismus podobný například pamětem cache. Uvažme následující scénář pro podrobnější vysvětlení.
