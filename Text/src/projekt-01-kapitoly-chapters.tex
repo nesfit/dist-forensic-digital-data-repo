@@ -500,6 +500,10 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 \section{Moduly, knihovny a frameworky}
 Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}.
 
+\vspace{0.5cm}
+
+\noindent Pro přehled byly využity tyto knihovny a frameworky: \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a samozřejmě ovladače pro jednotlivé databáze.
+
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/Architecture.pdf}
@@ -540,21 +544,12 @@ Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové d
 \end{figure}
 
 \section{Úložiště}
-Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště tvoří NoSQL databáze Cassandra a MongoDB, a distribuovaný souborový systém HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
+Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a MongoDB, a distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
 
 \subsection{Cassandra}
 
 \subsubsection{Asynchronní dotazy}
 Distribuovaný repositář komunikuje s databází asynchronně z důvodu co největší propustnosti a rychlosti. Asynchronní komunikace je umožněna díky třídám a metodám ovladače pro jazyk Java od společnosti DataStax, který je stále ve vývoji \footnote{https://github.com/datastax/java-driver}. Tento ovladač používá asynchronní architekturu. Takový způsob komunikace dovoluje klientské aplikaci ukládat data a provádět nad nimi dotazy neblokujícím způsobem, díky tzv. \texttt{Future} instancím \cite{asyncQueriesCassandra}.
-
-Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a dále s ním pracovat.
-Až databáze dotaz dokončí a vrátí odpověď, ovladač avizuje ResponseHandler (obecně může být zaregistrováno mnoho takových obsluh pro různé dotazy, párování je provedeno pomocí unikátního ID \texttt{streamId}, které bylo zasláno s dotazem). Obsluha třídy ResponseHandler dokončí volání upozorněním objektu třídy ResultSetFuture.
-Klientský kód získá výsledek dotazu provedením metody \texttt{get} nad objektem ResultSetFuture. Volání této metody je blokující, pokud ještě nebyl nastaven výsledek objektu ResultSetFuture \cite{asyncQueriesCassandra}.
-
-Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i způsob bez blokování. V takovém případě musí klient k objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k dispozici.
-Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a jejich tříd \texttt{Futures} a \texttt{FutureCallback}.
-
-Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
 
 \begin{figure}[!h]
   \centering
@@ -563,10 +558,60 @@ Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronn
   \label{FIG_Architecture}
 \end{figure}
 
+\noindent Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a dále s ním pracovat.
+Až databáze dotaz dokončí a vrátí odpověď, ovladač avizuje ResponseHandler (obecně může být zaregistrováno mnoho takových obsluh pro různé dotazy, párování je provedeno pomocí unikátního ID \texttt{streamId}, které bylo zasláno s dotazem). Obsluha třídy ResponseHandler dokončí volání upozorněním objektu třídy ResultSetFuture.
+Klientský kód získá výsledek dotazu provedením metody \texttt{get} nad objektem ResultSetFuture. Volání této metody je blokující, pokud ještě nebyl nastaven výsledek objektu ResultSetFuture \cite{asyncQueriesCassandra}.
+
+Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i způsob bez blokování. V takovém případě musí klient k objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k dispozici.
+Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a jejich tříd \texttt{Futures} a \texttt{FutureCallback}.
+
+Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
 
 \subsection{MongoDB}
 
-\subsubsection{Reaktivní paradigma}
+\subsubsection{Reaktivní dotazy}
+Pro komunikaci s databází MongoDB existuje několik ovladačů, tzn. synchronní, asynchronní, a také ovladač založen na reaktivním paradigmatu. Poslední zmíněný byl využit pro distribuovaný repositář. Tento ovladač poskytuje asynchronní zpracování dotazů neblokujícím způsobem. Zcela implementuje aplikační rozhraní tzv. \texttt{Reactive Streams} \footnote{http://www.reactive-streams.org/}. Mezi silné stránky tohoto paradigmatu patří: funkcionální přístup, asynchronní zpracování chyb, jednoduchá multivláknovost \cite{oficReactiveX}. Často je prezentováno jako rozšíření návrhových vzorů Pozorovatel (angl. \texttt{Observer}) a iterátor (angl. \texttt{Iterator}). Reaktivní paradigma se samozřejmě netýká jen databází, platí obecně a lze s ním vyvíjet celé aplikace.
+
+% https://dzone.com/articles/what-are-reactive-streams-in-java
+% http://vsadnajavu.cz/2017-06/odborne/spring-framework/spring-5-0-reactive/
+
+Manipulaci s metadaty zajišťuje tzv. reaktivní JPA (\texttt{Java Persistence API}) patřící pod projekt Spring. Tato vrstva využívá výše zmíněného reaktivního ovladače pro MongoDB. Následuje detailnější pohled na tento programovací model a aplikační rozhraní \cite{springDataReactive}.
+
+Základem je vytvoření entitní třídy, která reprezentuje objekty ukládané do tabulky databáze nebo v tomto případě do kolekce. Pro entitní třídu lze definovat rozhraní, které představuje použití návrhového vzoru \texttt{Repository}. Výhodou je, že objekty nemají ponětí o tom, jakým způsobem jsou ukládány. O persistenci se postará Repository. Definované rozhraní představující Repository musí dědit rozhraní
+
+\vspace{0.5cm}
+\texttt{ReactiveCrudRepository<T, ID>}
+
+\vspace{0.5cm}
+\noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s parametry reaktivních typů \texttt{Flux} a \texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s metadaty je rozhraní:
+
+\vspace{0.5cm}
+\texttt{PacketMetadataRepository extends} \\
+\indent \indent \indent \texttt{ReactiveCrudRepository<PacketMetadata, String>}
+
+\vspace{0.5cm}
+\noindent Framework Spring se postará o implementaci tohoto rozhraní pro všechny CRUD operace nabízené tímto rozhraním.
+
+Reaktivní přístup byl zvolen hlavně z důvodu vrstvy JPA, kterou zajišťuje sám Spring. Přístup pomocí asynchronních dotazů by šel využít taktéž, ale manipulace s metadaty, ukládání a dotazování, by byla těžkopádná, potřebovala výrazně více režijního kódu, a byla by nepřehledná, protože asynchronní ovladač pracuje primárně na úrovně dokumentů vkládaných do kolekcí. S tím by souviselo manuální sestavování a parsování objektů reprezentujících dokument.
+
+\subsubsection{Reaktivní typy}
+Výchozími reaktivními typy jsou Flux a Mono pocházející z projektu \texttt{Project Reactor} (implementací reaktivních typů existuje více, další je např. \texttt{ReactiveX}). Flux slouží pro vztahy typu N, Mono pak pro vztahy typu 0 nebo 1 \cite{projectReactor}.
+Reaktivní typy nejsou určeny k tomu, aby zpracovaly požadavky nebo data rychleji, ve skutečnosti představují malou režii ve srovnání s běžným blokujícím zpracováním. Jejich síla spočívá v obsluze více požadavků paralelně, a ve zpracování operací s latencemi, např. dotaz pro data z databáze nebo ze vzdáleného serveru, mnohem efektivněji. Poskytují lepší plánování zdrojů, zacházení s časem a latencemi. Na rozdíl od tradičního zpracování blokujícím způsobem, které pozastaví aktuální vlákno čekáním na výsledek operace, reaktivní aplikační rozhraní čekající na výsledek nestojí žádný čas, dotazuje se pouze na objem dat, který je schopné zpracovat. Zabývá se celými streamy dat, nikoliv pouze individuálními elementy jeden za druhým \cite{springReactiveTypes}.
+
+Reaktivní aplikační rozhraní poskytuje operátory podobné streamům z jazyka Java, ale tyto operátory pracují obecně s jakoukoliv sekvencí, nejsou omezeny pouze na kolekce, a umožňují definovat řetězec transformačních operací, které se aplikují na data procházející streamem. Streamy dokáží zpracovat synchronní i asynchronní operace, data lze řetězit, sloučit, nebo na ně aplikovat různé transformace \cite{springReactiveTypes}.
+
+Implementace reaktivního rozhraní je založena na výše zmíněné specifikaci Reactive Streams. Základním kamenem jsou čtyři rozhraní \texttt{Publisher}, \texttt{Subscriber}, \texttt{Subscription} a \texttt{Processor}. Jejich zodpovědnosti jsou:
+\begin{itemize}
+    \item Publisher - poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
+    
+    \item Subscriber - příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} - zpracování elementu, \texttt{onError} - zpracování chyby, a \texttt{onComplete} - signalizace dokončení operace onNext.
+    
+    \item Subscription - může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
+    
+    \item Processor - procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
+\end{itemize}
+
+\noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
 
 \subsection{HDFS}
 
