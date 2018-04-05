@@ -412,7 +412,14 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
     \item \texttt{Hadoop MapReduce} - Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
 \end{itemize}
 
-\noindent HDFS je založen na \texttt{GFS} (Google File System) a lze jej provozovat na rozsáhlých seskupeních počítačů. Používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat souborového systému. Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech \cite{hadoopHortonworks}. O mapování bloků datovým uzlům se stará NameNode.
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/HDFSArchitecture.pdf}
+  \caption{Architektura HDFS \cite{apacheHDFSGuide}.}
+  \label{FIG_SystemArchitecture}
+\end{figure}
+
+\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat souborového systému. Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech. NameNode se stará o mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}. 
 
 HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
 
