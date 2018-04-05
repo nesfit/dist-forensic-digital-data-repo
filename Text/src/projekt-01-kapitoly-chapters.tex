@@ -311,7 +311,7 @@ Systém bude založen na Big data technologiích - Kafka (společně se ZooKeepe
 \section{Aplikační rozhraní}
 Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje. V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
 
-\subsection{Komunikace}
+\subsection{Komunikace} \label{designCommunication}
 Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a~případně řetězec dat. Atributy příkazu udávají následující informace:
 
 \begin{itemize}
@@ -405,14 +405,14 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
 \begin{itemize}
     \item \texttt{Hadoop Common} - Knihovny a pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a operačního systému potřebné pro jazyk Java, a skripty nutné pro spuštění Hadoop-u.
     
-    \item \texttt{Hadoop YARN} - Jedná se o framework pro plánování úloh a správu zdrojů.
+    \item \texttt{Hadoop YARN} - Jedná se o framework pro plánování distribuovaných úloh a správu zdrojů.
     
     \item \texttt{HDFS} - Distribuovaný souborový systém poskytující vysokou propustnost přístupu k aplikačním datům, škálovatelnost, odolnost proti chybám a efektivní správu zdrojů.
     
     \item \texttt{Hadoop MapReduce} - Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
 \end{itemize}
 
-\noindent Jedná se o virtuální souborový systém vybudovaný nad běžnýmimi souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a přístupu k datům, nikoliv fyzické uložení na uzlu. Byl navržen pro sekvenční přístup k souborům, nikoliv náhodný \cite{hadoopPdi}.
+\noindent Kromě výše uvedených modulů existují i další pomocné nástroje:  \texttt{Apache Spark}, \texttt{Apache HBase} - distribuovaná databáze, \texttt{Apache Hive} - nástroj pro dolování dat nad platformou Hadoop, \texttt{Apache Pig} atd.
 
 \begin{figure}[!h]
   \centering
@@ -421,7 +421,11 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
   \label{FIG_SystemArchitecture}
 \end{figure}
 
-\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat souborového systému. Protože je NameNode pouze jeden, měl by být spolehlivý a výkonný, při jeho výpadku způsobí poruchu systému (jde o tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech. NameNode se stará o mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}. 
+\noindent HDFS je virtuální souborový systém vybudovaný nad běžnými souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a přístupu k datům, nikoliv fyzické uložení na uzlu. Byl navržen pro sekvenční přístup k souborům, nikoliv náhodný \cite{hadoopPdi}.
+
+\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat a jmenného prostoru souborového systému. Dále reguluje přístup k souborům a provádí operace typu otevření, zavření, přejmenování souborů a adresářů. Protože je NameNode pouze jeden, měl by být spolehlivý a výkonný, při jeho výpadku způsobí poruchu systému (jde o tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech. Datové uzly jsou také zodpovědné za zpracování požadavků čtení a zápisu od klientů. NameNode se stará o mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}.
+
+HDFS je implementován v jazyce Java, na každém stroji s nainstalovanou Javou může běžet NameNode nebo DataNode software. Typicky při nasazení existuje jeden stroj s běžícím NameNode, na dalších strojích potom běží datové uzly (lze ovšem najít i scénáře, kde na jednom stroji běží více datových uzlů). Důležité je, že uživatelská data nikdy neprochází přes NameNode \cite{apacheHDFSGuide}.
 
 HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
 
@@ -443,10 +447,13 @@ Relační databáze má určité schéma skládající se z~tabulek a~vztahů me
 
 Dynamičnost MongoDB je vhodná pro správu metadat, zvlášť když bude do repositáře potřeba přidávat nové druhy dat.
 
-\section{Zpracování zpráv}
+\section{Jádro distribuovaného úložiště}
 V~předchozích sekcích byla představena komunikace s~repositářem, jak vypadají příkazy a~jakým způsobem jsou posílána data. Následně byly popsány možnosti ukládání. Tato sekce se zaměřuje na jádro distribuovaného repositáře, převážně na zpracování příkazů a~manipulaci s~databázemi.
 
-Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých časových intervalech dotazuje na zprávy z~Kafka fronty. Po přijetí zprávy dojde k~přečtení příkazu určeného typem operace a~typem dat společně s~dodatečnými informacemi. Podle typu operace a~typu dat se sestaví objekt příkazu. Na základě něj dojde k~výběru konkrétní akce (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o~uložení dat, o~načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i~o~správu metadat zmíněnou v~sekci \ref{metadata}. Při implementaci je handleru nastaven konkrétní odpovídající objekt, který řeší databázové operace pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
+Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých časových intervalech dotazuje na zprávy z~Kafka fronty. Po přijetí zprávy dojde k~přečtení příkazu určeného typem operace a~typem dat společně s~dodatečnými parametry uvedenými v \ref{designCommunication}. Na základě příkazu dojde k~výběru konkrétní obsluhy (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o~uložení dat, o~načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i~o~správu metadat zmíněnou v~sekci \ref{metadata}. Při implementaci budou handleru nastaveny potřebné objekty pro řešení databázových operací pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
+
+Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout doimplementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
+
 %TODO: Vice Kafka front? - Vice konzumentu?
 
 \section{Architektura} \label{archSection}
@@ -533,6 +540,7 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 \section{Rozhraní pro dotazování dat}
 
 \section{Moduly, knihovny a frameworky}
+% TODO: \section{Architektura}
 Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}.
 
 \vspace{0.5cm}
