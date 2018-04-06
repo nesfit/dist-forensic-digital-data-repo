@@ -298,7 +298,7 @@ NoSQL databáze
 \end{multicols}
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
-Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána architektura systému včetně aplikačního rozhraní a~použité technologie pro vytvoření distribuovaného repositáře.
+Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána komunikace se systémem včetně aplikačního rozhraní, použité technologie, zvolené druhy úložišť a také zpracování požadavků.
 
 \section{Požadavky na systém}
 Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S tím souvisí také výběr vhodných technologií.
@@ -628,6 +628,15 @@ Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód n
 Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
 
 \subsection{MongoDB}
+MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}.
+
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=12cm]{template-fig/MetadataSchema.pdf}
+  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu \texttt{PacketMetadata}. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna}.
+  \label{FIG_MetadataSchema}
+\end{figure}
 
 \subsubsection{Reaktivní dotazy}
 Pro komunikaci s databází MongoDB existuje několik ovladačů, tzn. synchronní, asynchronní, a také ovladač založen na reaktivním paradigmatu. Poslední zmíněný byl využit pro distribuovaný repositář. Tento ovladač poskytuje asynchronní zpracování dotazů neblokujícím způsobem. Zcela implementuje aplikační rozhraní tzv. \texttt{Reactive Streams} \footnote{http://www.reactive-streams.org/}. Mezi silné stránky tohoto paradigmatu patří: funkcionální přístup, asynchronní zpracování chyb, jednoduchá multivláknovost \cite{oficReactiveX}. Často je prezentováno jako rozšíření návrhových vzorů Pozorovatel (angl. \texttt{Observer}) a iterátor (angl. \texttt{Iterator}). Reaktivní paradigma se samozřejmě netýká jen databází, platí obecně a lze s ním vyvíjet celé aplikace.
