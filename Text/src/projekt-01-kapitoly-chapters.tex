@@ -139,13 +139,6 @@ Definicí pro frázi Big data existuje několik. Jedná se o~termín použitý n
 
 Objem takových dat rychle roste. Vyskytují se v~mnoha odvětvích, například sběr informací o~počasí, sociální sítě, energetické a~telekomunikační společnosti, ekonomie a~finančnictví, či data z~kamer, měření z~různých senzorů apod. Z~toho plyne, že se jedná o~data různorodých typů, mohou být strukturovaná i~nestrukturovaná. Proto je potřeba existence různých technologií pro jejich uložení, zpracování, analýzu i~zobrazení.
 
-%\begin{figure}[!h]
-%  \centering
-%  \includegraphics[width=12.5cm]{template-fig/what_makes_data_big_data.pdf}
-%  \caption{Definice Big data podle Oracle. \cite{johanBigData}}
-%  \label{FIG_BigData}
-%\end{figure}
-
 \vspace{0.5cm}
 
 \noindent Pojem Big data je často definován jako 4V z~anglických slov Volume, Velocity, Variety a~Value \cite{oracleBigData}:
@@ -245,7 +238,7 @@ Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibil
 \vspace{0.5cm}
 \noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a multi-databázová architektura.
 
-\section{Úložiště}
+\section{Úložiště} \label{storage}
 V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je mezi nimi rozdíl a~jaká jsou jejich úložiště.
 
 \subsection{Strukturovaná data}
@@ -268,7 +261,7 @@ Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jed
     \item Grafové (angl. Graph databases) - Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
     Zástupcem je \texttt{Neo4J}.
     
-    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Organizace dat v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
+    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Data jsou organizována v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
 \end{itemize}
 
 \subsection{Srovnání relačních a NoSQL databází}
@@ -306,52 +299,76 @@ NoSQL databáze
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
 Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána architektura systému včetně aplikačního rozhraní a~použité technologie pro vytvoření distribuovaného repositáře.
-Systém bude založen na Big data technologiích - Kafka (společně se ZooKeeper), NoSQL databáze a HDFS ze systému Hadoop. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
+
+\section{Požadavky na systém}
+Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S tím souvisí také výběr vhodných technologií.
+
+Systém musí umožnit optimální přístup k různým datům, jiný přístup bude pro strukturovaná data a jiný pro nestrukturovaná. Z forenzních digitálních dat proběhne zaměření převážně na PCAP soubory.
+
+Posledním požadavkem je umožnit přidávání podpory pro nové druhy digitálních forenzních dat přímo za běhu systému.
+
+Ze sekce \ref{storage} vyplývá, že je vhodné využít NoSQL distribuovaných databází a HDFS jako úložiště. Pro komunikaci s klientem bude sloužit Kafka (společně se ZooKeeper). Všechny tyto technologie jsou distribuované a ověřené pro použití v Big data prostředích. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
 
 \section{Aplikační rozhraní}
-Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje. V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
+Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje.
 
+V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
+
+\newpage
 \subsection{Komunikace} \label{designCommunication}
-Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Zpráva obsahuje parametry - atributy příkazu a~případně řetězec dat. Atributy příkazu udávají následující informace:
+Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek - odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry - atributy příkazu a~případně řetězec dat.
+
+\vspace{0.5cm}
+\noindent Název a význam parametrů:
 
 \begin{itemize}
-    %\item \texttt{operation} - o~jakou operaci se jedná, výchozí operace jsou \texttt{SAVE}, \texttt{LOAD},
+    \item \texttt{command} - Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
     
-    %\item \texttt{dataType} - typ dat,  výchozími typy jsou \texttt{Text}, \texttt{PCAP}, \texttt{Packet},
+    \item \texttt{id} - Unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
     
-    \item \texttt{command} - určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
+    \item \texttt{awaitsResponse} - Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď.
     
-    \item \texttt{id} - unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
+    \item \texttt{responseTopic} - Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
     
-    \item \texttt{awaitsResponse} - jestli klient/odesilatel zprávy očekává od repositáře odpověď.
+    \item \texttt{errorTopic} - Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
     
-    \item \texttt{responseTopic} - ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
+    \item \texttt{dataSource} - Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
     
-    \item \texttt{errorTopic} - na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
-    
-    \item \texttt{dataSource} - zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
-    
-    \item \texttt{criterias} - seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
+    \item \texttt{criterias} - Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
 \end{itemize}
 
 \noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy příkazů, a v podstatě typy operací s typy dat lze libovolně přidávat.
 
+\vspace{0.5cm}
+\noindent Zpráva odpovědi nese tyto parametry:
+\begin{itemize}
+    \item \texttt{id} - Jedná se o unikátní ID zkopírované ze zprávy požadavku. Klient po přijetí odpovědi bude vědět, ke kterému požadavku odpověď patří.
+    
+    \item \texttt{responseTopic} - Název výstupní fronty, do které je odpověď zaslána.
+    
+    \item \texttt{responseCode} - Návratový kód odpovědi symbolizující jak operace dopadla. Analogie s HTTP návratovými kódy, možnými hodnotami jsou: \texttt{OK(200)}, \texttt{BAD\_REQUEST(400)}, \texttt{UNSUPPORTED\_MEDIA\_TYPE(415)}, \texttt{INTERNAL\_SERVER\_ERROR(500)}.
+    
+    \item \texttt{status} - Rezervovaný parametr pro status odpovědi.
+    
+    \item \texttt{detailMessage} - Pokud se objeví při zpracování požadavku chyba, může být v odpovědi odesláno, proč chyba nastala, nebo její přičina.
+\end{itemize}
+
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=14.1cm]{template-fig/Kafka_communication.pdf}
+  \includegraphics[width=14cm]{template-fig/Kafka_communication.pdf}
   \caption{Demonstrace komunikace - zaslání příkazu pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné - klient zjistí, ke kterému příkazu odpověď patří.}
   \label{FIG_KafkaCommunication}
 \end{figure}
 
 \subsection{Kafka}
-Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený na mechanismu \texttt{publish-subscribe} umožňující přenášet vysoké objemy dat. Kafka zprávy jsou perzistentně uloženy na disku a~replikovány v~rámci clusteru kvůli prevenci ztráty dat. Framework Kafka je postaven na synchronizační službě ZooKeeper \cite{kafkaTutorialsPoint}.
-
-\vspace{0.5cm}
-\noindent Výhody jsou:
+Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený na mechanismu \texttt{publish-subscribe} umožňující přenášet vysoké objemy dat. Kafka zprávy jsou perzistentně uloženy na disku a~replikovány v~rámci clusteru kvůli prevenci ztráty dat. Framework Kafka je postaven na synchronizační službě ZooKeeper \cite{kafkaTutorialsPoint}. Výhody jsou:
 \begin{itemize}
     \item Spolehlivost - Kafka je distribuovaný systém, segmentovaný, replikovaný a~odolný proti chybám.
+    
     \item Rozšiřitelnost - Možnost připojení nových uzlů do clusteru.
+    
     \item Odolnost - Zprávy jsou uloženy na disku.
+    
     \item Výkon - Vysoká propustnost pro obě akce \texttt{publish} a~\texttt{subscribe}. Je zachován stabilní výkon i~při objemu zpráv v~terabytech.
 \end{itemize}
 
@@ -427,7 +444,7 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
 
 HDFS je implementován v jazyce Java, na každém stroji s nainstalovanou Javou může běžet NameNode nebo DataNode software. Typicky při nasazení existuje jeden stroj s běžícím NameNode, na dalších strojích potom běží datové uzly (lze ovšem najít i scénáře, kde na jednom stroji běží více datových uzlů). Důležité je, že uživatelská data nikdy neprochází přes NameNode \cite{apacheHDFSGuide}.
 
-HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
+%HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
 
 \subsection{Metadata} \label{metadata}
 V~rámci zpracování příchozí zprávy do repositáře informující o~operaci uložení, by bylo vhodné provést předzpracování dat za účelem vhodnější indexace a~rychlejšího nalezení pro budoucí operace čtení. Jednalo by se tak o~mechanismus podobný například pamětem cache. Uvažme následující scénář pro podrobnější vysvětlení.
@@ -645,13 +662,13 @@ Reaktivní aplikační rozhraní poskytuje operátory podobné streamům z jazyk
 
 Implementace reaktivního rozhraní je založena na výše zmíněné specifikaci Reactive Streams. Základním kamenem jsou čtyři rozhraní \texttt{Publisher}, \texttt{Subscriber}, \texttt{Subscription} a \texttt{Processor}. Jejich zodpovědnosti jsou:
 \begin{itemize}
-    \item Publisher - poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
+    \item Publisher - Poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
     
-    \item Subscriber - příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} - zpracování elementu, \texttt{onError} - zpracování chyby, a \texttt{onComplete} - signalizace dokončení operace onNext.
+    \item Subscriber - Příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} - zpracování elementu, \texttt{onError} - zpracování chyby, a \texttt{onComplete} - signalizace dokončení operace onNext.
     
-    \item Subscription - může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
+    \item Subscription - Může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
     
-    \item Processor - procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
+    \item Processor - Procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
 \end{itemize}
 
 \noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
