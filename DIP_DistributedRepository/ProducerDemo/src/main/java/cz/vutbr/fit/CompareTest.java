@@ -16,8 +16,10 @@ public class CompareTest {
 
     public void ipv6() {
         try {
-            InetAddress ipv6Long = InetAddress.getByName("ff02:0:0:0:0:0:0:c");
-            InetAddress ipv6Short = InetAddress.getByName("ff02::c");
+            InetAddress ipv6Long = InetAddress.getByName("2002:9876:57ab:0000:0000:0000:0000:0001");
+            InetAddress ipv6Short = InetAddress.getByName("2002:9876:57ab::1");
+            System.out.println(ipv6Long.getHostAddress());
+            System.out.println(ipv6Short.getHostAddress());
             System.out.println("Are IPv6 addrs same? " + ((ipv6Long.equals(ipv6Short)) ? "Yes" : "No"));
             System.out.println("Are IPv6 addrs same? " + ((ipv6Long == ipv6Short) ? "Yes" : "No"));
         } catch (UnknownHostException e) {

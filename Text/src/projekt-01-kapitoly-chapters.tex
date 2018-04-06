@@ -571,7 +571,7 @@ Repositář je komplexní distribuovaný systém, který je postaven na framewor
   \label{FIG_Architecture}
 \end{figure}
 
-\subsection{Pcap4J}
+\subsection{Pcap4J} \label{pcap4j}
 Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} v závislosti na operačním systému) přes JNA (\texttt{Java Native Access})
 %\footnote{https://github.com/java-native-access/jna}
 a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
@@ -628,13 +628,59 @@ Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód n
 Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
 
 \subsection{MongoDB}
-MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}.
+MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}. Druh metadat pro nějaký typ forenzních dat lze reprezentovat jako dokument ve formátu JSON. Dokumenty stejného typu jsou pak ukládány do kolekce. Pro každý typ ukládaných forenzních dat existuje takový dokument. Při ukládání dat do Cassandry nebo HDFS je dokument metadat sestaven a vyplněn klíčovými atributy, podle kterých bude možné později vyhledávat.
 
+\vspace{0.5cm}
+\noindent Pro pakety byl zvolen dokument typu \texttt{PacketMetadata} s těmito atributy:
+
+\begin{itemize}
+    \item \texttt{id} - Unikátní ID v rámci MongoDB.
+    
+    \item \texttt{refId} - Unikátní ID pro záznamy v databázi Cassandra.
+    
+    \item \texttt{uri} - Pokud jsou korespondující forenzní data uložena v HDFS, je vyplněn tento atribut cestou k datům v HDFS.
+    
+    \item \texttt{databaseType} - Určuje typ úložiště, tzn. povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
+    
+    \item \texttt{timestamp} - Časové razítko paketu.
+    
+    \item \texttt{originalLength} - Délka paketu v bajtech.
+    
+    \item \texttt{ethernetTypeValue} - Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
+    
+    \item \texttt{ethernetTypeName} - Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v řetězcovém formátu, např. IPv4, IPv6, ARP atd.
+    
+    \item \texttt{srcLinkLayerAddress} - Zdrojová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
+    
+    \item \texttt{dstLinkLayerAddress} - Cílová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
+    
+    \item \texttt{ipProtocolValue} - Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v celočíselném formátu, např. 4 pro ICMPv4, 6 pro TCP, 17 pro UDP atd.
+    
+    \item \texttt{ipProtocolName} - Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v řetězcovém formátu, např ICMPv4, IGMP, TCP, IGP atd.
+    
+    \item \texttt{ipVersionValue} - Hodnota z IP hlavičky paketu udávající číslo verze IP protokolu, 4 pro IPv4, 5 pro ST, 6 pro IPv6 apod.
+    
+    \item \texttt{ipVersionName} - Hodnota z IP hlavičky paketu udávající verzi IP protokolu v řetězcovém formátu, např. IPv4, ST, IPv6 atd.
+    
+    \item \texttt{srcIpAddress} - Zdrojová IP adresa v řetězcovém formátu, lze tedy uchovat IPv4 i IPv6 adresu. IPv6 adresa může mít více řetězcových interpretací, např. řetězce \texttt{ff02:0:0:0:0:0:0:c} a \texttt{ff02::c} vyjadřují tu samou IPv6 adresu. IP adresy jsou získány z paketu pomocí knihovny Pcap4J \ref{pcap4j}, která IP adresy vrací jako Java objekty typu \texttt{InetAddress}. Tyto objekty nelze serializovat do databáze, proto jsou ukládány jen řetězcové hodnoty. Nicméně třída InetAddress nabízí statickou metodu \texttt{InetAddress 	getByName(String host)}, kterou lze IP adresy normalizovat na stejný řetězcový tvar. Obě následující volání vrátí stejný řetězec:
+    
+    \indent \texttt{InetAddress.getByName("ff02:0:0:0:0:0:0:c").getHostAddress()}
+    
+    \indent \texttt{InetAddress.getByName("ff02::c").getHostAddress()}
+    
+    \item \texttt{dstIpAddress} - Cílová IP adresa ve stejném formátu jako zdrojová.
+    
+    \item \texttt{srcPort} - Zdrojový port.
+    
+    \item \texttt{dstPort} - Cílový port.
+\end{itemize}
+
+\noindent První čtyři atributy jsou společné pro všechny druhy metadat.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=12cm]{template-fig/MetadataSchema.pdf}
-  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu \texttt{PacketMetadata}. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna}.
+  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna}.
   \label{FIG_MetadataSchema}
 \end{figure}
 
