@@ -435,7 +435,7 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
   \centering
   \includegraphics[width=15cm]{template-fig/HDFSArchitecture.pdf}
   \caption{Architektura HDFS \cite{apacheHDFSGuide} - datové uzly jsou uspořádány do \texttt{racků}, které se nachází v jedné lokalitě, což zajišťuje rychlejší propojení uzlů. Bloky jsou replikovány mezi odlišné uzly.}
-  \label{FIG_SystemArchitecture}
+  \label{FIG_HDFSArchitecture}
 \end{figure}
 
 \noindent HDFS je virtuální souborový systém vybudovaný nad běžnými souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a přístupu k datům, nikoliv fyzické uložení na uzlu. Byl navržen pro sekvenční přístup k souborům, nikoliv náhodný \cite{hadoopPdi}.
@@ -473,27 +473,12 @@ Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory
 
 %TODO: Vice Kafka front? - Vice konzumentu?
 
-\section{Architektura} \label{archSection}
-Tato sekce se zabývá architekturou systému, jak bude repositář implementován. Diagram tříd \ref{FIG_SystemArchitecture} zobrazuje z~důvodu přehlednosti pouze klíčová rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti.
-
-Tok začíná ve třídě \texttt{DistributedRepository}, která zapouzdřuje konzumenta Kafka front a~správce všech handlerů. Konzument přijme zprávu z~fronty, sestaví objekt příkazu na základě typu operace a~typu dat, a~vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. Odpověď může obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy.
-
-Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}. Dále je potřeba implementovat rozhraní \texttt{IConsumerHandler}, které kompletně řídí zpracování příkazu.
-Pro nový druh dat a~potřeby komunikace s~úložištěm nebo databází je nutné přidat implementaci rozhraní \texttt{IStore} a/nebo \texttt{ILoad}.
-Nová třída handleru musí být přidána do správce handlerů společně s~typem příkazu.
-
-Díky tomu že jsou typ operace a~typ dat výčty, nemůže klient poslat libovolný dotaz na úplně neznámá data. Příkaz je ale určen kombinací těchto dvou výčtů, a~proto i~tak lze odeslat nepodporovaný příkaz, který může skončit chybou.
-
-Všechny výše zmíněné technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
-
-Konfigurace parametrů systému a~jednotlivých technologií bude možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota.
-
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=15cm]{template-fig/Prototype_ClassDiagram.pdf}
-  \caption{Diagram tříd systému.}
-  \label{FIG_SystemArchitecture}
-\end{figure}
+%\begin{figure}[!h]
+%  \centering
+%  \includegraphics[width=15cm]{template-fig/Prototype_ClassDiagram.pdf}
+%  \caption{Diagram tříd systému.}
+%  \label{FIG_SystemArchitecture}
+%\end{figure}
 
 \chapter{Implementace prototypu} \label{chapterPrototype}
 Prototyp distribuovaného repositáře byl implementován za účelem ověření základních aspektů návrhu, k~ověření komunikace mezi klientem a~systémem, zpracování příkazů, a~také výkonu.
@@ -556,7 +541,7 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 
 \section{Rozhraní pro dotazování dat}
 
-\section{Moduly, knihovny a frameworky}
+\section{Dekompozice do modulů}
 % TODO: \section{Architektura}
 Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}.
 
@@ -600,7 +585,7 @@ Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové d
   \centering
   \includegraphics[width=14.8cm]{template-fig/Pcap4JExample.pdf}
   \caption{Schéma znázorňující výše uvedený příklad pro manipulaci s pakety \cite{gitPcap4J}.}
-  \label{FIG_Architecture}
+  \label{FIG_Pcap4JExample}
 \end{figure}
 
 \section{Úložiště}
@@ -615,7 +600,7 @@ Distribuovaný repositář komunikuje s databází asynchronně z důvodu co nej
   \centering
   \includegraphics[width=15cm]{template-fig/CassandraAsyncQueries.pdf}
   \caption{Sekvenční diagram znázorňující jednotlivá volání metod při vykonávání asynchronního dotazu do databáze Cassandra \cite{asyncQueriesCassandra}.}
-  \label{FIG_Architecture}
+  \label{FIG_CassandraAsyncQueries}
 \end{figure}
 
 \noindent Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a dále s ním pracovat.
@@ -640,7 +625,7 @@ MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému 
     
     \item \texttt{uri} - Pokud jsou korespondující forenzní data uložena v HDFS, je vyplněn tento atribut cestou k datům v HDFS.
     
-    \item \texttt{databaseType} - Určuje typ úložiště, tzn. povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
+    \item \texttt{databaseType} - Určuje typ úložiště, povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
     
     \item \texttt{timestamp} - Časové razítko paketu.
     
@@ -729,6 +714,41 @@ Implementace reaktivního rozhraní je založena na výše zmíněné specifikac
 \noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
 
 \subsection{HDFS}
+
+\section{Architektura systému} \label{architecture}
+Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti.
+
+Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy - \texttt{handlerManager}. Metoda \texttt{listen} je zavolána při přečtení zprávy požadavku z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně odpovědí je uvedeno v \ref{designCommunication}.
+
+
+
+
+
+
+Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
+
+Konfigurace parametrů systému a~jednotlivých technologií bude možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/CommunicationClassDiagram.pdf}
+  \caption{Diagram tříd komunikace systému.}
+  \label{FIG_CommunicationClassDiagram}
+\end{figure}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15cm]{template-fig/DRCoreClassDiagram.pdf}
+  \caption{Diagram tříd jádra systému.}
+  \label{FIG_DRCoreClassDiagram}
+\end{figure}
+
+\subsection{Rozšíření pro nový typ forenzních dat}
+Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}. Dále je potřeba implementovat rozhraní \texttt{IConsumerHandler}, které kompletně řídí zpracování příkazu.
+Pro nový druh dat a~potřeby komunikace s~úložištěm nebo databází je nutné přidat implementaci rozhraní \texttt{IStore} a/nebo \texttt{ILoad}.
+Nová třída handleru musí být přidána do správce handlerů společně s~typem příkazu.
+
+Díky tomu že jsou typ operace a~typ dat výčty, nemůže klient poslat libovolný dotaz na úplně neznámá data. Příkaz je ale určen kombinací těchto dvou výčtů, a~proto i~tak lze odeslat nepodporovaný příkaz, který může skončit chybou.
 
 \section{Logování}
 
