@@ -586,7 +586,7 @@ Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a konfigurac
     
     \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a \texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v \ref{configuration}). Spring Boot tedy podle zdrojů uvedených v \texttt{classpath} provádí konfiguraci celé aplikace.
     
-    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je stažen mezi závislostmi a je zabudovaný, takže aplikaci stačí pouze spustit a Spring Boot se postará o nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i jiný typ kontejneru, např. \texttt{Jetty} apod.
+    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je automaticky stažen spolu s ostatními závislostmi a je zabudovaný, takže aplikaci stačí pouze spustit a Spring Boot se postará o nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i jiný typ kontejneru, např. \texttt{Jetty} apod.
 \end{itemize}
 
 \noindent Spring Boot umožňuje vytvářet tzv. \texttt{beans} přímo v Java kódu, bez použití XML konfiguračních souborů. Každou bean lze vytvořit pomocí anotace \texttt{@Bean}, např.
@@ -610,7 +610,14 @@ private PcapParser<PcapPacket> pcapParser;
 
 \noindent Uživatel tedy definoval bean v konfigurační třídě označené anotací \texttt{@Configuration}, a tato instance je pak dodána principem dependency injection.
 
-\subsubsection{Spring Kafka}
+\subsubsection{Spring Kafka} \label{springKafka}
+Projekt Spring Kafka aplikuje klíčové koncepty Springu pro vývoj systémů založených na platformě Kafka. Poskytuje šablonu jako vysokoúrovňovou abstrakci pro zasílání zpráv \cite{springKafka}. Velkým přínosem je výše zmíněná auto konfigurace ze zadaných parametrů, která umožňuje okamžité použití komponent bez vytváření instancí uživatelem.
+
+Mezi nejdůležitější třídy patří \texttt{KafkaTemplate}, která zapouzdřuje mnoho metod pro odeslání zpráv do Kafka front. Podporuje asynchronní i synchronní odesílání. Použití této šablony lze vidět ve třídě \texttt{ResponseProducer} z diagramu tříd \ref{FIG_CommunicationClassDiagram}.
+
+Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageListenerContainer}, který poskytuje implementaci tzv. \texttt{Message Listener} nebo je označen pomocí anotace \texttt{@KafkaListener}. Existují 2 implementace kontejneru -- \texttt{KafkaMessageListenerContainer} (aktuálně použitá implementace v systému repositáře), kde jsou přijímány všechny zprávy ze všech front a oddílů v jednom vláknu; a \texttt{ConcurrentMessageListenerContainer}, který deleguje zpracování 1 nebo více kontejnerům, což poskytuje vícevláknový odběr zpráv a tudíž i vícevláknové zpracování \cite{springKafka}, více v \footnote{https://docs.spring.io/spring-kafka/docs/2.1.6.BUILD-SNAPSHOT/reference/html/\_reference.html}. Lze také nastavit různé filtry a vzorce pro přijímané zprávy, a rozdělit tak příjem zpráv podle jejich struktury jiným objektům.
+
+
 
 \subsubsection{Spring Hadoop}
 
@@ -723,13 +730,13 @@ Manipulaci s metadaty zajišťuje tzv. reaktivní JPA (\texttt{Java Persistence 
 Základem je vytvoření entitní třídy, která reprezentuje objekty ukládané do tabulky databáze nebo v tomto případě do kolekce. Pro entitní třídu lze definovat rozhraní, které představuje použití návrhového vzoru \texttt{Repository}. Výhodou je, že objekty nemají ponětí o tom, jakým způsobem jsou ukládány. O persistenci se postará Repository. Definované rozhraní představující Repository musí dědit rozhraní
 
 \begin{lstlisting}[language=Java]
-    ReactiveCrudRepository<T, ID>
+    interface ReactiveCrudRepository<T, ID>
 \end{lstlisting}
 
 \noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s parametry reaktivních typů \texttt{Flux} a \texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s metadaty je rozhraní:
 
 \begin{lstlisting}[language=Java]
-    PacketMetadataRepository extends
+    interface PacketMetadataRepository extends
             ReactiveCrudRepository<PacketMetadata, String>
 \end{lstlisting}
 
@@ -759,8 +766,7 @@ Implementace reaktivního rozhraní je založena na výše zmíněné specifikac
 \section{Architektura systému} \label{architecture}
 Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti (vynechány jsou především závislosti na třídy pocházející z knihoven).
 
-Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v \ref{designCommunication}.
-
+Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} (je označena anotací \texttt{@KafkaListener} -- více v \ref{springKafka}), je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující obsluhu ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v \ref{designCommunication}.
 
 
 
