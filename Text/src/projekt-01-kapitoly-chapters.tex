@@ -473,13 +473,6 @@ Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory
 
 %TODO: Vice Kafka front? - Vice konzumentu?
 
-%\begin{figure}[!h]
-%  \centering
-%  \includegraphics[width=15cm]{template-fig/Prototype_ClassDiagram.pdf}
-%  \caption{Diagram tříd systému.}
-%  \label{FIG_SystemArchitecture}
-%\end{figure}
-
 \chapter{Implementace prototypu} \label{chapterPrototype}
 Prototyp distribuovaného repositáře byl implementován za účelem ověření základních aspektů návrhu, k~ověření komunikace mezi klientem a~systémem, zpracování příkazů, a~také výkonu.
 
@@ -539,53 +532,39 @@ Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximá
 
 \chapter{Implementace} \label{chapter_impl}
 
-\section{Rozhraní pro dotazování dat}
-
 \section{Dekompozice do modulů}
-% TODO: \section{Architektura}
-Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}.
+Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}. Pro přehled byly využity tyto knihovny a frameworky -- \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a samozřejmě ovladače pro jednotlivé databáze.
 
-\vspace{0.5cm}
-
-\noindent Pro přehled byly využity tyto knihovny a frameworky: \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a samozřejmě ovladače pro jednotlivé databáze.
+Jedná se o dvě Spring Boot aplikace -- \texttt{DistributedRepository} a \texttt{ProducerDemo}, které komunikují pomocí komunikačního rozhraní implementovaného v modulu \texttt{Communication}. Přenos zpráv zajišťuje projekt Spring Kafka. Aplikace DistributedRepository má přístup k oběma databázím Cassandra a MongoDB díky modulu \texttt{Persistence} obsahujícím mimo jiné projekt Spring Data, a také k HDFS pomocí projektu Spring Hadoop. K HDFS má přístup i klientská aplikace ProducerDemo.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=15cm]{template-fig/Architecture.pdf}
-  \caption{Schéma závislostí systému.}
+  \includegraphics[width=12.3cm]{template-fig/Architecture.pdf}
+  \caption{Schéma klíčových modulů a závislostí systému.}
   \label{FIG_Architecture}
 \end{figure}
 
 \subsection{Pcap4J} \label{pcap4j}
 Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} v závislosti na operačním systému) přes JNA (\texttt{Java Native Access})
-%\footnote{https://github.com/java-native-access/jna}
+\footnote{https://github.com/java-native-access/jna}
 a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
 
 \begin{lstlisting}[language=Java]
     boolean contains(Class<T> clazz)
 \end{lstlisting}
-%\vspace{0.5cm}
-%\texttt{boolean contains(Class<T> clazz)}
 
-%\vspace{0.5cm}
 \noindent Ke konkrétnímu typu paketu, např. IP paketu, se přistupuje pomocí reflexe voláním metody:
 
 \begin{lstlisting}[language=Java]
     T get(Class<T> clazz)
 \end{lstlisting}
-%\vspace{0.5cm}
-%\texttt{T get(Class<T> clazz)}
 
-%\vspace{0.5cm}
 \noindent Tedy například:
 
 \begin{lstlisting}[language=Java]
     IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);
 \end{lstlisting}
-%\vspace{0.5cm}
-%\texttt{IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);}
 
-%\vspace{0.5cm}
 \noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z konkrétního paketu už lze získávat potřebné informace, v případě IP paketu údaje z hlavičky jako zdrojová a cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i v případě ostatním typů paketů, Z TCP paketu lze získat údaje o portech, sekvenční čísla, checksum a další.
 
 Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové datové jednotky (anglicky \texttt{Protocol Data Unit}) vyšší vrstvy do protokolové jednotky nižší vrstvy. Takže ethernetový paket může být současně i IP paketem a podobně.
@@ -597,7 +576,7 @@ Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové d
   \label{FIG_Pcap4JExample}
 \end{figure}
 
-\subsection{Spring a Spring Boot}
+\subsection{Spring, Spring Boot a Spring projekty}
 Spring je velmi populární framework pro jazyk Java umožňující vytvářet webové a enterprise aplikace. Věnuje se mnoha obecným principům a problémům jako jsou například \texttt{dependency injection}, konfigurace, aspektově orientované programování, ORM, validace, bezpečnost, testování, integrace s jinými frameworky atd. V současné době pod něj spadají desítky projektů, každý zaměřený na jiný aspekt \footnote{https://spring.io/docs/reference}.
 
 Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a konfigurace přímo v Java. S rozšiřující se funkcionalitou se zvyšuje komplexita a i konfigurace se stává obtížná a náchylná k chybám. Z důvodu lepšího způsobu konfigurace byl vyvinut Spring Boot. Spring Boot přichází s principem auto konfigurace, ponechává však možnost předefinovat výchozí nastavení. Klíčovými vlastnostmi jsou \cite{whySpringBoot}:
@@ -605,11 +584,35 @@ Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a konfigurac
 \begin{itemize}
     \item Jednoduchá správa závislostí -- Pokud chceme použít Spring Boot k běhu aplikace, je potřeba importovat \texttt{spring-boot-starter-parent} jako modulovou závislost. Existují další \texttt{Spring Boot Starter} závislosti, které se hodí pro určitý typ nebo aspekt vyvíjené aplikace. Existují např. \texttt{Test Starter}, \texttt{Web Starter}, \texttt{Security Starter}, \texttt{Data JPA Starter}, \texttt{AOP Starter} atd. Pokud chceme vyvíjet např. webovou aplikaci, Web Starter poskytne všechny potřebné závislosti zahrnující MVC modul, validační API, prostředky k serializaci dat atp. Webová aplikace typicky potřebuje pracovat s databází -- Data JPA Starter poskytne všechny potřebné závislosti zahrnující transakční API, \texttt{Hibernate} knihovny, ORM implementaci atd.
     
-    \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale také konfiguruje běžně používané objekty tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a \texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v \ref{configuration}).
+    \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a \texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v \ref{configuration}). Spring Boot tedy podle zdrojů uvedených v \texttt{classpath} provádí konfiguraci celé aplikace.
     
     \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je stažen mezi závislostmi a je zabudovaný, takže aplikaci stačí pouze spustit a Spring Boot se postará o nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i jiný typ kontejneru, např. \texttt{Jetty} apod.
-    
 \end{itemize}
+
+\noindent Spring Boot umožňuje vytvářet tzv. \texttt{beans} přímo v Java kódu, bez použití XML konfiguračních souborů. Každou bean lze vytvořit pomocí anotace \texttt{@Bean}, např.
+
+\begin{lstlisting}[language=Java,frame=tb,basicstyle={\small\ttfamily}]
+@Configuration
+public class ParserBeans {
+    @Bean
+    public PcapParser<PcapPacket> pcapParser() {
+        return new ParserImpl();
+    }
+}
+\end{lstlisting}
+
+\noindent Použití vytvořené bean je velmi jednoduché pomocí anotace \texttt{@Autowired}:
+
+\begin{lstlisting}[language=Java,frame=tb,basicstyle={\small\ttfamily}]
+@Autowired
+private PcapParser<PcapPacket> pcapParser;
+\end{lstlisting}
+
+\noindent Uživatel tedy definoval bean v konfigurační třídě označené anotací \texttt{@Configuration}, a tato instance je pak dodána principem dependency injection.
+
+\subsubsection{Spring Kafka}
+
+\subsubsection{Spring Hadoop}
 
 \section{Úložiště}
 Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a MongoDB, a distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
@@ -722,10 +725,7 @@ Základem je vytvoření entitní třídy, která reprezentuje objekty ukládan�
 \begin{lstlisting}[language=Java]
     ReactiveCrudRepository<T, ID>
 \end{lstlisting}
-%\vspace{0.5cm}
-%\texttt{ReactiveCrudRepository<T, ID>}
 
-%\vspace{0.5cm}
 \noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s parametry reaktivních typů \texttt{Flux} a \texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s metadaty je rozhraní:
 
 \begin{lstlisting}[language=Java]
@@ -733,11 +733,6 @@ Základem je vytvoření entitní třídy, která reprezentuje objekty ukládan�
             ReactiveCrudRepository<PacketMetadata, String>
 \end{lstlisting}
 
-%\vspace{0.5cm}
-%\texttt{PacketMetadataRepository extends} \\
-%\indent \indent \indent %\texttt{ReactiveCrudRepository<PacketMetadata, String>}
-
-%\vspace{0.5cm}
 \noindent Framework Spring se postará o implementaci tohoto rozhraní pro všechny CRUD operace nabízené tímto rozhraním.
 
 Reaktivní přístup byl zvolen hlavně z důvodu vrstvy JPA, kterou zajišťuje sám Spring. Přístup pomocí asynchronních dotazů by šel využít taktéž, ale manipulace s metadaty, ukládání a dotazování, by byla těžkopádná, potřebovala výrazně více režijního kódu, a byla by nepřehledná, protože asynchronní ovladač pracuje primárně na úrovně dokumentů vkládaných do kolekcí. S tím by souviselo manuální sestavování a parsování objektů reprezentujících dokument.
@@ -761,8 +756,6 @@ Implementace reaktivního rozhraní je založena na výše zmíněné specifikac
 
 \noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
 
-\subsection{HDFS}
-
 \section{Architektura systému} \label{architecture}
 Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti (vynechány jsou především závislosti na třídy pocházející z knihoven).
 
@@ -778,7 +771,7 @@ Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro sy
 
 Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
 
-Konfigurace parametrů systému a~jednotlivých technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota.
+Konfigurace parametrů systému a~technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota (konfigurace uvedena v \ref{configuration}).
 
 \begin{figure}[!h]
   \centering
@@ -793,6 +786,14 @@ Konfigurace parametrů systému a~jednotlivých technologií je možná pomocí 
   \caption{Diagram tříd jádra systému.}
   \label{FIG_DRCoreClassDiagram}
 \end{figure}
+
+\subsection{Rozhraní pro dotazování dat}
+
+\subsection{Scénáře}
+
+\subsubsection{Zpracování a uložení PCAP souboru}
+
+\subsubsection{Čtení paketů podle kritérií}
 
 \subsection{Rozšíření pro nový typ forenzních dat}
 Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}. Dále je potřeba implementovat rozhraní \texttt{IConsumerHandler}, které kompletně řídí zpracování příkazu.
