@@ -30,15 +30,15 @@ Forenzní analýza digitálních dat slouží k získání digitálního důkazn
 Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
 \begin{itemize}
-\item Identifikace - Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
+\item Identifikace -- Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
 
-\item Zachování - Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s digitálním důkazem jako je přenos, úschova, kontrola a stav.
+\item Zachování -- Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s digitálním důkazem jako je přenos, úschova, kontrola a stav.
 
-\item Obnovení - Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory. I po obnovení smazaného souboru musí být stále zachována integrita.
+\item Obnovení -- Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory. I po obnovení smazaného souboru musí být stále zachována integrita.
 
-\item Analýza - Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů. Prohledávána je paměť, registry, výpisy z logů aplikací, historie internetového prohlížeče apod. Podstatná je i dokumentace všech kroků, které byly provedeny.
+\item Analýza -- Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů. Prohledávána je paměť, registry, výpisy z logů aplikací, historie internetového prohlížeče apod. Podstatná je i dokumentace všech kroků, které byly provedeny.
 
-\item Předání - Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu. Po shromáždění všech nalezených informací může ale nemusí dojít k definitivnímu rozhodnutí. Co se s informacemi stane už není v rukou vyšetřovatele. Tady proces forenzní analýzy končí.
+\item Předání -- Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu. Po shromáždění všech nalezených informací může ale nemusí dojít k definitivnímu rozhodnutí. Co se s informacemi stane už není v rukou vyšetřovatele. Tady proces forenzní analýzy končí.
 \end{itemize}
 
 \noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření forenzní duplikace zkoumaného média. Provádí se proto, aby se neznehodnotil původní zdroj. Například dojde k vytvoření obrazu disku, který je kopie celého disku nebo jeho části bit po bitu. Neduplikuje se celý systém, pokud je prostor příliš velký. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
@@ -58,15 +58,15 @@ Typů digitálních forenzních dat existuje spousta. Každý typ takových dat 
 Mnoho forenzních počítačových programů používají své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a~programově specifické formáty (anglicky \texttt{Program-Specific File Formats}):
 
 \begin{itemize}
-\item Nezávislé - Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
+\item Nezávislé -- Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
 
-\item Programově specifické - Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní, a~proto je pro přečtení potřeba unikátního nástroje.
+\item Programově specifické -- Byly vyvinuty pro použití specifickými forenzními programy. Většinou každý takový formát je unikátní, a~proto je pro přečtení potřeba unikátního nástroje.
 Zástupci jsou například \texttt{Encase image file format}, \texttt{ProDiscover image file format}, \texttt{IXimager file formats}.
 \end{itemize}
 
 \subsubsection{Identifikace formátu}
 %File Format Identification
-Identifikace formátu souboru je proces určení formátu nějaké sekvence bajtů. Operační systém toto typicky dělá rozpoznáním přípony souboru nebo podle zabudované \texttt{MIME} informace. Forenzní aplikace musí identifikovat typy souborů podle obsahu. Mezi existující systémy patří například tyto projekty \--\ \texttt{libmagic}, \texttt{PRONOM}, \texttt{Apache Tika} \footnote{http://tika.apache.org/} \cite{forensicswikiFFIdentification}.
+Identifikace formátu souboru je proces určení formátu nějaké sekvence bajtů. Operační systém toto typicky dělá rozpoznáním přípony souboru nebo podle zabudované \texttt{MIME} informace. Forenzní aplikace musí identifikovat typy souborů podle obsahu. Mezi existující systémy patří například tyto projekty -- \texttt{libmagic}, \texttt{PRONOM}, \texttt{Apache Tika} \footnote{http://tika.apache.org/} \cite{forensicswikiFFIdentification}.
 
 \section{Existující systémy}
 Vyznamným zástupcem pro uložení digitálních forenzních dat je systém AFF4, který bude popsán detailněji.
@@ -110,9 +110,9 @@ Jedná se o~open source formát pro ukládání digitálních důkazů a~dat. Je
 Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno, a~získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a~\texttt{ZipFile}.
 
 \begin{itemize}
-\item \texttt{Directory Volume} - Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké http adrese, což nám umožní používat obraz přímo z~webu.
+\item \texttt{Directory Volume} -- Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké http adrese, což nám umožní používat obraz přímo z~webu.
 
-\item \texttt{ZipFile Volume} - Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (windows explorer) a~data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a~používat obraz přímo ze serveru.
+\item \texttt{ZipFile Volume} -- Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (windows explorer) a~data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a~používat obraz přímo ze serveru.
 \end{itemize}
 
 \noindent Je možné převádět mezi oběma formáty z~jednoho na druhý, extrahovat zip archiv do adresáře a~vytvoření Directory volume.
@@ -121,14 +121,14 @@ Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uloži
 Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a~\texttt{close}. Podporuje ještě \texttt{write}, ale ne k~modifikaci obrazu, nýbrž k~jeho vytvoření (kvůli výše uvedené integritě zdroje). Pokud nějaký AFF4 objekt podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z~nich jsou:
 
 \begin{itemize}
-\item \texttt{FileBackedObjects} - Stream, který ukládá data v~souboru v~souborovém systému, jehož pozice je určena URN souboru.
+\item \texttt{FileBackedObjects} -- Stream, který ukládá data v~souboru v~souborovém systému, jehož pozice je určena URN souboru.
 
-\item \texttt{HTTPObject} - Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah AFF4.
+\item \texttt{HTTPObject} -- Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah AFF4.
 
-\item \texttt{Segments} - Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v~komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a~ne forenzní obraz celkového systému.
+\item \texttt{Segments} -- Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v~komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a~ne forenzní obraz celkového systému.
 % Hodí se v situacích kdy je souborový systém příliš velký, a víme, že většina obsahu není relevantní. 
 
-\item \texttt{Image streams} - Tyto streamy jsou opakem segmentů. Pro velké obrazy nemůžeme použít segmenty, protože by nebyly zkomprimovány efektivně. Image stream ukládá obraz v~tzv. \texttt{chunks}.
+\item \texttt{Image streams} -- Tyto streamy jsou opakem segmentů. Pro velké obrazy nemůžeme použít segmenty, protože by nebyly zkomprimovány efektivně. Image stream ukládá obraz v~tzv. \texttt{chunks}.
 \end{itemize}
 
 \chapter{Úložiště pro rozsáhlá strukturovaná i~nestrukturovaná data} \label{chapter2}
@@ -144,13 +144,13 @@ Objem takových dat rychle roste. Vyskytují se v~mnoha odvětvích, například
 \noindent Pojem Big data je často definován jako 4V z~anglických slov Volume, Velocity, Variety a~Value \cite{oracleBigData}:
 
 \begin{itemize}
-\item Volume – Značí množství nebo velikost dat. Je vyžadováno zpracování vysokých objemů dat neznámých hodnot, například síťový provoz, data sesbírána ze senzorů apod.
+\item Volume -- Značí množství nebo velikost dat. Je vyžadováno zpracování vysokých objemů dat neznámých hodnot, například síťový provoz, data sesbírána ze senzorů apod.
 
-\item Velocity – Vyjadřuje rychlost z~hlediska vzniku dat a~potřeby jejich analýzy, některá vyžadují zpracování v~reálném čase. Nejdůležitější data se zapisují přímo do paměti, a~ne na disk, z~důvodu co nejrychlejšího zpracování.
+\item Velocity -- Vyjadřuje rychlost z~hlediska vzniku dat a~potřeby jejich analýzy, některá vyžadují zpracování v~reálném čase. Nejdůležitější data se zapisují přímo do paměti, a~ne na disk, z~důvodu co nejrychlejšího zpracování.
 
-\item Variety – Znamená různorodost typů. Jedná se především o~nestrukturovaná data, například text, audio, video, data o~geografické poloze a~další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost \cite{oracleBigData}.
+\item Variety -- Znamená různorodost typů. Jedná se především o~nestrukturovaná data, například text, audio, video, data o~geografické poloze a~další. Jsou na ně kladeny velmi podobné požadavky jako na data strukturovaná – sumarizace, monitorování, důvěrnost \cite{oracleBigData}.
 
-\item Value – Data mají vlastní hodnotu, která musí být analyzována a~zjištěna. Nejedná se o~jednoduchý proces, je stále potřeba nových metod a~technik zpracování.
+\item Value -- Data mají vlastní hodnotu, která musí být analyzována a~zjištěna. Nejedná se o~jednoduchý proces, je stále potřeba nových metod a~technik zpracování.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -193,26 +193,26 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \noindent Výhody
 \begin{itemize}
-\item Rozšiřitelnost – Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a~lokální data v~nové pozici, a~nakonec je připojit k~distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Analogický postup je při odebrání uzlu.
+\item Rozšiřitelnost -- Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a~lokální data v~nové pozici, a~nakonec je připojit k~distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Analogický postup je při odebrání uzlu.
 
-\item Spolehlivost – Když nějaký z~připojených uzlů selže, nepřestane distribuovaná databáze fungovat, sníží se maximálně výkon.
+\item Spolehlivost -- Když nějaký z~připojených uzlů selže, nepřestane distribuovaná databáze fungovat, sníží se maximálně výkon.
 
-\item Ochrana (záloha) dat – Při zničení jednoho uzlu a~smazání dat z~něj, mohou být stejná data zálohována i~na jiných uzlech.
+\item Ochrana (záloha) dat -- Při zničení jednoho uzlu a~smazání dat z~něj, mohou být stejná data zálohována i~na jiných uzlech.
 
-\item Výkonnost – Pokud jsou data efektivně distribuována, může být uživatelův požadavek uspokojen rychleji. Transakce mohou být také distribuované a~provedeny rychleji. 
+\item Výkonnost -- Pokud jsou data efektivně distribuována, může být uživatelův požadavek uspokojen rychleji. Transakce mohou být také distribuované a~provedeny rychleji. 
 \end{itemize}
 
 \noindent Nevýhody
 \begin{itemize}
-\item CAP teorém - Pojednává o tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z těchto 3 vlastností: konzistence (angl. Consistency), dostupnost (angl. Availability) a odolnost k přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a dostupností v případě výpadku části sítě.
+\item CAP teorém -- Pojednává o tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z těchto 3 vlastností: konzistence (angl. Consistency), dostupnost (angl. Availability) a odolnost k přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a dostupností v případě výpadku části sítě.
 
-\item Integrita dat – Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
+\item Integrita dat -- Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
 
-\item Komunikační režie – I~zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
+\item Komunikační režie -- I~zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
 
-\item Cena – DSŘDB vyžaduje drahý a~složitý software ke koordinaci uzlů a~zajištění transparentnosti \cite{distributedDBMS}.
+\item Cena -- DSŘDB vyžaduje drahý a~složitý software ke koordinaci uzlů a~zajištění transparentnosti \cite{distributedDBMS}.
 
-\item Mezi další patří – složitost, zabezpečení, řízení souběžného přístupu k~datům.
+\item Mezi další patří -- složitost, zabezpečení, řízení souběžného přístupu k~datům.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -227,10 +227,10 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a~spravovat.
 
 \vspace{0.5cm}
-\noindent Autonomní - Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
+\noindent Autonomní -- Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
 
 \vspace{0.5cm}
-\noindent Neautonomní - Data jsou distribuována napříč homogenními uzly. O~aktualizaci a~správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
+\noindent Neautonomní -- Data jsou distribuována napříč homogenními uzly. O~aktualizaci a~správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
 
 \subsubsection{Heterogenní}
 Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování \cite{wikiDBMS}. Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
@@ -253,15 +253,15 @@ Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jed
 \vspace{0.5cm}
 \noindent NoSQL databáze mohou být rozděleny do čtyř kategorií \cite{noSqlOverview}:
 \begin{itemize}
-    \item Klíč-hodnota (angl. Key-Value databases) - Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z několika částí, které lze použít jako ID do struktury a ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
+    \item Klíč-hodnota (angl. Key-Value databases) -- Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z několika částí, které lze použít jako ID do struktury a ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
     
-    \item Dokumentové (angl. Document databases) - Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
+    \item Dokumentové (angl. Document databases) -- Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
     Databáze dokáže interpretovat strukturovanou hodnotu (dokument), toho lze efektivně využít hlavně při dotazování. Dotazy mohou být i složitější než přes klíče, např. pomocí XPath. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
     
-    \item Grafové (angl. Graph databases) - Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
+    \item Grafové (angl. Graph databases) -- Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
     Zástupcem je \texttt{Neo4J}.
     
-    \item Sloupcové (angl. Column-oriented databases / Column family stores) - Data jsou organizována v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
+    \item Sloupcové (angl. Column-oriented databases / Column family stores) -- Data jsou organizována v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
 \end{itemize}
 
 \subsection{Srovnání relačních a NoSQL databází}
@@ -316,25 +316,25 @@ V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá,
 
 \newpage
 \subsection{Komunikace} \label{designCommunication}
-Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek - odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry - atributy příkazu a~případně řetězec dat.
+Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek -- odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry -- atributy příkazu a~případně řetězec dat.
 
 \vspace{0.5cm}
 \noindent Název a význam parametrů:
 
 \begin{itemize}
-    \item \texttt{command} - Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
+    \item \texttt{command} -- Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
     
-    \item \texttt{id} - Unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
+    \item \texttt{id} -- Unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
     
-    \item \texttt{awaitsResponse} - Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď.
+    \item \texttt{awaitsResponse} -- Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď.
     
-    \item \texttt{responseTopic} - Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
+    \item \texttt{responseTopic} -- Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
     
-    \item \texttt{errorTopic} - Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
+    \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
     
-    \item \texttt{dataSource} - Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
+    \item \texttt{dataSource} -- Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
     
-    \item \texttt{criterias} - Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
+    \item \texttt{criterias} -- Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
 \end{itemize}
 
 \noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy příkazů, a v podstatě typy operací s typy dat lze libovolně přidávat.
@@ -342,34 +342,34 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
 \vspace{0.5cm}
 \noindent Zpráva odpovědi nese tyto parametry:
 \begin{itemize}
-    \item \texttt{id} - Jedná se o unikátní ID zkopírované ze zprávy požadavku. Klient po přijetí odpovědi bude vědět, ke kterému požadavku odpověď patří.
+    \item \texttt{id} -- Jedná se o unikátní ID zkopírované ze zprávy požadavku. Klient po přijetí odpovědi bude vědět, ke kterému požadavku odpověď patří.
     
-    \item \texttt{responseTopic} - Název výstupní fronty, do které je odpověď zaslána.
+    \item \texttt{responseTopic} -- Název výstupní fronty, do které je odpověď zaslána.
     
-    \item \texttt{responseCode} - Návratový kód odpovědi symbolizující jak operace dopadla. Analogie s HTTP návratovými kódy, možnými hodnotami jsou: \texttt{OK(200)}, \texttt{BAD\_REQUEST(400)}, \texttt{UNSUPPORTED\_MEDIA\_TYPE(415)}, \texttt{INTERNAL\_SERVER\_ERROR(500)}.
+    \item \texttt{responseCode} -- Návratový kód odpovědi symbolizující jak operace dopadla. Analogie s HTTP návratovými kódy, možnými hodnotami jsou: \texttt{OK(200)}, \texttt{BAD\_REQUEST(400)}, \texttt{UNSUPPORTED\_MEDIA\_TYPE(415)}, \texttt{INTERNAL\_SERVER\_ERROR(500)}.
     
-    \item \texttt{status} - Rezervovaný parametr pro status odpovědi.
+    \item \texttt{status} -- Rezervovaný parametr pro status odpovědi.
     
-    \item \texttt{detailMessage} - Pokud se objeví při zpracování požadavku chyba, může být v odpovědi odesláno, proč chyba nastala, nebo její přičina.
+    \item \texttt{detailMessage} -- Pokud se objeví při zpracování požadavku chyba, může být v odpovědi odesláno, proč chyba nastala, nebo její přičina.
 \end{itemize}
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=14cm]{template-fig/Kafka_communication.pdf}
-  \caption{Demonstrace komunikace - zaslání příkazu pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné - klient zjistí, ke kterému příkazu odpověď patří.}
+  \caption{Demonstrace komunikace -- zaslání zprávy požadavku pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné -- klient zjistí, ke kterému příkazu odpověď patří.}
   \label{FIG_KafkaCommunication}
 \end{figure}
 
 \subsection{Kafka}
 Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený na mechanismu \texttt{publish-subscribe} umožňující přenášet vysoké objemy dat. Kafka zprávy jsou perzistentně uloženy na disku a~replikovány v~rámci clusteru kvůli prevenci ztráty dat. Framework Kafka je postaven na synchronizační službě ZooKeeper \cite{kafkaTutorialsPoint}. Výhody jsou:
 \begin{itemize}
-    \item Spolehlivost - Kafka je distribuovaný systém, segmentovaný, replikovaný a~odolný proti chybám.
+    \item Spolehlivost -- Kafka je distribuovaný systém, segmentovaný, replikovaný a~odolný proti chybám.
     
-    \item Rozšiřitelnost - Možnost připojení nových uzlů do clusteru.
+    \item Rozšiřitelnost -- Možnost připojení nových uzlů do clusteru.
     
-    \item Odolnost - Zprávy jsou uloženy na disku.
+    \item Odolnost -- Zprávy jsou uloženy na disku.
     
-    \item Výkon - Vysoká propustnost pro obě akce \texttt{publish} a~\texttt{subscribe}. Je zachován stabilní výkon i~při objemu zpráv v~terabytech.
+    \item Výkon -- Vysoká propustnost pro obě akce \texttt{publish} a~\texttt{subscribe}. Je zachován stabilní výkon i~při objemu zpráv v~terabytech.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -384,21 +384,21 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
 \vspace{0.5cm}
 \noindent Hlavní komponenty systému Kafka z~diagramu \ref{FIG_KafkaArchitecture}:
 \begin{itemize}
-    \item Fronta - Jedná se o~proud zpráv patřící k~příslušné kategorii. Data jsou uložena ve frontách. Fronty jsou rozděleny do oddílů.
+    \item Fronta -- Jedná se o~proud zpráv patřící k~příslušné kategorii. Data jsou uložena ve frontách. Fronty jsou rozděleny do oddílů.
     
-    \item Oddíl - Fronty mohou mít mnoho oddílů, tak aby zvládaly zpracování libovolného množství dat.
+    \item Oddíl -- Fronty mohou mít mnoho oddílů, tak aby zvládaly zpracování libovolného množství dat.
 
-    \item Offset oddílu (angl. Partition offset) - Každá zpráva v~oddílu má unikátní sekvenci ID nazývanou offset.
+    \item Offset oddílu (angl. Partition offset) -- Každá zpráva v~oddílu má unikátní sekvenci ID nazývanou offset.
 
-    \item Replika oddílu - Je pouhou zálohou oddílu. Repliky nejsou využívány ke čtení nebo zápisu dat, slouží pouze jako prevence před ztrátou dat.
+    \item Replika oddílu -- Je pouhou zálohou oddílu. Repliky nejsou využívány ke čtení nebo zápisu dat, slouží pouze jako prevence před ztrátou dat.
     
-    \item Prostředník - Jednoduchý systém zodpovědný za správu dat v~oddílech, resp. frontách. Prostředníci slouží k~balancování zátěže.
+    \item Prostředník -- Jednoduchý systém zodpovědný za správu dat v~oddílech, resp. frontách. Prostředníci slouží k~balancování zátěže.
     
-    \item Kafka Cluster - Pokud existuje víc než jeden prostředník, pak se systém nazývá cluster. Cluster může být rozšířen bez prodlev o~další prostředníky.
+    \item Kafka Cluster -- Pokud existuje víc než jeden prostředník, pak se systém nazývá cluster. Cluster může být rozšířen bez prodlev o~další prostředníky.
     
-    \item Producent - Je odesilatel zprávy do jedné nebo více Kafka front. Producenti posílají data prostředníkům. Pokaždé když producent pošle zprávu prostředníkovi, prostředník přidá zprávu na konec oddílu. Producent nečeká na žádná potvrzení, posílá zprávy tak rychle, jak jen prostředník dokáže přijímat.
+    \item Producent -- Je odesilatel zprávy do jedné nebo více Kafka front. Producenti posílají data prostředníkům. Pokaždé když producent pošle zprávu prostředníkovi, prostředník přidá zprávu na konec oddílu. Producent nečeká na žádná potvrzení, posílá zprávy tak rychle, jak jen prostředník dokáže přijímat.
     
-    \item Konzument - Čte data od prostředníka(ů). Odebírá z~jedné nebo více front a~konzumuje zprávy vytažením dat od prostředníků.
+    \item Konzument -- Čte data od prostředníka(ů). Odebírá z~jedné nebo více front a~konzumuje zprávy vytažením dat od prostředníků.
 \end{itemize}
 
 \section{Úložiště}
@@ -420,21 +420,21 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
 \noindent Platforma Hadoop zahrnuje tyto moduly:
 
 \begin{itemize}
-    \item \texttt{Hadoop Common} - Knihovny a pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a operačního systému potřebné pro jazyk Java, a skripty nutné pro spuštění Hadoop-u.
+    \item \texttt{Hadoop Common} -- Knihovny a pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a operačního systému potřebné pro jazyk Java, a skripty nutné pro spuštění Hadoop-u.
     
-    \item \texttt{Hadoop YARN} - Jedná se o framework pro plánování distribuovaných úloh a správu zdrojů.
+    \item \texttt{Hadoop YARN} -- Jedná se o framework pro plánování distribuovaných úloh a správu zdrojů.
     
-    \item \texttt{HDFS} - Distribuovaný souborový systém poskytující vysokou propustnost přístupu k aplikačním datům, škálovatelnost, odolnost proti chybám a efektivní správu zdrojů.
+    \item \texttt{HDFS} -- Distribuovaný souborový systém poskytující vysokou propustnost přístupu k aplikačním datům, škálovatelnost, odolnost proti chybám a efektivní správu zdrojů.
     
-    \item \texttt{Hadoop MapReduce} - Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
+    \item \texttt{Hadoop MapReduce} -- Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
 \end{itemize}
 
-\noindent Kromě výše uvedených modulů existují i další pomocné nástroje:  \texttt{Apache Spark}, \texttt{Apache HBase} - distribuovaná databáze, \texttt{Apache Hive} - nástroj pro dolování dat nad platformou Hadoop, \texttt{Apache Pig} atd.
+\noindent Kromě výše uvedených modulů existují i další pomocné nástroje:  \texttt{Apache Spark}, \texttt{Apache HBase} -- distribuovaná databáze, \texttt{Apache Hive} -- nástroj pro dolování dat nad platformou Hadoop, \texttt{Apache Pig} atd.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/HDFSArchitecture.pdf}
-  \caption{Architektura HDFS \cite{apacheHDFSGuide} - datové uzly jsou uspořádány do \texttt{racků}, které se nachází v jedné lokalitě, což zajišťuje rychlejší propojení uzlů. Bloky jsou replikovány mezi odlišné uzly.}
+  \caption{Architektura HDFS \cite{apacheHDFSGuide} -- datové uzly jsou uspořádány do \texttt{racků}, které se nachází v jedné lokalitě, což zajišťuje rychlejší propojení uzlů. Bloky jsou replikovány mezi odlišné uzly.}
   \label{FIG_HDFSArchitecture}
 \end{figure}
 
@@ -451,7 +451,7 @@ V~rámci zpracování příchozí zprávy do repositáře informující o~operac
 
 Do repositáře bylo v~průběhu několika dnů uloženo mnoho milionů paketů, které obsahovaly síťovou komunikaci mezi několika komunikujícími stranami. Data paketů jsou uložena v~serializované podobě v~NoSQL databázi. Na úrovni databáze nedávají taková data žádný význam, pouze aplikace je dokáže správně interpretovat jako pakety. Po několika dnech by uživatel rád zjistil podrobnější informace o~komunikaci mezi uzly A~a~B. Nezbývalo by mu nic jiného, než všechna data z~NoSQL databáze načíst na aplikační úrovni a~analyzovat paket po paketu, aby zjistil minimálně IP adresy zdroje a~cíle. Takový způsob by byl velmi pomalý a~neefektivní.
 
-Následně uvažme, jak by vypadal postup pro zjištění informací o~komunikaci mezi uzly A~a~B, kdyby byla k~dispozici cache, či paměť metadat. Cache by mohla uchovávat základní informace o~dříve uložených paketech v~jednotně definované struktuře. Mezi tyto informace by patřily - zdrojová a~cílová IP adresa, zdrojová a~cílová MAC adresa, typ protokolu, časové razítko a~další. Co je však důležité, u~těchto informací by bylo uvedeno ID záznamu z~NoSQL databáze, kde je uchován celý paket. Pro zjištění podrobnějších informací by uživatel mohl načíst pouze ty pakety, které jsou pro něj relevantní.
+Následně uvažme, jak by vypadal postup pro zjištění informací o~komunikaci mezi uzly A~a~B, kdyby byla k~dispozici cache, či paměť metadat. Cache by mohla uchovávat základní informace o~dříve uložených paketech v~jednotně definované struktuře. Mezi tyto informace by patřily -- zdrojová a~cílová IP adresa, zdrojová a~cílová MAC adresa, typ protokolu, časové razítko a~další. Co je však důležité, u~těchto informací by bylo uvedeno ID záznamu z~NoSQL databáze, kde je uchován celý paket. Pro zjištění podrobnějších informací by uživatel mohl načíst pouze ty pakety, které jsou pro něj relevantní.
 
 Předzpracování dat je výhodné před jejich uložením, protože v~kontextu provádění aplikace jsou data interpretovatelná. Výtah základních informací z~nich nezpůsobí propad výkonu. Naopak se výkon zvýší pro případné operace čtení a~hledání.
 
@@ -561,37 +561,77 @@ Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílán
 %\footnote{https://github.com/java-native-access/jna}
 a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
 
-\vspace{0.5cm}
-\texttt{boolean contains(Class<T> clazz)}
+\begin{lstlisting}[language=Java]
+    boolean contains(Class<T> clazz)
+\end{lstlisting}
+%\vspace{0.5cm}
+%\texttt{boolean contains(Class<T> clazz)}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \noindent Ke konkrétnímu typu paketu, např. IP paketu, se přistupuje pomocí reflexe voláním metody:
 
-\vspace{0.5cm}
-\texttt{T get(Class<T> clazz)}
+\begin{lstlisting}[language=Java]
+    T get(Class<T> clazz)
+\end{lstlisting}
+%\vspace{0.5cm}
+%\texttt{T get(Class<T> clazz)}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \noindent Tedy například:
 
-\vspace{0.5cm}
-\texttt{IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);}
+\begin{lstlisting}[language=Java]
+    IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);
+\end{lstlisting}
+%\vspace{0.5cm}
+%\texttt{IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z konkrétního paketu už lze získávat potřebné informace, v případě IP paketu údaje z hlavičky jako zdrojová a cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i v případě ostatním typů paketů, Z TCP paketu lze získat údaje o portech, sekvenční čísla, checksum a další.
 
 Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové datové jednotky (anglicky \texttt{Protocol Data Unit}) vyšší vrstvy do protokolové jednotky nižší vrstvy. Takže ethernetový paket může být současně i IP paketem a podobně.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=14.8cm]{template-fig/Pcap4JExample.pdf}
+  \includegraphics[width=15cm]{template-fig/Pcap4JExample.pdf}
   \caption{Schéma znázorňující výše uvedený příklad pro manipulaci s pakety \cite{gitPcap4J}.}
   \label{FIG_Pcap4JExample}
 \end{figure}
+
+\subsection{Spring a Spring Boot}
+Spring je velmi populární framework pro jazyk Java umožňující vytvářet webové a enterprise aplikace. Věnuje se mnoha obecným principům a problémům jako jsou například \texttt{dependency injection}, konfigurace, aspektově orientované programování, ORM, validace, bezpečnost, testování, integrace s jinými frameworky atd. V současné době pod něj spadají desítky projektů, každý zaměřený na jiný aspekt \footnote{https://spring.io/docs/reference}.
+
+Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a konfigurace přímo v Java. S rozšiřující se funkcionalitou se zvyšuje komplexita a i konfigurace se stává obtížná a náchylná k chybám. Z důvodu lepšího způsobu konfigurace byl vyvinut Spring Boot. Spring Boot přichází s principem auto konfigurace, ponechává však možnost předefinovat výchozí nastavení. Klíčovými vlastnostmi jsou \cite{whySpringBoot}:
+
+\begin{itemize}
+    \item Jednoduchá správa závislostí -- Pokud chceme použít Spring Boot k běhu aplikace, je potřeba importovat \texttt{spring-boot-starter-parent} jako modulovou závislost. Existují další \texttt{Spring Boot Starter} závislosti, které se hodí pro určitý typ nebo aspekt vyvíjené aplikace. Existují např. \texttt{Test Starter}, \texttt{Web Starter}, \texttt{Security Starter}, \texttt{Data JPA Starter}, \texttt{AOP Starter} atd. Pokud chceme vyvíjet např. webovou aplikaci, Web Starter poskytne všechny potřebné závislosti zahrnující MVC modul, validační API, prostředky k serializaci dat atp. Webová aplikace typicky potřebuje pracovat s databází -- Data JPA Starter poskytne všechny potřebné závislosti zahrnující transakční API, \texttt{Hibernate} knihovny, ORM implementaci atd.
+    
+    \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale také konfiguruje běžně používané objekty tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a \texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v \ref{configuration}).
+    
+    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je stažen mezi závislostmi a je zabudovaný, takže aplikaci stačí pouze spustit a Spring Boot se postará o nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i jiný typ kontejneru, např. \texttt{Jetty} apod.
+    
+\end{itemize}
 
 \section{Úložiště}
 Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a MongoDB, a distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
 
 \subsection{Cassandra}
+Schéma databáze Cassandra je aktuálně velmi jednoduché. Nejzevnější úroveň tvoří tzv. \texttt{Keyspace} představující kontejner tabulek. Keyspace svými atributy udává replikační faktor (angl. \texttt{replication factor}), strategii umísťování replik (angl. \texttt{replica placement strategy}), a třídy sloupců (angl. \texttt{column families}). Aktuální nastavení keyspace vypadá následovně:
+
+\vspace{0.5cm}
+\texttt{CREATE KEYSPACE structured\_data WITH replication = }
+
+\texttt{\string{ 'class':'SimpleStrategy', 'replication\_factor':1 \string} }
+
+\vspace{0.5cm}
+\noindent Je použita strategie \texttt{SimpleStrategy}, vhodná pouze pro jedno sdružení počítačových uzlů (\texttt{rack}). Není optimální pro současné použití mnoha datovými centry, k tomu slouží strategie \texttt{ NetworkTopologyStrategy}. Replikační faktor vyjadřuje počet strojů v clusteru, které obdrží stejnou kopii dat. Zde nastaveno na hodnotu 1.
+
+Schéma tabulky pro ukládání paketů je taktéž velmi jednoduché. Tabulka obsahuje pouze primární klíč ID a hodnotu paketu v binární podobě. Struktura tabulky:
+
+\vspace{0.5cm}
+\texttt{packet (
+	id timeuuid PRIMARY KEY,
+	packet blob
+)}
 
 \subsubsection{Asynchronní dotazy}
 Distribuovaný repositář komunikuje s databází asynchronně z důvodu co největší propustnosti a rychlosti. Asynchronní komunikace je umožněna díky třídám a metodám ovladače pro jazyk Java od společnosti DataStax, který je stále ve vývoji \footnote{https://github.com/datastax/java-driver}. Tento ovladač používá asynchronní architekturu. Takový způsob komunikace dovoluje klientské aplikaci ukládat data a provádět nad nimi dotazy neblokujícím způsobem, díky tzv. \texttt{Future} instancím \cite{asyncQueriesCassandra}.
@@ -619,45 +659,45 @@ MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému 
 \noindent Pro pakety byl zvolen dokument typu \texttt{PacketMetadata} s těmito atributy:
 
 \begin{itemize}
-    \item \texttt{id} - Unikátní ID v rámci MongoDB.
+    \item \texttt{id} -- Unikátní ID v rámci MongoDB.
     
-    \item \texttt{refId} - Unikátní ID pro záznamy v databázi Cassandra.
+    \item \texttt{refId} -- Unikátní ID pro záznamy v databázi Cassandra.
     
-    \item \texttt{uri} - Pokud jsou korespondující forenzní data uložena v HDFS, je vyplněn tento atribut cestou k datům v HDFS.
+    \item \texttt{uri} -- Pokud jsou korespondující forenzní data uložena v HDFS, je vyplněn tento atribut cestou k datům v HDFS.
     
-    \item \texttt{databaseType} - Určuje typ úložiště, povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
+    \item \texttt{databaseType} -- Určuje typ úložiště, povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
     
-    \item \texttt{timestamp} - Časové razítko paketu.
+    \item \texttt{timestamp} -- Časové razítko paketu.
     
-    \item \texttt{originalLength} - Délka paketu v bajtech.
+    \item \texttt{originalLength} -- Délka paketu v bajtech.
     
-    \item \texttt{ethernetTypeValue} - Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
+    \item \texttt{ethernetTypeValue} -- Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
     
-    \item \texttt{ethernetTypeName} - Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v řetězcovém formátu, např. IPv4, IPv6, ARP atd.
+    \item \texttt{ethernetTypeName} -- Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v řetězcovém formátu, např. IPv4, IPv6, ARP atd.
     
-    \item \texttt{srcLinkLayerAddress} - Zdrojová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
+    \item \texttt{srcLinkLayerAddress} -- Zdrojová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
     
-    \item \texttt{dstLinkLayerAddress} - Cílová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
+    \item \texttt{dstLinkLayerAddress} -- Cílová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
     
-    \item \texttt{ipProtocolValue} - Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v celočíselném formátu, např. 4 pro ICMPv4, 6 pro TCP, 17 pro UDP atd.
+    \item \texttt{ipProtocolValue} -- Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v celočíselném formátu, např. 4 pro ICMPv4, 6 pro TCP, 17 pro UDP atd.
     
-    \item \texttt{ipProtocolName} - Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v řetězcovém formátu, např ICMPv4, IGMP, TCP, IGP atd.
+    \item \texttt{ipProtocolName} -- Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v řetězcovém formátu, např ICMPv4, IGMP, TCP, IGP atd.
     
-    \item \texttt{ipVersionValue} - Hodnota z IP hlavičky paketu udávající číslo verze IP protokolu, 4 pro IPv4, 5 pro ST, 6 pro IPv6 apod.
+    \item \texttt{ipVersionValue} -- Hodnota z IP hlavičky paketu udávající číslo verze IP protokolu, 4 pro IPv4, 5 pro ST, 6 pro IPv6 apod.
     
-    \item \texttt{ipVersionName} - Hodnota z IP hlavičky paketu udávající verzi IP protokolu v řetězcovém formátu, např. IPv4, ST, IPv6 atd.
+    \item \texttt{ipVersionName} -- Hodnota z IP hlavičky paketu udávající verzi IP protokolu v řetězcovém formátu, např. IPv4, ST, IPv6 atd.
     
-    \item \texttt{srcIpAddress} - Zdrojová IP adresa v řetězcovém formátu, lze tedy uchovat IPv4 i IPv6 adresu. IPv6 adresa může mít více řetězcových interpretací, např. řetězce \texttt{ff02:0:0:0:0:0:0:c} a \texttt{ff02::c} vyjadřují tu samou IPv6 adresu. IP adresy jsou získány z paketu pomocí knihovny Pcap4J \ref{pcap4j}, která IP adresy vrací jako Java objekty typu \texttt{InetAddress}. Tyto objekty nelze serializovat do databáze, proto jsou ukládány jen řetězcové hodnoty. Nicméně třída InetAddress nabízí statickou metodu \texttt{InetAddress 	getByName(String host)}, kterou lze IP adresy normalizovat na stejný řetězcový tvar. Obě následující volání vrátí stejný řetězec:
+    \item \texttt{srcIpAddress} -- Zdrojová IP adresa v řetězcovém formátu, lze tedy uchovat IPv4 i IPv6 adresu. IPv6 adresa může mít více řetězcových interpretací, např. řetězce \texttt{ff02:0:0:0:0:0:0:c} a \texttt{ff02::c} vyjadřují tu samou IPv6 adresu. IP adresy jsou získány z paketu pomocí knihovny Pcap4J \ref{pcap4j}, která IP adresy vrací jako Java objekty typu \texttt{InetAddress}. Tyto objekty nelze serializovat do databáze, proto jsou ukládány jen řetězcové hodnoty. Nicméně třída InetAddress nabízí statickou metodu \texttt{InetAddress 	getByName(String host)}, kterou lze IP adresy normalizovat na stejný řetězcový tvar. Obě následující volání vrátí stejný řetězec:
     
     \indent \texttt{InetAddress.getByName("ff02:0:0:0:0:0:0:c").getHostAddress()}
     
     \indent \texttt{InetAddress.getByName("ff02::c").getHostAddress()}
     
-    \item \texttt{dstIpAddress} - Cílová IP adresa ve stejném formátu jako zdrojová.
+    \item \texttt{dstIpAddress} -- Cílová IP adresa ve stejném formátu jako zdrojová.
     
-    \item \texttt{srcPort} - Zdrojový port.
+    \item \texttt{srcPort} -- Zdrojový port.
     
-    \item \texttt{dstPort} - Cílový port.
+    \item \texttt{dstPort} -- Cílový port.
 \end{itemize}
 
 \noindent První čtyři atributy jsou společné pro všechny druhy metadat.
@@ -665,7 +705,7 @@ MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=12cm]{template-fig/MetadataSchema.pdf}
-  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna}.
+  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna.}
   \label{FIG_MetadataSchema}
 \end{figure}
 
@@ -679,17 +719,25 @@ Manipulaci s metadaty zajišťuje tzv. reaktivní JPA (\texttt{Java Persistence 
 
 Základem je vytvoření entitní třídy, která reprezentuje objekty ukládané do tabulky databáze nebo v tomto případě do kolekce. Pro entitní třídu lze definovat rozhraní, které představuje použití návrhového vzoru \texttt{Repository}. Výhodou je, že objekty nemají ponětí o tom, jakým způsobem jsou ukládány. O persistenci se postará Repository. Definované rozhraní představující Repository musí dědit rozhraní
 
-\vspace{0.5cm}
-\texttt{ReactiveCrudRepository<T, ID>}
+\begin{lstlisting}[language=Java]
+    ReactiveCrudRepository<T, ID>
+\end{lstlisting}
+%\vspace{0.5cm}
+%\texttt{ReactiveCrudRepository<T, ID>}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 \noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s parametry reaktivních typů \texttt{Flux} a \texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s metadaty je rozhraní:
 
-\vspace{0.5cm}
-\texttt{PacketMetadataRepository extends} \\
-\indent \indent \indent \texttt{ReactiveCrudRepository<PacketMetadata, String>}
+\begin{lstlisting}[language=Java]
+    PacketMetadataRepository extends
+            ReactiveCrudRepository<PacketMetadata, String>
+\end{lstlisting}
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
+%\texttt{PacketMetadataRepository extends} \\
+%\indent \indent \indent %\texttt{ReactiveCrudRepository<PacketMetadata, String>}
+
+%\vspace{0.5cm}
 \noindent Framework Spring se postará o implementaci tohoto rozhraní pro všechny CRUD operace nabízené tímto rozhraním.
 
 Reaktivní přístup byl zvolen hlavně z důvodu vrstvy JPA, kterou zajišťuje sám Spring. Přístup pomocí asynchronních dotazů by šel využít taktéž, ale manipulace s metadaty, ukládání a dotazování, by byla těžkopádná, potřebovala výrazně více režijního kódu, a byla by nepřehledná, protože asynchronní ovladač pracuje primárně na úrovně dokumentů vkládaných do kolekcí. S tím by souviselo manuální sestavování a parsování objektů reprezentujících dokument.
@@ -702,13 +750,13 @@ Reaktivní aplikační rozhraní poskytuje operátory podobné streamům z jazyk
 
 Implementace reaktivního rozhraní je založena na výše zmíněné specifikaci Reactive Streams. Základním kamenem jsou čtyři rozhraní \texttt{Publisher}, \texttt{Subscriber}, \texttt{Subscription} a \texttt{Processor}. Jejich zodpovědnosti jsou:
 \begin{itemize}
-    \item Publisher - Poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
+    \item Publisher -- Poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
     
-    \item Subscriber - Příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} - zpracování elementu, \texttt{onError} - zpracování chyby, a \texttt{onComplete} - signalizace dokončení operace onNext.
+    \item Subscriber -- Příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} -- zpracování elementu, \texttt{onError} -- zpracování chyby, a \texttt{onComplete} -- signalizace dokončení operace onNext.
     
-    \item Subscription - Může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
+    \item Subscription -- Může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
     
-    \item Processor - Procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
+    \item Processor -- Procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
 \end{itemize}
 
 \noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
@@ -716,18 +764,21 @@ Implementace reaktivního rozhraní je založena na výše zmíněné specifikac
 \subsection{HDFS}
 
 \section{Architektura systému} \label{architecture}
-Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti.
+Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti (vynechány jsou především závislosti na třídy pocházející z knihoven).
 
-Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy - \texttt{handlerManager}. Metoda \texttt{listen} je zavolána při přečtení zprávy požadavku z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně odpovědí je uvedeno v \ref{designCommunication}.
+Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující handler ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v \ref{designCommunication}.
 
 
+
+
+%TODO: Popsat druhy diagram
 
 
 
 
 Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
 
-Konfigurace parametrů systému a~jednotlivých technologií bude možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota.
+Konfigurace parametrů systému a~jednotlivých technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota.
 
 \begin{figure}[!h]
   \centering
@@ -749,6 +800,8 @@ Pro nový druh dat a~potřeby komunikace s~úložištěm nebo databází je nutn
 Nová třída handleru musí být přidána do správce handlerů společně s~typem příkazu.
 
 Díky tomu že jsou typ operace a~typ dat výčty, nemůže klient poslat libovolný dotaz na úplně neznámá data. Příkaz je ale určen kombinací těchto dvou výčtů, a~proto i~tak lze odeslat nepodporovaný příkaz, který může skončit chybou.
+
+\section{Klientská aplikace}
 
 \section{Logování}
 
