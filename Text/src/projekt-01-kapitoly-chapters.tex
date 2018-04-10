@@ -469,66 +469,7 @@ V~předchozích sekcích byla představena komunikace s~repositářem, jak vypad
 
 Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých časových intervalech dotazuje na zprávy z~Kafka fronty. Po přijetí zprávy dojde k~přečtení příkazu určeného typem operace a~typem dat společně s~dodatečnými parametry uvedenými v \ref{designCommunication}. Na základě příkazu dojde k~výběru konkrétní obsluhy (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o~uložení dat, o~načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i~o~správu metadat zmíněnou v~sekci \ref{metadata}. Při implementaci budou handleru nastaveny potřebné objekty pro řešení databázových operací pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
 
-Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout doimplementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
-
-%TODO: Vice Kafka front? - Vice konzumentu?
-
-\chapter{Implementace prototypu} \label{chapterPrototype}
-Prototyp distribuovaného repositáře byl implementován za účelem ověření základních aspektů návrhu, k~ověření komunikace mezi klientem a~systémem, zpracování příkazů, a~také výkonu.
-
-Prototyp má omezenou funkcionalitu co se týká zpracování různých druhů digitálních forenzních dat a~z~hlediska operací. Neobsahuje také ani systém metadat. Podporuje pouze operaci uložení a~pro soubory typu PCAP.
-
-Klient tedy může odeslat příkaz pro operaci \texttt{SAVE} a~typ dat \texttt{PCAP}. Konzument zpráv zprávu přijme a~spustí odpovídající handler. Jak bylo výše uvedeno, soubory typu PCAP lze považovat za strukturovaná data. Handler tedy soubor rozdělí na jednotlivé pakety a~ty jsou potom serializovány a~uloženy do Cassandry. Klientovi je odeslána odpověď informující o~dokončení. Systém využívá knihovnu \texttt{pcap4j}\footnote{https://github.com/kaitoy/pcap4j} pro rozdělení na pakety.
-
-\section{Výkon}
-Tato sekce se věnuje shrnutí výkonnosti implementovaného prototypu. Test rychlosti byl proveden na této konfiguraci:
-
-\vspace{0.5cm}
-\noindent
-\texttt{CPU: Intel Core i5-4200U 1.6Ghz @ 2.3Ghz} \\
-\texttt{RAM: 8 GB} \\
-\texttt{OS: Windows 8.1} \\
-\texttt{Kafka, Zookeeper and Cassandra: running as containers in Docker environment} \\
-\texttt{hosted by boot2docker}
-
-\vspace{0.5cm}
-\noindent
-Pro testování byly použity PCAP soubory obsahující od stovkek paketů po několik tisíc. Tabulka \ref{TablePerformance} obsahuje informace z~měření. První sloupec udává velikost PCAP souboru v~bytech, druhý sloupec obsahuje počet paketů na daný PCAP soubor a~třetí sloupec zobrazuje průměrnou velikost paketu. Čas uvedený ve čtvrtém sloupci je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Poslední pátý sloupec udává počet paketů zpracovaných za sekundu. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
-
-Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí by byla výkonnost systému znatelně vyšší.
-
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=15cm]{template-fig/PerformanceChart.pdf}
-  \caption{Graf zobrazující počet uložených paketů z~jednoho PCAP souboru za čas.}
-  \label{FIG_PerformanceChart}
-\end{figure}
-
-\vspace{0.5cm}
-
-\noindent Z uvedeného grafu \ref{FIG_PerformanceChart} vyplývá lineární složitost. Podle údajů v~tabulce \ref{TablePerformance} lze průměrně zpracovat 89 paketů za sekundu při průměrné velikosti jednoho paketu 450 bytů.
-
-%AVG time (s)	AVG packet size (Bytes)
-%88,97043294	451,4784279
-
-
-\vspace{0.5cm}
-
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{| l | l | l | l | l |}
-    \hline
-    PCAP size (bytes)   &   Count of packets   &   Avg. packet size &  Time (s) &   Packets/s \\ \hline
-    91 340 & 382 & 239,1099476 & 7 & 54,57142857 \\ \hline
-    1 955 172 & 1360 & 1437,626471 & 13 & 104,6153846 \\ \hline
-    412 254 & 1879 & 219,4007451 & 19 & 98,89473684 \\ \hline
-    420 869 & 2263 & 185,9783473 & 23 & 98,39130435 \\ \hline
-    449 234 & 2563 & 175,276629 & 29 & 88,37931034 \\ \hline
-    \end{tabular}\par
-    \bigskip
-    \caption{Tabulka obsahuje měřená data.}
-    \label{TablePerformance}
-\end{table}
+Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout do-implementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
 
 \chapter{Implementace} \label{chapter_impl}
 
@@ -621,12 +562,32 @@ Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageLis
 Další z projektů, které patří pod Spring, je Spring Hadoop, zjednodušující použití Hadoop API pro Javu. Přináší zase výše zmíněný jednotný konfigurační model usnadňující vývoj systémů postavených na platformě Hadoop, využívající HDFS, paradigma MapReduce, Hive a Pig. Poskytuje také integraci s jinými projekty ze Spring ekosystému jako například \texttt{Spring Integration} a \texttt{Spring Batch}. Podporuje tvorbu Hadoop aplikací, které jsou konfigurovány principem dependency injection a spuštěny jako standardní Java aplikace nebo pomocí nástrojů Hadoop pro příkazovou řádku.
 Velmi jednoduše lze integrovat se Spring Boot pro zjednodušení připojení k HDFS za účelem manipulace s daty \cite{springHadoop}. Jedná se o komplexní systém obsahující obrovské množství dalších nástrojů, podsystémů a nastavení, které ovšem překračují použití v distribuovaném úložišti, více lze nalézt na referenčních webových stránkách projektu Spring Hadoop \footnote{https://docs.spring.io/spring-hadoop/docs/2.5.1.BUILD-SNAPSHOT/reference/html/}.
 
-Pro účely distribuovaného repositáře byla využita převážně možnost propojení s HDFS. Přistupovat k HDFS lze obecně několika způsoby -- použít Java API \footnote{https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/fs/FileSystem.html} (nutno stále kontrolovat výjimky a ošetřovat chybové stavy), nebo souborový systém ovládat pomocí příkazové řádky nástrojem \texttt{hadoop} \footnote{https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/FileSystemShell.html} mimo Java aplikaci. Oba způsoby nejsou uživatelsky přívětivé. Spring Hadoop propojuje tyto dva způsoby skrze intuitivní jednoduché Java API. \cite{springHadoopReference}.
+Pro účely distribuovaného repositáře byla využita převážně možnost propojení s HDFS. Přistupovat k HDFS lze obecně několika způsoby -- použít Java API \footnote{https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/fs/FileSystem.html} (nutno stále kontrolovat výjimky a ošetřovat chybové stavy), nebo souborový systém ovládat pomocí příkazové řádky nástrojem \texttt{hadoop} \footnote{https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/FileSystemShell.html} mimo Java aplikaci. Oba způsoby nejsou uživatelsky přívětivé. Spring Hadoop propojuje tyto dva způsoby skrze intuitivní jednoduché Java API \cite{springHadoopReference}.
+
+HDFS nabízí tři API:
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{| l | l | l | l | l |}
+    \hline
+    Soubor. systém   &   Metoda   &   Schéma/Prefix &  Zápis/Čtení &   Verze \\ \hline
+    HDFS & RPC & \texttt{hdfs://} & Zápis i čtení & Pouze stejná verze \\ \hline
+    HFTP & HTTP & \texttt{hftp://} & Pouze čtení & Nezávislé na verzi \\ \hline
+    WebHDFS & HTTP (REST) & \texttt{webhdfs://} & Zápis i čtení & Nezávislé na verzi \\ \hline
+    \end{tabular}\par
+    \bigskip
+    \caption{Druhy API, které HDFS poskytuje, převzato z referenční dokumentace \cite{springHadoopReference}.}
+    \label{HDFSApi}
+\end{table}
+
+\noindent Pro účely distribuovaného úložiště bylo zvoleno první API, tzv. HDFS, založené na RPC volání -- tento způsob vyžaduje, aby klient i Hadoop cluster běželi na stejné verzi (rozdílné verze způsobí problémy v serializaci). Další alternativou by bylo API WebHDFS, které ovšem vyžaduje další konfiguraci, a přenos pomocí HTTP přináší režii navíc ve formě zpomalení ukládání a čtení dat.
+API HFTP v tomto případě využít nelze, protože podporuje pouze čtení.
+
+Praktickým nástrojem poskytovaným distribucí Hadoop je klient příkazové řádky, přes kterého lze spouštět příkazy podobné těm linuxovým přímo nad HDFS -- existenci, mazaní, kopírování, přesouvání souborů, nebo nastavení přístupových práv. Tento nástroj je dostupný pouze přes příkazovou řádku, což stěžuje použití přímo z Java aplikace. Spring Hadoop poskytuje plně zabudovanou funkcionalitu výše zmíněného nástroje uvnitř třídy \texttt{FsShell}, která zrcadlí většinu příkazů dostupných z příkazové řádky (metody typu \texttt{chmod}, \texttt{cp}, \texttt{copyFromLocal}, \texttt{ls}, \texttt{mkdir}, \texttt{put}, \texttt{rm}, atd) \cite{springHadoopReference}. Pomocí této třídy jsou prováděny veškeré operace s HDFS.
 
 \section{Úložiště}
 Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a MongoDB, a distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
 
-\subsection{Cassandra}
+\subsection{Cassandra} \label{cassandra}
 Schéma databáze Cassandra je aktuálně velmi jednoduché. Nejzevnější úroveň tvoří tzv. \texttt{Keyspace} představující kontejner tabulek. Keyspace svými atributy udává replikační faktor (angl. \texttt{replication factor}), strategii umísťování replik (angl. \texttt{replica placement strategy}), a třídy sloupců (angl. \texttt{column families}). Aktuální nastavení keyspace vypadá následovně:
 
 \vspace{0.5cm}
@@ -664,7 +625,7 @@ Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód n
 
 Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
 
-\subsection{MongoDB}
+\subsection{MongoDB} \label{mongoDB}
 MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}. Druh metadat pro nějaký typ forenzních dat lze reprezentovat jako dokument ve formátu JSON. Dokumenty stejného typu jsou pak ukládány do kolekce. Pro každý typ ukládaných forenzních dat existuje takový dokument. Při ukládání dat do Cassandry nebo HDFS je dokument metadat sestaven a vyplněn klíčovými atributy, podle kterých bude možné později vyhledávat.
 
 \vspace{0.5cm}
@@ -798,8 +759,17 @@ Konfigurace parametrů systému a~technologií je možná pomocí specifických 
 \subsection{Rozhraní pro dotazování dat}
 
 \subsection{Scénáře}
+Tato sekce uvede podporované příkazy a jakým způsobem jsou zpracovány. Podporovány jsou dva scénáře -- uložení PCAP souboru a čtení paketů podle zadaných kritérií. Jádro distribuovaného repositáře ilustruje diagram tříd \ref{FIG_DRCoreClassDiagram}.
+
+Zpracování proběhne následovně -- metoda \texttt{listen} třídy DistributedRepositoryConsumer zkonzumuje zprávu z fronty a zavolá metodu \texttt{consume}, která spustí obsluhu příkazu. Aktuálně jsou definovány dvě obsluhy:
+
+\begin{itemize}
+    \item Příkaz \texttt{STORE\_PCAP} - Zpracování řeší třída \texttt{StorePcapHandler}.
+    \item Příkaz \texttt{LOAD\_PCAP} - Obsluhu poskytuje třída \texttt{LoadPcapHandler}. 
+\end{itemize}
 
 \subsubsection{Zpracování a uložení PCAP souboru}
+Klient odešle příkaz \texttt{STORE\_PCAP} s dodatečnými parametry udávajícími zdroj dat a výstupní frontu (více v \ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z HDFS a nebo z paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z HDFS ani z paměti RAM. Následně proběhne parsování na jednotlivé pakety. K tomu slouží rozhraní \texttt{PcapParser<T>} s implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a \texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z lokálního disku, a poté odeslat odpověď klientovi.
 
 \subsubsection{Čtení paketů podle kritérií}
 
