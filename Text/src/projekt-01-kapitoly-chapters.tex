@@ -731,13 +731,6 @@ Tato sekce se zabývá architekturou systému. Následující dva diagramy tří
 
 Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} (je označena anotací \texttt{@KafkaListener} -- více v \ref{springKafka}), je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující obsluhu ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v \ref{designCommunication}.
 
-
-
-%TODO: Popsat druhy diagram
-
-
-
-
 Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
 
 Konfigurace parametrů systému a~technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota (konfigurace uvedena v \ref{configuration}).
@@ -756,7 +749,7 @@ Konfigurace parametrů systému a~technologií je možná pomocí specifických 
   \label{FIG_DRCoreClassDiagram}
 \end{figure}
 
-\subsection{Rozhraní pro dotazování dat}
+\subsection{Rozhraní pro dotazování dat} \label{queryDataInterface}
 
 \subsection{Scénáře}
 Tato sekce uvede podporované příkazy a jakým způsobem jsou zpracovány. Podporovány jsou dva scénáře -- uložení PCAP souboru a čtení paketů podle zadaných kritérií. Jádro distribuovaného repositáře ilustruje diagram tříd \ref{FIG_DRCoreClassDiagram}.
@@ -772,13 +765,18 @@ Zpracování proběhne následovně -- metoda \texttt{listen} třídy Distribute
 Klient odešle příkaz \texttt{STORE\_PCAP} s dodatečnými parametry udávajícími zdroj dat a výstupní frontu (více v \ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z HDFS a nebo z paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z HDFS ani z paměti RAM. Následně proběhne parsování na jednotlivé pakety. K tomu slouží rozhraní \texttt{PcapParser<T>} s implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a \texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z lokálního disku, a poté odeslat odpověď klientovi.
 
 \subsubsection{Čtení paketů podle kritérií}
+Klient odešle příkaz \texttt{LOAD\_PCAP} s dodatečnými parametry podobně jako v předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v \ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v tomto případě už hodnoty celého paketu z databáze Cassandra. Načítání paketů probíhá zase asynchronně, k metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z důvodu neznámé velikosti a počtu nalezených paketů). Přístup k výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>}, implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
 
 \subsection{Rozšíření pro nový typ forenzních dat}
-Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}. Dále je potřeba implementovat rozhraní \texttt{IConsumerHandler}, které kompletně řídí zpracování příkazu.
-Pro nový druh dat a~potřeby komunikace s~úložištěm nebo databází je nutné přidat implementaci rozhraní \texttt{IStore} a/nebo \texttt{ILoad}.
-Nová třída handleru musí být přidána do správce handlerů společně s~typem příkazu.
+Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~přídání implementace:
 
-Díky tomu že jsou typ operace a~typ dat výčty, nemůže klient poslat libovolný dotaz na úplně neznámá data. Příkaz je ale určen kombinací těchto dvou výčtů, a~proto i~tak lze odeslat nepodporovaný příkaz, který může skončit chybou.
+\begin{itemize}
+    \item Rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}, kde lze přidat nové typy příkazů.
+    
+    \item Zpracování příkazu -- Je potřeba specializovat třídu \texttt{BaseHandler} novou implementací, která bude kompletně řídit zpracování příkazu (\texttt{BaseHandler} má přístup k HDFS a k šabloně obsluhující komunikaci s Kafkou). Tato implementace se musí nakonfigurovat jako bean ve třídě \texttt{HandlerBeans} a asociovat s typem příkazu přes správce handlerů v \texttt{HandlerManagerBeans}.
+\end{itemize}
+
+\noindent Po těchto krocích už lze zasílat zprávy požadavků s novým typem příkazu z klientské aplikace.
 
 \section{Klientská aplikace}
 
