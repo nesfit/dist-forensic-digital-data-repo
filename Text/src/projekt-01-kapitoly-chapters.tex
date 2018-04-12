@@ -303,7 +303,7 @@ Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých di
 \section{Požadavky na systém}
 Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S tím souvisí také výběr vhodných technologií.
 
-Systém musí umožnit optimální přístup k různým datům, jiný přístup bude pro strukturovaná data a jiný pro nestrukturovaná. Z forenzních digitálních dat proběhne zaměření převážně na PCAP soubory.
+Systém musí umožnit optimální přístup k různým datům, jiný přístup bude pro strukturovaná data a jiný pro nestrukturovaná. Z forenzních digitálních dat proběhne zaměření převážně na \texttt{PCAP} soubory.
 
 Posledním požadavkem je umožnit přidávání podpory pro nové druhy digitálních forenzních dat přímo za běhu systému.
 
@@ -405,7 +405,7 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
 Tato sekce se zaměřuje na úložiště, kde budou digitální forenzní data uchována. Můžeme je rozdělit na strukturovaná a~nestrukturovaná.
 
 \subsection{Strukturovaná data}
-V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou být rozdělena na menší části při zachování možnosti interpretace, a~mohou být efektivně serializována pro uložení. Mezi strukturovaná data můžeme zařadit například soubory formátu \texttt{PCAP} obsahující síťovou komunikaci. Tyto soubory lze rozparsovat na jednotlivé segmenty pakety. Pakety lze potom serializovat na pole bajtů a~uložit do NoSQL databáze. Pro strukturovaná data byla vybrána databáze Cassandra.
+V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou být rozdělena na menší části při zachování možnosti interpretace, a~mohou být efektivně serializována pro uložení. Mezi strukturovaná data můžeme zařadit například soubory formátu PCAP obsahující síťovou komunikaci. Tyto soubory lze rozparsovat na jednotlivé segmenty pakety. Pakety lze potom serializovat na pole bajtů a~uložit do NoSQL databáze. Pro strukturovaná data byla vybrána databáze Cassandra.
 
 \subsubsection{Cassandra}
 Jedná se o~zástupce sloupcových NoSQL databází. Výhodami jsou předně: škálovatelnost, odolnost proti chybám, rychlost, distribuovanost, konzistence a~podpora transakcí. Cassandru využívají i~světoznámé společnosti Facebook, Twitter, Cisco, ebay, Twitter, Netflix a~další. Cílem Cassandry je zvládat vysoké objemy dat napříč mnoha uzly. Data jsou pak distribuována na všech uzlech clusteru. Uzly lze libovolně přidávat. Každý uzel je nezávislý a~zároveň propojený s~ostatními. Každý uzel v~clusteru se může podílet na požadavcích čtení a~zápisu nezávisle na tom, kde jsou data skutečně uložena. Když uzel selže, požadavky čtení a~zápisu mohou být obslouženy jinými uzly sítě \cite{cassandraTutorialsPoint}.
@@ -779,10 +779,24 @@ Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je 
 \noindent Po těchto krocích už lze zasílat zprávy požadavků s novým typem příkazu z klientské aplikace.
 
 \section{Klientská aplikace}
+Pro účely testování byla implementována i klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. 
+Jedná se také o aplikaci postavené na Spring Boot s možností auto-konfigurace. Systém podporuje zaslání zpráv požadavků pro dva výše zmíněné scénáře -- požadavek pro uložení PCAP souboru, a požadavek pro čtení paketů podle kritérií. Data předává v obou případech přes HDFS z důvodu šetření paměti RAM. Odpovědi z distribuovaného úložiště přijímají dvě rozdílné komponenty:
+
+\begin{itemize}
+    \item \texttt{AcknowledgementConsumerHandler} -- Přijímá zprávy pouze z výstupní Kafka fronty \texttt{output\_topic}.
+    
+    \item \texttt{ErrorConsumerHandler} -- Přijímá zprávy z chybové fronty \texttt{error\_topic}.
+\end{itemize}
+
+\noindent Čtení zpráv z těchto dvou front je rozděleno do různých tříd pro potenciálně lepší zpracování chyb. Aktuálně jsou všechny příchozí odpovědi (v obou třídách) zapsány do logů.
+
+Příklady spuštění aplikací jsou uvedeny v \ref{launching}.
 
 \section{Logování}
+Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v logu. Odpovídající nastavení v systému distribuovaného úložiště lze vidět v \ref{configuration}.
 
 \section{Zpracování chyb}
+Při běhu systému může nastat několik druhů chyb -- nefungující připojení k databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v blocích \texttt{try} a \texttt{catch}, v případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedené ve zprávě požadavku.
 
 \chapter{Výkon} \label{chapter_performance}
 
