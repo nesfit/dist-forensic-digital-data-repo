@@ -9,12 +9,12 @@ public enum MetadataOperation {
     //  See https://docs.mongodb.com/manual/reference/operator/query-comparison/
     // There is not any eq method inside org.springframework.data.mongodb.core.query.Criteria.Criteria !
     EQ("is", false),
+    NEQ("ne", false),
+    LT("lt", false),
+    LTE("lte", false),
     GT("gt", false),
     GTE("gte", false),
     IN("in", true),
-    LT("lt", false),
-    LTE("lte", false),
-    NE("ne", false),
     NIN("nin", true);
 
     private String operationAsString;
@@ -26,7 +26,6 @@ public enum MetadataOperation {
     }
 
     public String getOperationAsString() {
-
         return operationAsString;
     }
 

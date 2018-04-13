@@ -81,8 +81,10 @@ public class StorePcapHandler extends BaseHandler {
             processPackets();
             removePayload();
 
-            String detailMessage = String.format("Successfully stored %d packets", count);
-            sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
+            if (request.getAwaitsResponse()) {
+                String detailMessage = String.format("Successfully stored %d packets", count);
+                sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
+            }
 
         } catch (Exception exception) {
             handleFailure(exception);

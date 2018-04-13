@@ -314,7 +314,6 @@ Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným reposit
 
 V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
 
-\newpage
 \subsection{Komunikace} \label{designCommunication}
 Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek -- odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry -- atributy příkazu a~případně řetězec dat.
 
@@ -324,15 +323,15 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
 \begin{itemize}
     \item \texttt{command} -- Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
     
-    \item \texttt{id} -- Unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
+    \item \texttt{id} -- Povinný parametr, udává unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
     
-    \item \texttt{awaitsResponse} -- Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď.
+    \item \texttt{awaitsResponse} -- Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď. Pokud je tento parametr zadán jako \texttt{True}, je nutné zadat také další parametr \texttt{responseTopic}.
     
     \item \texttt{responseTopic} -- Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
     
-    \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení.
+    \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení. Jedná se o povinný parametr.
     
-    \item \texttt{dataSource} -- Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití.
+    \item \texttt{dataSource} -- Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití. Lze využít i pro příkazy čtení dat ke způsobu předání výsledku -- přes HDFS nebo Kafku.
     
     \item \texttt{criterias} -- Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
 \end{itemize}
@@ -623,9 +622,31 @@ Klientský kód získá výsledek dotazu provedením metody \texttt{get} nad obj
 Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i způsob bez blokování. V takovém případě musí klient k objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k dispozici.
 Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a jejich tříd \texttt{Futures} a \texttt{FutureCallback}.
 
-Pozn: Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get.
+Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get. Ovladač umožňuje paralelně provádět pouze omezený počet dotazů. Tento počet je udán vnitřními parametry \texttt{Cluster} objektu (více detailních informací lze nalézt na referenčních www stránkách ovladače v sekci \texttt{Connection pooling} \footnote{https://docs.datastax.com/en/developer/java-driver/2.1/manual/pooling/}):
+
+\begin{itemize}
+    \item \texttt{maxRequestsPerConnection} -- Udává maximální počet požadavků na jedno připojení.
+    
+    \item \texttt{maxConnectionsPerHost} -- Udává maximální počet připojení na uzel.
+\end{itemize}
+
+\noindent Počet paralelních připojení do databáze Cassandra je v systému limitován semaforem. Jinak by vždy při vyčerpání dostupných připojení docházelo k selhání ve formě výjimky \texttt{NoHostAvailableException}. Při každém dotazu do databáze, čtení nebo zápis, tedy dojde k uzamčení semaforu, při dokončení operace (či při chybě) zase k odemknutí semaforu. Semafor byl nastaven na počet přístupů daných výrazem:
+
+\vspace{0.5cm}
+\texttt{maxConnectionsPerHost * maxRequestsPerConnection}
+
+\vspace{0.5cm}
+\noindent Tímto přístupem je tedy maximálně využito systémových prostředků a docíleno zrychlení provádění dotazů.
 
 \subsection{MongoDB} \label{mongoDB}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=13cm]{template-fig/MetadataSchema.pdf}
+  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna.}
+  \label{FIG_MetadataSchema}
+\end{figure}
+
 MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}. Druh metadat pro nějaký typ forenzních dat lze reprezentovat jako dokument ve formátu JSON. Dokumenty stejného typu jsou pak ukládány do kolekce. Pro každý typ ukládaných forenzních dat existuje takový dokument. Při ukládání dat do Cassandry nebo HDFS je dokument metadat sestaven a vyplněn klíčovými atributy, podle kterých bude možné později vyhledávat.
 
 \vspace{0.5cm}
@@ -674,13 +695,6 @@ MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému 
 \end{itemize}
 
 \noindent První čtyři atributy jsou společné pro všechny druhy metadat.
-
-\begin{figure}[!h]
-  \centering
-  \includegraphics[width=12cm]{template-fig/MetadataSchema.pdf}
-  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna.}
-  \label{FIG_MetadataSchema}
-\end{figure}
 
 \subsubsection{Reaktivní dotazy}
 Pro komunikaci s databází MongoDB existuje několik ovladačů, tzn. synchronní, asynchronní, a také ovladač založen na reaktivním paradigmatu. Poslední zmíněný byl využit pro distribuovaný repositář. Tento ovladač poskytuje asynchronní zpracování dotazů neblokujícím způsobem. Zcela implementuje aplikační rozhraní tzv. \texttt{Reactive Streams} \footnote{http://www.reactive-streams.org/}. Mezi silné stránky tohoto paradigmatu patří: funkcionální přístup, asynchronní zpracování chyb, jednoduchá multivláknovost \cite{oficReactiveX}. Často je prezentováno jako rozšíření návrhových vzorů Pozorovatel (angl. \texttt{Observer}) a iterátor (angl. \texttt{Iterator}). Reaktivní paradigma se samozřejmě netýká jen databází, platí obecně a lze s ním vyvíjet celé aplikace.
@@ -750,6 +764,22 @@ Konfigurace parametrů systému a~technologií je možná pomocí specifických 
 \end{figure}
 
 \subsection{Rozhraní pro dotazování dat} \label{queryDataInterface}
+V této sekci bude uvedeno jakým způsobem lze zadávat kritéria pro dotazování. Kritéria slouží k filtrování záznamů, uplatní se na záznamy -- dokumenty metadat. Formát jednotlivých kritérií výrazně odpovídá tvaru parametrů dokumentů v MongoDB.
+
+Jeden objekt kritéria je reprezentován instancí třídy \texttt{KafkaCriteria} pocházející z modulu Communication. Obsahuje tyto parametry:
+
+\begin{itemize}
+    \item \texttt{field} -- Řetězcová hodnota udávající název atributu v dokumentu MongoDB.
+    
+    \item \texttt{operation} -- Jedná se o hodnotu výčtu \texttt{MetadataOperation}, který obsahuje tyto názvy operací -- \texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}. Tyto názvy porovnávacích operací reflektují názvy metod ve třídě \texttt{Criteria} z modulu Spring Data, takže lze pomocí reflexe tento objekt sestavit. Způsob sestavení přes reflexi je zvolen kvůli chybějící závislosti modulu Persistence klientské aplikaci.
+    Objekt \texttt{Criteria} lze potom předat do reaktivního dotazu do MongoDB.
+    
+    \item \texttt{value} -- Představuje hodnotu, podle které se atribut \texttt{field} bude filtrovat. Lze zadat libovolný Java objekt.
+    
+    \item \texttt{values} -- Operace \texttt{in} a \texttt{nin} vyžadují seznam hodnot k filtrování. K předání seznamu objektů slouží tento parametr.
+\end{itemize}
+
+\noindent Objektů typu \texttt{KafkaCriteria} lze sestavit libovolné množství, a předat je poté do zprávy požadavku \texttt{KafkaRequest} \ref{designCommunication}.
 
 \subsection{Scénáře}
 Tato sekce uvede podporované příkazy a jakým způsobem jsou zpracovány. Podporovány jsou dva scénáře -- uložení PCAP souboru a čtení paketů podle zadaných kritérií. Jádro distribuovaného repositáře ilustruje diagram tříd \ref{FIG_DRCoreClassDiagram}.
@@ -762,7 +792,7 @@ Zpracování proběhne následovně -- metoda \texttt{listen} třídy Distribute
 \end{itemize}
 
 \subsubsection{Zpracování a uložení PCAP souboru}
-Klient odešle příkaz \texttt{STORE\_PCAP} s dodatečnými parametry udávajícími zdroj dat a výstupní frontu (více v \ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z HDFS a nebo z paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z HDFS ani z paměti RAM. Následně proběhne parsování na jednotlivé pakety. K tomu slouží rozhraní \texttt{PcapParser<T>} s implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a \texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z lokálního disku, a poté odeslat odpověď klientovi.
+Klient odešle příkaz \texttt{STORE\_PCAP} s dodatečnými parametry udávajícími zdroj dat a výstupní frontu (více v \ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z HDFS a nebo z paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z HDFS ani z paměti RAM. Následně proběhne parsování na jednotlivé pakety. K tomu slouží rozhraní \texttt{PcapParser<T>} s implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a \texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z lokálního disku. Poté je případně odeslána odpověď klientovi s návratovým kódem \texttt{OK(200)}.
 
 \subsubsection{Čtení paketů podle kritérií}
 Klient odešle příkaz \texttt{LOAD\_PCAP} s dodatečnými parametry podobně jako v předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v \ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v tomto případě už hodnoty celého paketu z databáze Cassandra. Načítání paketů probíhá zase asynchronně, k metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z důvodu neznámé velikosti a počtu nalezených paketů). Přístup k výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>}, implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
@@ -776,7 +806,7 @@ Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je 
     \item Zpracování příkazu -- Je potřeba specializovat třídu \texttt{BaseHandler} novou implementací, která bude kompletně řídit zpracování příkazu (\texttt{BaseHandler} má přístup k HDFS a k šabloně obsluhující komunikaci s Kafkou). Tato implementace se musí nakonfigurovat jako bean ve třídě \texttt{HandlerBeans} a asociovat s typem příkazu přes správce handlerů v \texttt{HandlerManagerBeans}.
 \end{itemize}
 
-\noindent Po těchto krocích už lze zasílat zprávy požadavků s novým typem příkazu z klientské aplikace.
+\noindent Po těchto krocích lze zasílat zprávy požadavků s novým typem příkazu z klientské aplikace.
 
 \section{Klientská aplikace}
 Pro účely testování byla implementována i klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. 
@@ -796,16 +826,19 @@ Příklady spuštění aplikací jsou uvedeny v \ref{launching}.
 Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v logu. Odpovídající nastavení v systému distribuovaného úložiště lze vidět v \ref{configuration}.
 
 \section{Zpracování chyb}
-Při běhu systému může nastat několik druhů chyb -- nefungující připojení k databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v blocích \texttt{try} a \texttt{catch}, v případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedené ve zprávě požadavku.
+Při běhu systému může nastat několik druhů chyb -- nefungující připojení k databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v blocích \texttt{try} a \texttt{catch}, v případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
 
 \chapter{Výkon} \label{chapter_performance}
 
 \chapter{Závěr}
+\section{Výsledky}
 V~rámci semestrálního projektu jsem se seznámil s~formáty digitálních forenzních dat a~způsoby jejich uložení. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s~distribuovanými databázemi a~NoSQL databázemi. Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní.
 
 Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracovává požadavky od klienta. Provedl jsem také základní vyhodnocení z hlediska výkonnosti na běžně dostupné hardwarové konfiguraci.
 
 Dalším krokem bude rozšíření implementace prototypu o~podporu nových druhů digitálních forenzních dat, zejména zjednodušení přidávání nových akcí, které zpracovávají příkazy od klienta. Bude také implementován podsystém metadat, který bude provádět předzpracování dat.
 Implementovaný systém bude zhodnocen z~hlediska výkonu a~použití pro vybrané druhy digitálních forenzních dat.
+
+\section{Navržená rozšíření}
 
 %=========================================================================

@@ -8,7 +8,6 @@
     <artifactId>persistence</artifactId>
     <version>1.0</version>
 
-    <!-- TODO: Check if Spring Boot starter parent is necessary -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -82,12 +81,12 @@
             <type>pom</type>
         </dependency>
 
-        <!-- MongoDB Reactive Streams Java Driver -->
+        <!-- MongoDB Reactive Streams Java Driver
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
             <version>1.7.1</version>
-        </dependency>
+        </dependency> -->
 
         <!-- MongoDB Async Driver
         <dependency>
@@ -101,13 +100,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
-
-        <!-- JavaEE API
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>6.0</version>
-        </dependency>-->
 
     </dependencies>
 
@@ -125,14 +117,6 @@
             </plugin>
         </plugins>
     </build>
-    <!--<build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>-->
 
     <repositories>
         <repository>

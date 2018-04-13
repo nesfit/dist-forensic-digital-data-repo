@@ -94,7 +94,9 @@ public class LoadPcapHandler extends BaseHandler {
 
         removeTmpFile(localFile);
 
-        acknowledge();
+        if (request.getAwaitsResponse()) {
+            acknowledge();
+        }
     }
 
     private void storePayloadIntoHDFS(String localFile, String dstFile) {
