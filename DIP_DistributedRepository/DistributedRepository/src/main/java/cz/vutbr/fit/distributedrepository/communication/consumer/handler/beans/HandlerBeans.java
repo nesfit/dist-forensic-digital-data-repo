@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Configuration;
 public class HandlerBeans {
 
     @Bean
-    public LoadPcapHandler loadPcapHandler() {
-        return new LoadPcapHandler();
+    public StorePcapHandler storePcapHandler() {
+        return new StorePcapHandler();
     }
 
     @Bean
-    public StorePcapHandler storePcapHandler() {
-        return new StorePcapHandler();
+    public LoadPcapHandler loadPcapHandler() {
+        return new LoadPcapHandler();
     }
 
 }

@@ -13,16 +13,16 @@ import org.springframework.context.annotation.Configuration;
 public class HandlerManagerBeans {
 
     @Autowired
-    private LoadPcapHandler loadPcapHandler;
+    private StorePcapHandler storePcapHandler;
 
     @Autowired
-    private StorePcapHandler storePcapHandler;
+    private LoadPcapHandler loadPcapHandler;
 
     @Bean
     public HandlerManager<KafkaRequest, byte[]> handlerManager() {
         HandlerManager<KafkaRequest, byte[]> handlerManager = new HandlerManager<>();
-        handlerManager.attachHandler(Command.LOAD_PCAP, loadPcapHandler);
         handlerManager.attachHandler(Command.STORE_PCAP, storePcapHandler);
+        handlerManager.attachHandler(Command.LOAD_PCAP, loadPcapHandler);
         return handlerManager;
     }
 

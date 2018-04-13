@@ -1,13 +1,17 @@
 package cz.vutbr.fit.persistence.mongodb.repository;
 
 import cz.vutbr.fit.persistence.mongodb.entity.PacketMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -15,8 +19,20 @@ import java.util.function.Consumer;
 
 public class PacketMetadataRepositoryImpl implements DynamicCriteria {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketMetadataRepositoryImpl.class);
+
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
+
+    @PostConstruct
+    private void init() {
+        postConstructValidation();
+        LOGGER.info("PacketMetadataRepositoryImpl initialized");
+    }
+
+    private void postConstructValidation() {
+        Assert.notNull(reactiveMongoTemplate, "ReactiveMongoTemplate must be initialized");
+    }
 
     @Override
     public Flux<PacketMetadata> findByDynamicCriteria(CriteriaDefinition criteriaDefinition) {

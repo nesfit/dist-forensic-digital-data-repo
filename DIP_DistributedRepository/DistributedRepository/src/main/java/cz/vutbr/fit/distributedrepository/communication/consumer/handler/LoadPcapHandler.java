@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
 
+@Component
 public class LoadPcapHandler extends BaseHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadPcapHandler.class);

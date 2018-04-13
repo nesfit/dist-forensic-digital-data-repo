@@ -1,5 +1,5 @@
 
-FROM cassandra:latest
+FROM cassandra:3
 MAINTAINER MartinFIT
 
 # replace docker's official entrypoint here

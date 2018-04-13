@@ -65,6 +65,7 @@ public class StorePcapHandler extends BaseHandler {
     @PostConstruct
     public void init() {
         postConstructValidation();
+        LOGGER.debug("StorePcapHandler initialized");
     }
 
     private void postConstructValidation() {
