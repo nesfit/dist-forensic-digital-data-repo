@@ -2,7 +2,8 @@
 Navod pro ovladani Docker prostredi
 
 	Pozadavky
-		- mit nainstalovany Docker (Docker Toolbox) a Oracle VM VirtualBox
+		- mit nainstalovany Docker (Docker Toolbox) a Oracle VM VirtualBox,
+		  je dost mozne, ze pod Linuxem bude potreba mirne upravit konfiguraci technologii (v Environment/docker-compose.yml)
 		- spusteni prostredi Docker napr. pomoci Docker Quickstart Terminal
 
 	Vytvoreni virtualni masiny
@@ -10,12 +11,11 @@ Navod pro ovladani Docker prostredi
 		  lze ji i znovu vytvorit spustenim skriptu docker-machine-recreate.sh
 
 	Stazeni technologii v prostredi Docker
-		- spusteni skriptu install-docker-enviroment.sh, ktery provede stazeni
-		  obrazu technologii z DockerHub: Cassandra, Kafka, ZooKeeper
+		- spusteni skriptu install-docker-enviroment.sh, ktery provede stazeni obrazu
+		  technologii z DockerHub: Cassandra, Kafka, ZooKeeper, MongoDB, Hadoop
 
 	Spusteni technologii v prostredi Docker
-		- spusteni skriptu run-docker-enviroment.sh,
-		  pro ucely prototypu spusti zatim pouze Cassandru a Kafku se ZooKeeper
+		- spusteni skriptu run-docker-enviroment.sh, spusti vsechny vyse zminene technologie
 
 	Ukonceni behu technologii v prostredi Docker
 		- spusteni skriptu stop-docker-enviroment.sh
@@ -49,29 +49,32 @@ Navod pro ovladani technologii v Docker prostredi
 
 	Cassandra
 		Otevreni CSLSH
-			$ docker run -it --net cassandraofficial_default --link cassandra:cassandra -v /nosql/cassandra/data:/var/lib/cassandra --rm cassandra cqlsh cassandra
-		
-		Tabulky databaze jsou v adresari Environment/cassandra-official/initialize-database, tyto prikazy je nutne vlozit do otevreneho cslsh
+			$ docker run -it --link cassandra:cassandra --rm cassandra cqlsh cassandra
+	
+	MongoDB
+		Otevreni Mongo shell
+			$ docker run -it --link mongodb:mongodb --rm mongo mongo 192.168.99.100:27017
 
 
 Distribuovany repositar
 
-	Prototyp se sklada ze tri samostatnych Maven aplikaci:
+	Implementace se sklada ze ctyr Maven modulu:
+		- Communication							rozhrani pro komunikaci
+		- Persistence							Obsluha Cassandry a MongoDB
 		- DistributedRepository					system distribuovaneho repositare, po spusteni bezi nepretrzite
-		- DistributedRepositoryCommunication	rozhrani pro komunikaci, ktere muze pouzit klient pro komunikaci s DR
-		- ProducerApp							klientska aplikace, ktera odesle PCAP do DR a pocka na odpoved
+		- ProducerDemo							klientska aplikace
 	
-	Prvni je potreba nainstalovat modul DistributedRepositoryCommunication, protoze ostatni dve aplikace jej pouzivaji jako dependency.
-		cd DistributedRepositoryCommunication
-		mvn install
+	Prvni je potreba nainstalovat moduly Communication a Persistence, protoze ostatni dve aplikace jej pouzivaji jako dependency.
+		cd Communication
+			./install.sh
+		cd Persistence
+			./install.sh
 	Pote je potreba nainstalovat zbyle dve aplikace.
 		cd DistributedRepository
-		mvn install
-		cd ProducerApp
-		mvn install
+			./install.sh
+		cd ProducerDemo
+			./install.sh
 	
-	Jedna se o projekty do vyvojoveho prostredi IntelliJ IDEA,
-	DistributedRepository a ProducerApp lze spustit primo v IDEA nebo pomoci Maven v prikazove radce.
-	Pri spusteni v IDEA lze rovnez navazat spojeni na prostredi bezici v Docker a kontrolovat logy technologii Cassandra a Kafka.
-
+	Jedna se o projekty vytvorene ve vyvojovem prostredi IntelliJ IDEA.
+	Pro IDEA existuje plugin Docker, kde lze videt po pripojeni obrazy a bezici kontejnery, zaroven lze sledovat jejich nastaveni a logy.
 

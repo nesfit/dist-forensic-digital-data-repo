@@ -91,6 +91,51 @@ cz.vutbr.fit.producerdemo.demo.StorePcapProducerDemo.dataSourceStorage=HDFS \\
 cz.vutbr.fit.producerdemo.demo.LoadPcapProducerDemo.dataSourceStorage=HDFS
 }
 
-%\chapter{RelaxNG Schéma konfiguračního souboru} % Scheme of RelaxNG configuration file
+\chapter{Běhové prostředí}
+Jako běhové prostředí pro systém distribuovaného repositáře byl zvolen projekt \texttt{Docker} \footnote{https://www.docker.com/} z důvodu jednodušší a oddělené správy použitých technologií. Každá technologie běží v odděleném kontejneru spuštěném z předem připraveného obrazu. Všechny soubory a skripty týkající se běhového prostředí jsou uloženy v adresáři \texttt{Docker/}.
+
+\section{Obrazy}
+Každou technologii reprezentuje samostatný obraz (angl. \texttt{image}), v němž je daná technologie nainstalována.
+
+\vspace{0.5cm}
+\noindent Kompletní přehled obrazů:
+
+\begin{lstlisting}[language=bash,basicstyle={\small\ttfamily}]
+$ docker image ls
+REPOSITORY                  TAG                 IMAGE ID          CREATED           SIZE
+martinfit/maven             3.5.2-jdk-9-slim    3b5fe317e7ef      2 weeks ago       449MB
+martinfit/cassandra         latest              cb028d053919      2 weeks ago       323MB
+wurstmeister/kafka          latest              a958fac18206      3 weeks ago       330MB
+mongo                       latest              5b1317f8158f      4 weeks ago       366MB
+cassandra                   latest              c6b513da2ff3      4 weeks ago       323MB
+maven                       3.5.2-jdk-9-slim    58405637ffbb      8 weeks ago       392MB
+wurstmeister/zookeeper      latest              351aa00d2fe9      16 months ago     478MB
+sequenceiq/hadoop-docker    latest              5c3cc170c6bc      2 years ago       1.77GB
+\end{lstlisting}
+
+\noindent Většina výše uvedených obrazů pochází přímo z oficiálního repositáře \texttt{Docker Hub} \footnote{https://hub.docker.com/}. Výjimku tvoří obrazy \texttt{martinfit/maven} a \texttt{martinfit/cassandra}. Tyto dva obrazy jsou založeny na obrazech z Docker Hub, ale byla do nich přidána dodatečná konfigurace. Obraz pro databázi Cassandra byl mírně upraven, aby bylo možné inicializovat schéma databáze při spuštění kontejneru. Do obrazu pro nástroj Maven byla doinstalována nativní knihovna \texttt{libpcap} kvůli korektnímu běhu knihovny Pcap4J \ref{pcap4j}.
+
+Instalaci prostředí (tzn. stažení a sestavení obrazů) provádí nástroje \texttt{docker-compose pull} a \texttt{docker build} uvnitř skriptu \texttt{install-docker-enviroment.sh}. Spuštění kontejnerů z definovaných obrazů zajistí skript \texttt{run-docker-enviroment.sh}. Zastavit kontejnery lze pomocí skriptu \texttt{stop-docker-enviroment.sh}. Veškerá konfigurace obrazů a kontejnerů se nachází v souboru \texttt{Environment/docker-compose.yml}.
+
+\chapter{Spuštění aplikací} \label{launching}
+Sestavení jednotlivých modulů zajišťují přiložené skripty \texttt{install.sh} v adresáři každého modulu. Jednotlivé cesty ke skriptům jsou:
+
+\begin{enumerate}
+    \item \texttt{Communication/install.sh}
+    
+    \item \texttt{Persistence/install.sh}
+    
+    \item \texttt{DistributedRepository/install.sh}
+    
+    \item \texttt{ProducerDemo/install.sh}
+\end{enumerate}
+
+\noindent Kvůli závislostem mezi moduly je nutné skripty spustit ve výše uvedeném pořadí. Moduly jsou zkompilovány a sestaveny pomocí nástroje Maven, který provede stažení všech potřebných závislostí.
+
+\section{DistributedRepository}
+Systém distribuovaného úložiště lze spustit skriptem \texttt{DistributedRepository/run.sh}, který dynamicky zjistí IP adresy běžících kontejnerů v Docker, a na základě zjištěných hodnot přepíše aplikační proměnné.
+
+\section{ProducerDemo}
+Klientskou aplikaci lze spustit pomocí skriptu \texttt{ProducerDemo/run.sh}, který také dynamicky přepíše aplikační proměnné podle běžících kontejnerů.
 
 %\chapter{Plakát} % poster
