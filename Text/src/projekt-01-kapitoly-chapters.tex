@@ -3,21 +3,21 @@
 
 
 \chapter{Úvod}
-Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a~dalších zařízení, či mobilních plateb a~on-line transakcí. V podstatě ve všech oblastech jako je například věda, politika, strojírenství, medicína, doprava, energetika, se nevyhneme použití digitálních zařízení. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, a také vyšetřovat.
+Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a~dalších digitálních zařízení, či mobilních plateb a~on-line transakcí. V~podstatě ve všech oblastech jako je například věda, politika, strojírenství, medicína, doprava, energetika, se nevyhneme použití digitálních zařízení. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, a~také vyšetřovat.
 
-Digitální zařízení se mohou stát terčem útoků, může se jednat o krádež citlivých dat, podvržení dat, sledování a další. Digitální zařízení mohou být také nástrojem zločinu.
+Digitální zařízení se mohou stát terčem útoků, může se jednat o~krádež citlivých dat, podvržení dat, sledování a~další. Digitální zařízení mohou být také nástrojem zločinu.
 
 Rozdílnost mezi formáty digitálních dat, jejich strukturované a~nestrukturované vlastnosti, a~také prudký nárůst vyžadují mnoho rozličných přístupů a~technologií pro jejich zpracování.
 
 Cílem této práce je navrhnout a~vytvořit distribuované úložiště pro digitální forenzní data. V~rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat, vysvětluje, jak probíhá a~co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a~existujícími systémy, které slouží k~uchování těchto dat a~důkazního materiálu. Následně je představen systém AFF4.
 
-Kapitola \ref{chapter2} pojednává o~úložištích pro rozsáhlá strukturovaná i~nestrukturovaná data. V~jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a~nevýhod. Kapitola je završena uvedením principů NoSQL databází, rozdělení podle typů, a srovnání s relačními databázemi. Na NoSQL databázích bude založeno úložiště distribuovaného repositáře.
+Kapitola \ref{chapter2} pojednává o~úložištích pro rozsáhlá strukturovaná i~nestrukturovaná data. V~jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a~nevýhod. Kapitola je završena uvedením principů NoSQL databází, rozdělení podle typů, a~srovnání s~relačními databázemi. Na NoSQL databázích bude založeno úložiště distribuovaného repositáře.
 
-Cílem praktické části práce je navrhnout a~implementovat distribuovaný repositář. V~kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a~také rozšiřitelnost pro nové druhy digitálních forenzních dat. Systém využívá Big data technologie. Pro komunikaci s klientem jsou zprávy přenášeny tzv. \texttt{Message brokerem} Kafka. Jako úložiště slouží, v závislosti na tom, o jaký typ forenzních digitálních dat se jedná, NoSQL databáze a distribuovaný souborový systém HDFS.
+Cílem praktické části práce je navrhnout a~implementovat distribuovaný repositář. V~kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a~také rozšiřitelnost pro nové druhy digitálních forenzních dat. Systém využívá Big data technologie. Pro komunikaci s~klientem jsou zprávy přenášeny tzv. \texttt{Message brokerem} Kafka. Jako úložiště slouží, v~závislosti na tom, o~jaký typ forenzních digitálních dat se jedná, NoSQL databáze a~distribuovaný souborový systém HDFS.
 
-Kapitola \ref{chapter_impl} se zabývá implementací distribuovaného úložiště,  technickými detaily, způsobem asynchronní komunikace s databázemi, ukládáním a dotazováním nad daty (sekvenčním i náhodným). Systém pracuje nad frameworkem Spring, který usnadňuje konfiguraci a použití Big data komponent. Jako běhové prostředí byl zvolen projekt \texttt{Docker}, který poskytuje jednotné rozhraní pro izolaci aplikací do kontejnerů.
+Kapitola \ref{chapter_impl} se zabývá implementací distribuovaného úložiště,  technickými detaily, způsobem asynchronní komunikace s~databázemi, ukládáním a~dotazováním nad daty (sekvenčním i~náhodným). Systém pracuje nad frameworkem Spring, který usnadňuje konfiguraci a~použití Big data komponent. Jako běhové prostředí byl zvolen projekt \texttt{Docker}, který poskytuje jednotné rozhraní pro izolaci aplikací do kontejnerů.
 
-Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, hardwarovým požadavkům a konfiguraci, a použití systému pro vybrané druhy digitálních forenzních dat.
+Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, hardwarovým požadavkům a~konfiguraci, a~použití systému pro vybrané druhy digitálních forenzních dat.
 
 %Pro ověření základních aspektů návrhu byl také implementován prototyp distribuovaného repositáře, který řeší převážně rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracování požadavků od klienta. Prototypem se zabývá kapitola \ref{chapterPrototype}.
 
@@ -25,37 +25,37 @@ Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, ha
 Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a~předávající fakta ohledně digitálních důkazů nalezených v~počítačích nebo digitálních úložištích mediálních zařízení.
 Nezabývá se tedy pouze počítači, ale také ostatními digitálními technologiemi včetně mobilních telefonů a~tabletů, mobilních sítí, internetového bankovnictví, datových médií apod.
 
-Forenzní analýza digitálních dat slouží k získání digitálního důkazního materiálu, který může být použit v soudní síni proti obviněnému. Nalezené výstupy nejsou omezeny k použití pouze u soudu. Častokrát může nějaká firma řešit interní záležitosti jako například porušení firemní politiky, kdy se zase musí najít (digitální) důkaz, který potvrzuje nebo vyvrací obvinění.
+Forenzní analýza digitálních dat slouží k~získání digitálního důkazního materiálu, který může být použit v~soudní síni proti obviněnému. Nalezené výstupy nejsou omezeny k~použití pouze u~soudu. Častokrát může nějaká firma řešit interní záležitosti jako například porušení firemní politiky, kdy se zase musí najít (digitální) důkaz, který potvrzuje nebo vyvrací obvinění.
 
 Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
 \begin{itemize}
 \item Identifikace -- Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
 
-\item Zachování -- Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s digitálním důkazem jako je přenos, úschova, kontrola a stav.
+\item Zachování -- Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s~digitálním důkazem jako je přenos, úschova, kontrola a~stav.
 
-\item Obnovení -- Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory. I po obnovení smazaného souboru musí být stále zachována integrita.
+\item Obnovení -- Součástí procesu je i~obnova dat, která může zahrnovat obnovu smazaných dat procesy operačního systému, úmyslně smazané soubory, soubory chráněné heslem a~také poškozené soubory. I~po obnovení smazaného souboru musí být stále zachována integrita.
 
-\item Analýza -- Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů. Prohledávána je paměť, registry, výpisy z logů aplikací, historie internetového prohlížeče apod. Podstatná je i dokumentace všech kroků, které byly provedeny.
+\item Analýza -- Jedná se o~hlavní část vyšetřování. Cílem je shromáždit co nejvíce relevantních artefaktů. Prohledávána je paměť, registry, výpisy z~logů aplikací, historie internetového prohlížeče apod. Podstatná je i~dokumentace všech kroků, které byly provedeny.
 
-\item Předání -- Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu. Po shromáždění všech nalezených informací může ale nemusí dojít k definitivnímu rozhodnutí. Co se s informacemi stane už není v rukou vyšetřovatele. Tady proces forenzní analýzy končí.
+\item Předání -- Po analýze jsou artefakty důkladně zdokumentovány a~odevzdány například ve formě protokolu. Po shromáždění všech nalezených informací může ale nemusí dojít k~definitivnímu rozhodnutí. Co se s~informacemi stane už není v~rukou vyšetřovatele. Tady proces forenzní analýzy končí.
 \end{itemize}
 
-\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření forenzní duplikace zkoumaného média. Provádí se proto, aby se neznehodnotil původní zdroj. Například dojde k vytvoření obrazu disku, který je kopie celého disku nebo jeho části bit po bitu. Neduplikuje se celý systém, pokud je prostor příliš velký. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
+\noindent Vyšetřování digitálních forenzních dat obvykle zahrnuje vytvoření forenzní duplikace zkoumaného média. Provádí se proto, aby se neznehodnotil původní zdroj. Například dojde k~vytvoření obrazu disku, který je kopií celého disku nebo jeho části bit po bitu. Neduplikuje se celý systém, pokud je prostor příliš velký. Obraz je statický snímek, který může být analyzován za účelem odhalení nebo stanovení událostí ohledně incidentů, a~může tak být použitý jako důkaz v~soudní síni. Analýza je prováděna na kopii pro zachování integrity originálu.
 
-Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, ale také nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní artefakty a informace jako například smazané soubory, či jejich fragmenty \cite{forensicImages}.
+Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevantní data z~disku. Forenzní obraz obsahuje soubory z~disku, nealokovaný prostor a~tzv. \texttt{slack space}. Slack space je pozůstatek diskového prostoru, který byl alokován pro nějaký počítačový soubor a~ten všechen prostor nepotřebuje. Právě v~těchto prostorech mohou být nalezeny relevantní artefakty a~informace jako např. smazané soubory, či jejich fragmenty \cite{forensicImages}.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=10.5cm]{template-fig/SlackSpace.pdf}
-  \caption{Příklad znázorňuje slack space pro parametry: sektory velikosti 512 bajtů v operačním systému jsou shluknuty do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů (modrá barva). Pro tento soubor byl alokován celý svazek 2048 bajtů, nevyužité místo je slack space, v tomto případě se jedná o 768 bajtů \cite{slacSpace}.}
+  \caption{Příklad znázorňuje slack space pro parametry -- sektory velikosti 512 bajtů jsou shluknuty v~operačním systému do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů (vyznačen modrou barvou). Pro tento soubor byl alokován celý svazek 2048 bajtů. Nevyužité místo (označeno bílou barvou) je slack space, v~tomto případě se jedná o~768 bajtů \cite{slacSpace}.}
   \label{FIG_SlackSpace}
 \end{figure}
 
 \section{Formáty digitálních forenzních dat}
 Typů digitálních forenzních dat existuje spousta. Každý typ takových dat může být reprezentován jiným formátem. Tato sekce čerpá informace převážně z~\cite{forensicswikiForensicFF}.
 
-Mnoho forenzních počítačových programů používají své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a~programově specifické formáty (anglicky \texttt{Program-Specific File Formats}):
+Mnoho forenzních počítačových programů používá své vlastní formáty pro uložení informace. Můžeme je rozdělit na nezávislé (anglicky \texttt{Independent File Formats}) a~programově specifické formáty (anglicky \texttt{Program-Specific File Formats}):
 
 \begin{itemize}
 \item Nezávislé -- Tyto formáty byly vyvinuty nezávisle na konkrétním forenzním programu. Patří mezi ně \texttt{AFF}, \texttt{AFF4}, \texttt{gfzip}, \texttt{Raw Image Format}.
@@ -110,12 +110,12 @@ Jedná se o~open source formát pro ukládání digitálních důkazů a~dat. Je
 Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno, a~získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a~\texttt{ZipFile}.
 
 \begin{itemize}
-\item \texttt{Directory Volume} -- Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké http adrese, což nám umožní používat obraz přímo z~webu.
+\item \texttt{Directory Volume} -- Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké HTTP adrese, což nám umožní používat obraz přímo z~webu.
 
-\item \texttt{ZipFile Volume} -- Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (windows explorer) a~data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a~používat obraz přímo ze serveru.
+\item \texttt{ZipFile Volume} -- Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (v~OS Windows např. \texttt{Windows Explorer}) a~data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a~používat obraz přímo ze serveru.
 \end{itemize}
 
-\noindent Je možné převádět mezi oběma formáty z~jednoho na druhý, extrahovat zip archiv do adresáře a~vytvoření Directory volume.
+\noindent Je možné převádět mezi oběma formáty z~jednoho na druhý, extrahovat zip archiv do adresáře a~nebo z~adresáře vytvořit zip archiv.
 
 \subsubsection{Rozhraní Stream}
 Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje metody typu \texttt{read}, \texttt{seek}, \texttt{tell} a~\texttt{close}. Podporuje ještě \texttt{write}, ale ne k~modifikaci obrazu, nýbrž k~jeho vytvoření (kvůli výše uvedené integritě zdroje). Pokud nějaký AFF4 objekt podporuje rozhraní stream, lze provést náhodné čtení jeho dat. Existuje několik specifických implementací rozhraní stream, některými z~nich jsou:
@@ -123,7 +123,7 @@ Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje 
 \begin{itemize}
 \item \texttt{FileBackedObjects} -- Stream, který ukládá data v~souboru v~souborovém systému, jehož pozice je určena URN souboru.
 
-\item \texttt{HTTPObject} -- Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah AFF4.
+\item \texttt{HTTPObject} -- Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z~důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah systému AFF4.
 
 \item \texttt{Segments} -- Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v~komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a~ne forenzní obraz celkového systému.
 % Hodí se v situacích kdy je souborový systém příliš velký, a víme, že většina obsahu není relevantní. 
@@ -204,7 +204,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \noindent Nevýhody
 \begin{itemize}
-\item CAP teorém -- Pojednává o tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z těchto 3 vlastností: konzistence (angl. Consistency), dostupnost (angl. Availability) a odolnost k přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a dostupností v případě výpadku části sítě.
+\item CAP teorém -- Pojednává o~tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u~ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z~těchto 3 vlastností: konzistence (angl. Consistency), dostupnost (angl. Availability) a~odolnost k~přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a~dostupností v~případě výpadku části sítě.
 
 \item Integrita dat -- Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
 
@@ -236,7 +236,7 @@ Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají in
 Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování \cite{wikiDBMS}. Heterogenní distribuované databáze můžeme rozdělit na federované (angl. federated) nebo multidatabázové.
 
 \vspace{0.5cm}
-\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a multi-databázová architektura.
+\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a~multi-databázová architektura.
 
 \section{Úložiště} \label{storage}
 V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je mezi nimi rozdíl a~jaká jsou jejich úložiště.
@@ -253,19 +253,19 @@ Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jed
 \vspace{0.5cm}
 \noindent NoSQL databáze mohou být rozděleny do čtyř kategorií \cite{noSqlOverview}:
 \begin{itemize}
-    \item Klíč-hodnota (angl. Key-Value databases) -- Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z několika částí, které lze použít jako ID do struktury a ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
+    \item Klíč-hodnota (angl. Key-Value databases) -- Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z~několika částí, které lze použít jako ID do struktury a~ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
     
-    \item Dokumentové (angl. Document databases) -- Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
-    Databáze dokáže interpretovat strukturovanou hodnotu (dokument), toho lze efektivně využít hlavně při dotazování. Dotazy mohou být i složitější než přes klíče, např. pomocí XPath. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
+    \item Dokumentové (angl. Document databases) -- Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v~podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
+    Databáze dokáže interpretovat strukturovanou hodnotu (dokument), toho lze efektivně využít hlavně při dotazování. Dotazy mohou být i~složitější než přes klíče, např. pomocí XPath. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
     
-    \item Grafové (angl. Graph databases) -- Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
+    \item Grafové (angl. Graph databases) -- Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a~jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
     Zástupcem je \texttt{Neo4J}.
     
-    \item Sloupcové (angl. Column-oriented databases / Column family stores) -- Data jsou organizována v tabulkách. Tabulka má řádky jako v relační databázi, ale u řádku pak lze definovat sloupce s hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a z nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
+    \item Sloupcové (angl. Column-oriented databases / Column family stores) -- Data jsou organizována v~tabulkách. Tabulka má řádky jako v~relační databázi, ale u~řádku pak lze definovat sloupce s~hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i~různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a~z~nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
 \end{itemize}
 
-\subsection{Srovnání relačních a NoSQL databází}
-Podle výše uvedených vlastností úložišť pro strukturovaná a nestrukturovaná data můžeme vidět tyto rozdíly:
+\subsection{Srovnání relačních a~NoSQL databází}
+Podle výše uvedených vlastností úložišť pro strukturovaná a~nestrukturovaná data můžeme vidět tyto rozdíly:
 
 \begin{multicols}{2}
 
@@ -274,9 +274,9 @@ Relační databáze
 \begin{itemize}
     \item Datový model je formalizovaný, databáze umožňuje definovat integritní omezení, kontroly, model reflektuje elementy reálného světa.
     
-    \item S daty lze provádět transformace v podobě spojení, agregací, řazení apod.
+    \item S~daty lze provádět transformace v~podobě spojení, agregací, řazení apod.
     
-    \item Kvůli podpoře transakcí a ACID vlastností není úplně snadná škálovatelnost.
+    \item Kvůli podpoře transakcí a~ACID vlastností není úplně snadná škálovatelnost.
     
     \item Mají pevné schéma databáze. Vzniklé problémy po úpravách se musí řešit např. migračními skripty.
 \end{itemize}
@@ -286,31 +286,31 @@ Relační databáze
 NoSQL databáze
 
 \begin{itemize}
-    \item Jedná se o nízkoúrovňové úložiště, kde ve většině případů databáze není schopna data interpretovat. Zajištění konzistence je ponecháno aplikaci. 
+    \item Jedná se o~nízkoúrovňové úložiště, kde ve většině případů databáze není schopna data interpretovat. Zajištění konzistence je ponecháno aplikaci. 
     
-    \item Data lze dostat pouze v podobě, v jaké byla uložena.
+    \item Data lze dostat pouze v~podobě, v~jaké byla uložena.
     
     \item Jsou navrženy pro jednoduchou škálovatelnost.
     
-    \item Mají dynamické schéma, které neomezuje definovat libovolnou strukturu a provádět flexibilní úpravy.
+    \item Mají dynamické schéma, které neomezuje definovat libovolnou strukturu a~provádět flexibilní úpravy.
 \end{itemize}
 
 \end{multicols}
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
-Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána komunikace se systémem včetně aplikačního rozhraní, použité technologie, zvolené druhy úložišť a také zpracování požadavků.
+Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána komunikace se systémem včetně aplikačního rozhraní, použité technologie, zvolené druhy úložišť a~také zpracování požadavků.
 
 \section{Požadavky na systém}
-Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S tím souvisí také výběr vhodných technologií.
+Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S~tím souvisí také výběr vhodných technologií.
 
-Systém musí umožnit optimální přístup k různým datům, jiný přístup bude pro strukturovaná data a jiný pro nestrukturovaná. Z forenzních digitálních dat proběhne zaměření převážně na \texttt{PCAP} soubory.
+Systém musí umožnit optimální přístup k~různým datům, jiný přístup bude pro strukturovaná data a~jiný pro nestrukturovaná. Z~forenzních digitálních dat proběhne zaměření převážně na \texttt{PCAP} soubory.
 
 Posledním požadavkem je umožnit přidávání podpory pro nové druhy digitálních forenzních dat přímo za běhu systému.
 
-Ze sekce \ref{storage} vyplývá, že je vhodné využít NoSQL distribuovaných databází a HDFS jako úložiště. Pro komunikaci s klientem bude sloužit Kafka (společně se ZooKeeper). Všechny tyto technologie jsou distribuované a ověřené pro použití v Big data prostředích. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
+Ze sekce \ref{storage} vyplývá, že je vhodné využít NoSQL distribuovaných databází a~HDFS jako úložiště. Pro komunikaci s~klientem bude sloužit Kafka (společně se ZooKeeper). Všechny tyto technologie jsou distribuované a~ověřené pro použití v~Big data prostředích. Jak jednotlivé technologie fungují bude vysvětleno v~této kapitole.
 
 \section{Aplikační rozhraní}
-Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje.
+Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným repositářem. Komunikace je založena na asynchronním zasílání zpráv. Systém repositáře nenabízí klientovi přímo žádné metody či funkce, které by klient mohl volat. Ovládání repositáře probíhá pomocí zaslání zprávy obsahující tzv. příkaz. Příkaz specifikuje typ operace a~typ dat. Podle typu příkazu je určeno, jak se daný příkaz zpracuje.
 
 V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
 
@@ -318,10 +318,10 @@ V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá,
 Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek -- odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry -- atributy příkazu a~případně řetězec dat.
 
 \vspace{0.5cm}
-\noindent Název a význam parametrů:
+\noindent Název a~význam parametrů:
 
 \begin{itemize}
-    \item \texttt{command} -- Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a \texttt{LOAD\_PCAP}. Příkaz v sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a \texttt{LOAD}, a také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
+    \item \texttt{command} -- Určuje typ příkazu, příklady příkazů mohou být \texttt{STORE\_PCAP} a~\texttt{LOAD\_PCAP}. Příkaz v~sobě ještě zapouzdřuje typ operace, které mohou být \texttt{SAVE} a~\texttt{LOAD}, a~také typ dat jako například \texttt{PCAP}, \texttt{Packet}, \texttt{BINARY}, \texttt{LOG} apod.
     
     \item \texttt{id} -- Povinný parametr, udává unikátní ID zprávy, aby klient potom dokázal identifikovat už zpracované příkazy.
     
@@ -329,27 +329,27 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
     
     \item \texttt{responseTopic} -- Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
     
-    \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení. Jedná se o povinný parametr.
+    \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a~další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení. Jedná se o~povinný parametr.
     
-    \item \texttt{dataSource} -- Zdrojová data k uložení lze zaslat dvojím způsobem. První z nich je poslat data v binární podobě přímo přes systém Kafka společně s příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k souboru, pokud se jedná o HDFS, a také atribut \texttt{removeAfterUse} pro odstranění souboru po použití. Lze využít i pro příkazy čtení dat ke způsobu předání výsledku -- přes HDFS nebo Kafku.
+    \item \texttt{dataSource} -- Zdrojová data k~uložení lze zaslat dvojím způsobem. První z~nich je poslat data v~binární podobě přímo přes systém Kafka společně s~příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a~to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v~podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k~souboru, pokud se jedná o~HDFS, a~také atribut \texttt{removeAfterUse} pro odstranění souboru po použití. Lze využít i~pro příkazy čtení dat ke způsobu předání výsledku -- přes HDFS nebo Kafku.
     
     \item \texttt{criterias} -- Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze pro operace čtení.
 \end{itemize}
 
-\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy příkazů, a v podstatě typy operací s typy dat lze libovolně přidávat.
+\noindent Řetězec dat obsahuje vlastní data, která mají být na straně repositáře zpracována. Typy příkazů, a~v~podstatě typy operací s~typy dat lze libovolně přidávat.
 
 \vspace{0.5cm}
 \noindent Zpráva odpovědi nese tyto parametry:
 \begin{itemize}
-    \item \texttt{id} -- Jedná se o unikátní ID zkopírované ze zprávy požadavku. Klient po přijetí odpovědi bude vědět, ke kterému požadavku odpověď patří.
+    \item \texttt{id} -- Jedná se o~unikátní ID zkopírované ze zprávy požadavku. Klient po přijetí odpovědi bude vědět, ke kterému požadavku odpověď patří.
     
     \item \texttt{responseTopic} -- Název výstupní fronty, do které je odpověď zaslána.
     
-    \item \texttt{responseCode} -- Návratový kód odpovědi symbolizující jak operace dopadla. Analogie s HTTP návratovými kódy, možnými hodnotami jsou: \texttt{OK(200)}, \texttt{BAD\_REQUEST(400)}, \texttt{UNSUPPORTED\_MEDIA\_TYPE(415)}, \texttt{INTERNAL\_SERVER\_ERROR(500)}.
+    \item \texttt{responseCode} -- Návratový kód odpovědi symbolizující jak operace dopadla. Analogie s~HTTP návratovými kódy, možnými hodnotami jsou: \texttt{OK(200)}, \texttt{BAD\_REQUEST(400)}, \texttt{UNSUPPORTED\_MEDIA\_TYPE(415)}, \texttt{INTERNAL\_SERVER\_ERROR(500)}.
     
     \item \texttt{status} -- Rezervovaný parametr pro status odpovědi.
     
-    \item \texttt{detailMessage} -- Pokud se objeví při zpracování požadavku chyba, může být v odpovědi odesláno, proč chyba nastala, nebo její přičina.
+    \item \texttt{detailMessage} -- Pokud se objeví při zpracování požadavku chyba, může být v~odpovědi odesláno, proč chyba nastala, nebo její přičina.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -410,38 +410,38 @@ V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou b
 Jedná se o~zástupce sloupcových NoSQL databází. Výhodami jsou předně: škálovatelnost, odolnost proti chybám, rychlost, distribuovanost, konzistence a~podpora transakcí. Cassandru využívají i~světoznámé společnosti Facebook, Twitter, Cisco, ebay, Twitter, Netflix a~další. Cílem Cassandry je zvládat vysoké objemy dat napříč mnoha uzly. Data jsou pak distribuována na všech uzlech clusteru. Uzly lze libovolně přidávat. Každý uzel je nezávislý a~zároveň propojený s~ostatními. Každý uzel v~clusteru se může podílet na požadavcích čtení a~zápisu nezávisle na tom, kde jsou data skutečně uložena. Když uzel selže, požadavky čtení a~zápisu mohou být obslouženy jinými uzly sítě \cite{cassandraTutorialsPoint}.
 
 \subsection{Nestrukturovaná data}
-Pro uchování nestrukturovaných dat typu například audio, video, logů, a obecně binárních dat bude sloužit distribuovaný souborový systém HDFS. Taková data mohou mít velký objem, a~bylo by plýtvání výkonem provádět jejich serializaci nebo rozdělování na části při ukládání do NoSQL databází.
+Pro uchování nestrukturovaných dat typu například audio, video, logů, a~obecně binárních dat bude sloužit distribuovaný souborový systém HDFS. Taková data mohou mít velký objem, a~bylo by plýtvání výkonem provádět jejich serializaci nebo rozdělování na části při ukládání do NoSQL databází.
 
-\subsubsection{Hadoop a HDFS}
-Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop}, který je navržen pro ukládání a zpracování obrovského množství dat v distribuovaném prostřední napříč mnoha počítači. Počítá se škálovatelností od jednoho serveru po tisíce strojů, kde každý z nich nabízí lokální úložiště a výpočetní zdroje \cite{hadoopTutorialsPoint}.
+\subsubsection{Hadoop a~HDFS}
+Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop}, který je navržen pro ukládání a~zpracování obrovského množství dat v~distribuovaném prostřední napříč mnoha počítači. Počítá se škálovatelností od jednoho serveru po tisíce strojů, kde každý z~nich nabízí lokální úložiště a~výpočetní zdroje \cite{hadoopTutorialsPoint}.
 
 \vspace{0.5cm}
 \noindent Platforma Hadoop zahrnuje tyto moduly:
 
 \begin{itemize}
-    \item \texttt{Hadoop Common} -- Knihovny a pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a operačního systému potřebné pro jazyk Java, a skripty nutné pro spuštění Hadoop-u.
+    \item \texttt{Hadoop Common} -- Knihovny a~pomocné nástroje požadované ostatními Hadoop moduly. Poskytují abstrakce souborového a~operačního systému potřebné pro jazyk Java, a~skripty nutné pro spuštění Hadoop-u.
     
-    \item \texttt{Hadoop YARN} -- Jedná se o framework pro plánování distribuovaných úloh a správu zdrojů.
+    \item \texttt{Hadoop YARN} -- Jedná se o~framework pro plánování distribuovaných úloh a~správu zdrojů.
     
-    \item \texttt{HDFS} -- Distribuovaný souborový systém poskytující vysokou propustnost přístupu k aplikačním datům, škálovatelnost, odolnost proti chybám a efektivní správu zdrojů.
+    \item \texttt{HDFS} -- Distribuovaný souborový systém poskytující vysokou propustnost přístupu k~aplikačním datům, škálovatelnost, odolnost proti chybám a~efektivní správu zdrojů.
     
     \item \texttt{Hadoop MapReduce} -- Systém pro paralelní zpracování obrovského množství vstupních dat. Tento modul je pro systém distribuovaného úložiště zbytečný.
 \end{itemize}
 
-\noindent Kromě výše uvedených modulů existují i další pomocné nástroje:  \texttt{Apache Spark}, \texttt{Apache HBase} -- distribuovaná databáze, \texttt{Apache Hive} -- nástroj pro dolování dat nad platformou Hadoop, \texttt{Apache Pig} atd.
+\noindent Kromě výše uvedených modulů existují i~další pomocné nástroje:  \texttt{Apache Spark}, \texttt{Apache HBase} -- distribuovaná databáze, \texttt{Apache Hive} -- nástroj pro dolování dat nad platformou Hadoop, \texttt{Apache Pig} atd.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/HDFSArchitecture.pdf}
-  \caption{Architektura HDFS \cite{apacheHDFSGuide} -- datové uzly jsou uspořádány do \texttt{racků}, které se nachází v jedné lokalitě, což zajišťuje rychlejší propojení uzlů. Bloky jsou replikovány mezi odlišné uzly.}
+  \caption{Architektura HDFS \cite{apacheHDFSGuide} -- datové uzly jsou uspořádány do \texttt{racků}, které se nachází v~jedné lokalitě, což zajišťuje rychlejší propojení uzlů. Bloky jsou replikovány mezi odlišné uzly.}
   \label{FIG_HDFSArchitecture}
 \end{figure}
 
-\noindent HDFS je virtuální souborový systém vybudovaný nad běžnými souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a přístupu k datům, nikoliv fyzické uložení na uzlu. Byl navržen pro sekvenční přístup k souborům, nikoliv náhodný \cite{hadoopPdi}.
+\noindent HDFS je virtuální souborový systém vybudovaný nad běžnými souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a~přístupu k~datům, nikoliv fyzické uložení na uzlu. Byl navržen pro sekvenční přístup k~souborům, nikoliv náhodný \cite{hadoopPdi}.
 
-\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z jednoho uzlu nazývaného \texttt{NameNode}, který se stará o správu metadat a jmenného prostoru souborového systému. Dále reguluje přístup k souborům a provádí operace typu otevření, zavření, přejmenování souborů a adresářů. Protože je NameNode pouze jeden, měl by být spolehlivý a výkonný, při jeho výpadku způsobí poruchu systému (jde o tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a každý blok souboru je nezávisle replikován v několika datových uzlech slave. Bloky jsou uloženy v lokálním souborovém systému na datových uzlech. Datové uzly jsou také zodpovědné za zpracování požadavků čtení a zápisu od klientů. NameNode se stará o mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}.
+\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z~jednoho uzlu nazývaného \texttt{NameNode}, který se stará o~správu metadat a~jmenného prostoru souborového systému. Dále reguluje přístup k~souborům a~provádí operace typu otevření, zavření, přejmenování souborů a~adresářů. Protože je NameNode pouze jeden, měl by být spolehlivý a~výkonný, při jeho výpadku způsobí poruchu systému (jde o~tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a~ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a~každý blok souboru je nezávisle replikován v~několika datových uzlech slave. Bloky jsou uloženy v~lokálním souborovém systému na datových uzlech. Datové uzly jsou také zodpovědné za zpracování požadavků čtení a~zápisu od klientů. NameNode se stará o~mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}.
 
-HDFS je implementován v jazyce Java, na každém stroji s nainstalovanou Javou může běžet NameNode nebo DataNode software. Typicky při nasazení existuje jeden stroj s běžícím NameNode, na dalších strojích potom běží datové uzly (lze ovšem najít i scénáře, kde na jednom stroji běží více datových uzlů). Důležité je, že uživatelská data nikdy neprochází přes NameNode \cite{apacheHDFSGuide}.
+HDFS je implementován v~jazyce Java, na každém stroji s~nainstalovanou Javou může běžet NameNode nebo DataNode software. Typicky při nasazení existuje jeden stroj s~běžícím NameNode, na dalších strojích potom běží datové uzly (lze ovšem najít i~scénáře, kde na jednom stroji běží více datových uzlů). Důležité je, že uživatelská data nikdy neprochází přes NameNode \cite{apacheHDFSGuide}.
 
 %HDFS poskytuje rozhraní přes příkazovou řádku jako ostatní souborové systémy, které umožňuje interagovat se souborovým systémem.
 
@@ -466,28 +466,28 @@ Dynamičnost MongoDB je vhodná pro správu metadat, zvlášť když bude do rep
 \section{Jádro distribuovaného úložiště}
 V~předchozích sekcích byla představena komunikace s~repositářem, jak vypadají příkazy a~jakým způsobem jsou posílána data. Následně byly popsány možnosti ukládání. Tato sekce se zaměřuje na jádro distribuovaného repositáře, převážně na zpracování příkazů a~manipulaci s~databázemi.
 
-Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých časových intervalech dotazuje na zprávy z~Kafka fronty. Po přijetí zprávy dojde k~přečtení příkazu určeného typem operace a~typem dat společně s~dodatečnými parametry uvedenými v \ref{designCommunication}. Na základě příkazu dojde k~výběru konkrétní obsluhy (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o~uložení dat, o~načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i~o~správu metadat zmíněnou v~sekci \ref{metadata}. Při implementaci budou handleru nastaveny potřebné objekty pro řešení databázových operací pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
+Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých časových intervalech dotazuje na zprávy z~Kafka fronty. Po přijetí zprávy dojde k~přečtení příkazu určeného typem operace a~typem dat společně s~dodatečnými parametry uvedenými v~\ref{designCommunication}. Na základě příkazu dojde k~výběru konkrétní obsluhy (tzv. \texttt{handler}), která má za úkol zpracování příkazu. Může se jednat o~uložení dat, o~načtení dat podle zadaných parametrů, přečtení metadat apod. Handler ukrývá všechny potřebné operace, které mají proběhnout při zpracování příkazu. Mimo jiné se jedná i~o~správu metadat zmíněnou v~sekci \ref{metadata}. Při implementaci budou handleru nastaveny potřebné objekty pro řešení databázových operací pro daný typ dat. Každý typ úložiště (souborový systém nebo NoSQL databáze) může mít jiné rozhraní přístupu.
 
-Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout do-implementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
+Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a~zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V~tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout do-implementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a~spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
 
 \chapter{Implementace} \label{chapter_impl}
 
 \section{Dekompozice do modulů}
-Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z několika modulů a knihoven. V této sekci je uvedeno, jak byl systém dekomponován do modulů a jaké knihovny byly zvoleny. Pro správu závislostí a sestavení aplikace byl zvolen nástroj \texttt{Maven}. Pro přehled byly využity tyto knihovny a frameworky -- \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a samozřejmě ovladače pro jednotlivé databáze.
+Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z~několika modulů a~knihoven. V~této sekci je uvedeno, jak byl systém dekomponován do modulů a~jaké knihovny byly zvoleny. Pro správu závislostí a~sestavení aplikace byl zvolen nástroj \texttt{Maven}. Pro přehled byly využity tyto knihovny a~frameworky -- \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a~samozřejmě ovladače pro jednotlivé databáze.
 
-Jedná se o dvě Spring Boot aplikace -- \texttt{DistributedRepository} a \texttt{ProducerDemo}, které komunikují pomocí komunikačního rozhraní implementovaného v modulu \texttt{Communication}. Přenos zpráv zajišťuje projekt Spring Kafka. Aplikace DistributedRepository má přístup k oběma databázím Cassandra a MongoDB díky modulu \texttt{Persistence} obsahujícím mimo jiné projekt Spring Data, a také k HDFS pomocí projektu Spring Hadoop. K HDFS má přístup i klientská aplikace ProducerDemo.
+Jedná se o~dvě Spring Boot aplikace -- \texttt{DistributedRepository} a~\texttt{ProducerDemo}, které komunikují pomocí komunikačního rozhraní implementovaného v~modulu \texttt{Communication}. Přenos zpráv zajišťuje projekt Spring Kafka. Aplikace DistributedRepository má přístup k~oběma databázím Cassandra a~MongoDB díky modulu \texttt{Persistence} obsahujícím mimo jiné projekt Spring Data, a~také k~HDFS pomocí projektu Spring Hadoop. K~HDFS má přístup i~klientská aplikace ProducerDemo.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=12.3cm]{template-fig/Architecture.pdf}
-  \caption{Schéma klíčových modulů a závislostí systému.}
+  \caption{Schéma klíčových modulů a~závislostí systému.}
   \label{FIG_Architecture}
 \end{figure}
 
 \subsection{Pcap4J} \label{pcap4j}
-Jedná se o knihovnu pro jazyk Java pro zachytávání, sestrojení a odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} v závislosti na operačním systému) přes JNA (\texttt{Java Native Access})
+Jedná se o~knihovnu pro jazyk Java pro zachytávání, sestrojení a~odesílání paketů. Knihovna je stále ve vývoji. Pcap4J pracuje nad nativní knihovnou (\texttt{libpcap}, \texttt{WinPcap}, nebo \texttt{Npcap} v~závislosti na operačním systému) přes JNA (\texttt{Java Native Access})
 \footnote{https://github.com/java-native-access/jna}
-a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s PCAP soubory, vytvářet a parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a \texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
+a~poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti dokáže pracovat s~PCAP soubory, vytvářet a~parsovat je na jednotlivé pakety. Každý paket implementuje rozhraní \texttt{Packet}. Toto rozhraní nabízí mimo jiné dvě klíčové metody \texttt{contains} a~\texttt{get}. Metoda \texttt{contains} slouží ke kontrole, jestli je paket konkrétního typu, který chceme získat. Metoda má jako parametr třídu, které je paket typem, hlavička metody potom vypadá:
 
 \begin{lstlisting}[language=Java]
     boolean contains(Class<T> clazz)
@@ -505,31 +505,31 @@ a poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti
     IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);
 \end{lstlisting}
 
-\noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z konkrétního paketu už lze získávat potřebné informace, v případě IP paketu údaje z hlavičky jako zdrojová a cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i v případě ostatním typů paketů, Z TCP paketu lze získat údaje o portech, sekvenční čísla, checksum a další.
+\noindent Návratová hodnota metody \texttt{get} je objekt třídy uvedené v~parametru. Před voláním \texttt{get} je vhodné zkontrolovat typ pomocí metody \texttt{contains}. Z~konkrétního paketu už lze získávat potřebné informace, v~případě IP paketu údaje z~hlavičky jako zdrojová a~cílová IP adresa, verze protokolu apod. Analogicky lze postupovat i~v~případě ostatním typů paketů, Z~TCP paketu lze získat údaje o~portech, sekvenční čísla, checksum a~další.
 
-Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové datové jednotky (anglicky \texttt{Protocol Data Unit}) vyšší vrstvy do protokolové jednotky nižší vrstvy. Takže ethernetový paket může být současně i IP paketem a podobně.
+Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové datové jednotky (anglicky \texttt{Protocol Data Unit}) vyšší vrstvy do protokolové jednotky nižší vrstvy. Takže ethernetový paket může být současně i~IP paketem a~podobně.
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=15cm]{template-fig/Pcap4JExample.pdf}
-  \caption{Schéma znázorňující výše uvedený příklad pro manipulaci s pakety \cite{gitPcap4J}.}
+  \caption{Schéma znázorňující výše uvedený příklad pro manipulaci s~pakety \cite{gitPcap4J}.}
   \label{FIG_Pcap4JExample}
 \end{figure}
 
-\subsection{Spring, Spring Boot a Spring projekty}
-Spring je velmi populární framework pro jazyk Java umožňující vytvářet webové a enterprise aplikace. Věnuje se mnoha obecným principům a problémům jako jsou například \texttt{dependency injection}, konfigurace, aspektově orientované programování, ORM, validace, bezpečnost, testování, integrace s jinými frameworky atd. V současné době pod něj spadají desítky projektů, každý zaměřený na jiný aspekt \footnote{https://spring.io/docs/reference}.
+\subsection{Spring, Spring Boot a~Spring projekty}
+Spring je velmi populární framework pro jazyk Java umožňující vytvářet webové a~enterprise aplikace. Věnuje se mnoha obecným principům a~problémům jako jsou například \texttt{dependency injection}, konfigurace, aspektově orientované programování, ORM, validace, bezpečnost, testování, integrace s~jinými frameworky atd. V~současné době pod něj spadají desítky projektů, každý zaměřený na jiný aspekt \footnote{https://spring.io/docs/reference}.
 
-Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a konfigurace přímo v Java. S rozšiřující se funkcionalitou se zvyšuje komplexita a i konfigurace se stává obtížná a náchylná k chybám. Z důvodu lepšího způsobu konfigurace byl vyvinut Spring Boot. Spring Boot přichází s principem auto konfigurace, ponechává však možnost předefinovat výchozí nastavení. Klíčovými vlastnostmi jsou \cite{whySpringBoot}:
+Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a~konfigurace přímo v~Java. S~rozšiřující se funkcionalitou se zvyšuje komplexita a~i~konfigurace se stává obtížná a~náchylná k~chybám. Z~důvodu lepšího způsobu konfigurace byl vyvinut Spring Boot. Spring Boot přichází s~principem auto konfigurace, ponechává však možnost předefinovat výchozí nastavení. Klíčovými vlastnostmi jsou \cite{whySpringBoot}:
 
 \begin{itemize}
-    \item Jednoduchá správa závislostí -- Pokud chceme použít Spring Boot k běhu aplikace, je potřeba importovat \texttt{spring-boot-starter-parent} jako modulovou závislost. Existují další \texttt{Spring Boot Starter} závislosti, které se hodí pro určitý typ nebo aspekt vyvíjené aplikace. Existují např. \texttt{Test Starter}, \texttt{Web Starter}, \texttt{Security Starter}, \texttt{Data JPA Starter}, \texttt{AOP Starter} atd. Pokud chceme vyvíjet např. webovou aplikaci, Web Starter poskytne všechny potřebné závislosti zahrnující MVC modul, validační API, prostředky k serializaci dat atp. Webová aplikace typicky potřebuje pracovat s databází -- Data JPA Starter poskytne všechny potřebné závislosti zahrnující transakční API, \texttt{Hibernate} knihovny, ORM implementaci atd.
+    \item Jednoduchá správa závislostí -- Pokud chceme použít Spring Boot k~běhu aplikace, je potřeba importovat \texttt{spring-boot-starter-parent} jako modulovou závislost. Existují další \texttt{Spring Boot Starter} závislosti, které se hodí pro určitý typ nebo aspekt vyvíjené aplikace. Existují např. \texttt{Test Starter}, \texttt{Web Starter}, \texttt{Security Starter}, \texttt{Data JPA Starter}, \texttt{AOP Starter} atd. Pokud chceme vyvíjet např. webovou aplikaci, Web Starter poskytne všechny potřebné závislosti zahrnující MVC modul, validační API, prostředky k~serializaci dat atp. Webová aplikace typicky potřebuje pracovat s~databází -- Data JPA Starter poskytne všechny potřebné závislosti zahrnující transakční API, \texttt{Hibernate} knihovny, ORM implementaci atd.
     
-    \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a \texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v \ref{configuration}). Spring Boot tedy podle zdrojů uvedených v \texttt{classpath} provádí konfiguraci celé aplikace.
+    \item Auto konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k~používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a~\texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o~jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v~konfiguračním souboru \texttt{application.properties} (celá konfigurace aplikace uvedena v~\ref{configuration}). Spring Boot tedy podle zdrojů uvedených v~\texttt{classpath} provádí konfiguraci celé aplikace.
     
-    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je automaticky stažen spolu s ostatními závislostmi a je zabudovaný, takže aplikaci stačí pouze spustit a Spring Boot se postará o nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i jiný typ kontejneru, např. \texttt{Jetty} apod.
+    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v~nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je automaticky stažen spolu s~ostatními závislostmi a~je zabudovaný, takže aplikaci stačí pouze spustit a~Spring Boot se postará o~nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i~jiný typ kontejneru, např. \texttt{Jetty} apod.
 \end{itemize}
 
-\noindent Spring Boot umožňuje vytvářet tzv. \texttt{beans} přímo v Java kódu, bez použití XML konfiguračních souborů. Každou bean lze vytvořit pomocí anotace \texttt{@Bean}, např.
+\noindent Spring Boot umožňuje vytvářet tzv. \texttt{beans} přímo v~Java kódu, bez použití XML konfiguračních souborů. Každou bean lze vytvořit pomocí anotace \texttt{@Bean}, např.
 
 \begin{lstlisting}[language=Java,frame=tb,basicstyle={\small\ttfamily}]
 @Configuration
@@ -548,20 +548,20 @@ public class ParserBeans {
 private PcapParser<PcapPacket> pcapParser;
 \end{lstlisting}
 
-\noindent Uživatel tedy definoval bean v konfigurační třídě označené anotací \texttt{@Configuration}, a tato instance je pak dodána principem dependency injection.
+\noindent Uživatel tedy definoval bean v~konfigurační třídě označené anotací \texttt{@Configuration}, a~tato instance je pak dodána principem dependency injection.
 
 \subsubsection{Spring Kafka} \label{springKafka}
 Projekt Spring Kafka aplikuje klíčové koncepty Springu pro vývoj systémů založených na platformě Kafka. Poskytuje šablonu jako vysokoúrovňovou abstrakci pro zasílání zpráv \cite{springKafka}. Velkým přínosem je výše zmíněná auto konfigurace ze zadaných parametrů, která umožňuje okamžité použití komponent bez vytváření instancí uživatelem.
 
-Mezi nejdůležitější třídy patří \texttt{KafkaTemplate}, která zapouzdřuje mnoho metod pro odeslání zpráv do Kafka front. Podporuje asynchronní i synchronní odesílání. Použití této šablony lze vidět ve třídě \texttt{ResponseProducer} z diagramu tříd \ref{FIG_CommunicationClassDiagram}.
+Mezi nejdůležitější třídy patří \texttt{KafkaTemplate}, která zapouzdřuje mnoho metod pro odeslání zpráv do Kafka front. Podporuje asynchronní i~synchronní odesílání. Použití této šablony lze vidět ve třídě \texttt{ResponseProducer} z~diagramu tříd \ref{FIG_CommunicationClassDiagram}.
 
-Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageListenerContainer}, který poskytuje implementaci tzv. \texttt{Message Listener} nebo je označen pomocí anotace \texttt{@KafkaListener}. Existují 2 implementace kontejneru -- \texttt{KafkaMessageListenerContainer} (aktuálně použitá implementace v systému repositáře), kde jsou přijímány všechny zprávy ze všech front a oddílů v jednom vláknu; a \texttt{ConcurrentMessageListenerContainer}, který deleguje zpracování 1 nebo více kontejnerům, což poskytuje vícevláknový odběr zpráv a tudíž i vícevláknové zpracování \cite{springKafka}, více v \footnote{https://docs.spring.io/spring-kafka/docs/2.1.6.BUILD-SNAPSHOT/reference/html/\_reference.html}. Lze také nastavit různé filtry a vzorce pro přijímané zprávy, a rozdělit tak příjem zpráv podle jejich struktury jiným objektům.
+Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageListenerContainer}, který poskytuje implementaci tzv. \texttt{Message Listener} nebo je označen pomocí anotace \texttt{@KafkaListener}. Existují 2 implementace kontejneru -- \texttt{KafkaMessageListenerContainer} (aktuálně použitá implementace v~systému repositáře), kde jsou přijímány všechny zprávy ze všech front a~oddílů v~jednom vláknu; a~\texttt{ConcurrentMessageListenerContainer}, který deleguje zpracování 1 nebo více kontejnerům, což poskytuje vícevláknový odběr zpráv a~tudíž i~vícevláknové zpracování \cite{springKafka}, více v~\footnote{https://docs.spring.io/spring-kafka/docs/2.1.6.BUILD-SNAPSHOT/reference/html/\_reference.html}. Lze také nastavit různé filtry a~vzorce pro přijímané zprávy, a~rozdělit tak příjem zpráv podle jejich struktury jiným objektům.
 
 \subsubsection{Spring Hadoop}
-Další z projektů, které patří pod Spring, je Spring Hadoop, zjednodušující použití Hadoop API pro Javu. Přináší zase výše zmíněný jednotný konfigurační model usnadňující vývoj systémů postavených na platformě Hadoop, využívající HDFS, paradigma MapReduce, Hive a Pig. Poskytuje také integraci s jinými projekty ze Spring ekosystému jako například \texttt{Spring Integration} a \texttt{Spring Batch}. Podporuje tvorbu Hadoop aplikací, které jsou konfigurovány principem dependency injection a spuštěny jako standardní Java aplikace nebo pomocí nástrojů Hadoop pro příkazovou řádku.
-Velmi jednoduše lze integrovat se Spring Boot pro zjednodušení připojení k HDFS za účelem manipulace s daty \cite{springHadoop}. Jedná se o komplexní systém obsahující obrovské množství dalších nástrojů, podsystémů a nastavení, které ovšem překračují použití v distribuovaném úložišti, více lze nalézt na referenčních webových stránkách projektu Spring Hadoop \footnote{https://docs.spring.io/spring-hadoop/docs/2.5.1.BUILD-SNAPSHOT/reference/html/}.
+Další z~projektů, které patří pod Spring, je Spring Hadoop, zjednodušující použití Hadoop API pro Javu. Přináší zase výše zmíněný jednotný konfigurační model usnadňující vývoj systémů postavených na platformě Hadoop, využívající HDFS, paradigma MapReduce, Hive a~Pig. Poskytuje také integraci s~jinými projekty ze Spring ekosystému jako například \texttt{Spring Integration} a~\texttt{Spring Batch}. Podporuje tvorbu Hadoop aplikací, které jsou konfigurovány principem dependency injection a~spuštěny jako standardní Java aplikace nebo pomocí nástrojů Hadoop pro příkazovou řádku.
+Velmi jednoduše lze integrovat se Spring Boot pro zjednodušení připojení k~HDFS za účelem manipulace s~daty \cite{springHadoop}. Jedná se o~komplexní systém obsahující obrovské množství dalších nástrojů, podsystémů a~nastavení, které ovšem překračují použití v~distribuovaném úložišti, více lze nalézt na referenčních webových stránkách projektu Spring Hadoop \footnote{https://docs.spring.io/spring-hadoop/docs/2.5.1.BUILD-SNAPSHOT/reference/html/}.
 
-Pro účely distribuovaného repositáře byla využita převážně možnost propojení s HDFS. Přistupovat k HDFS lze obecně několika způsoby -- použít Java API \footnote{https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/fs/FileSystem.html} (nutno stále kontrolovat výjimky a ošetřovat chybové stavy), nebo souborový systém ovládat pomocí příkazové řádky nástrojem \texttt{hadoop} \footnote{https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/FileSystemShell.html} mimo Java aplikaci. Oba způsoby nejsou uživatelsky přívětivé. Spring Hadoop propojuje tyto dva způsoby skrze intuitivní jednoduché Java API \cite{springHadoopReference}.
+Pro účely distribuovaného repositáře byla využita převážně možnost propojení s~HDFS. Přistupovat k~HDFS lze obecně několika způsoby -- použít Java API \footnote{https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/fs/FileSystem.html} (nutno stále kontrolovat výjimky a~ošetřovat chybové stavy), nebo souborový systém ovládat pomocí příkazové řádky nástrojem \texttt{hadoop} \footnote{https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/FileSystemShell.html} mimo Java aplikaci. Oba způsoby nejsou uživatelsky přívětivé. Spring Hadoop propojuje tyto dva způsoby skrze intuitivní jednoduché Java API \cite{springHadoopReference}.
 
 HDFS nabízí tři API:
 \begin{table}[h!]
@@ -569,25 +569,25 @@ HDFS nabízí tři API:
     \begin{tabular}{| l | l | l | l | l |}
     \hline
     Soubor. systém   &   Metoda   &   Schéma/Prefix &  Zápis/Čtení &   Verze \\ \hline
-    HDFS & RPC & \texttt{hdfs://} & Zápis i čtení & Pouze stejná verze \\ \hline
+    HDFS & RPC & \texttt{hdfs://} & Zápis i~čtení & Pouze stejná verze \\ \hline
     HFTP & HTTP & \texttt{hftp://} & Pouze čtení & Nezávislé na verzi \\ \hline
-    WebHDFS & HTTP (REST) & \texttt{webhdfs://} & Zápis i čtení & Nezávislé na verzi \\ \hline
+    WebHDFS & HTTP (REST) & \texttt{webhdfs://} & Zápis i~čtení & Nezávislé na verzi \\ \hline
     \end{tabular}\par
     \bigskip
-    \caption{Druhy API, které HDFS poskytuje, převzato z referenční dokumentace \cite{springHadoopReference}.}
+    \caption{Druhy API, které HDFS poskytuje, převzato z~referenční dokumentace \cite{springHadoopReference}.}
     \label{HDFSApi}
 \end{table}
 
-\noindent Pro účely distribuovaného úložiště bylo zvoleno první API, tzv. HDFS, založené na RPC volání -- tento způsob vyžaduje, aby klient i Hadoop cluster běželi na stejné verzi (rozdílné verze způsobí problémy v serializaci). Další alternativou by bylo API WebHDFS, které ovšem vyžaduje další konfiguraci, a přenos pomocí HTTP přináší režii navíc ve formě zpomalení ukládání a čtení dat.
-API HFTP v tomto případě využít nelze, protože podporuje pouze čtení.
+\noindent Pro účely distribuovaného úložiště bylo zvoleno první API, tzv. HDFS, založené na RPC volání -- tento způsob vyžaduje, aby klient i~Hadoop cluster běželi na stejné verzi (rozdílné verze způsobí problémy v~serializaci). Další alternativou by bylo API WebHDFS, které ovšem vyžaduje další konfiguraci, a~přenos pomocí HTTP přináší režii navíc ve formě zpomalení ukládání a~čtení dat.
+API HFTP v~tomto případě využít nelze, protože podporuje pouze čtení.
 
-Praktickým nástrojem poskytovaným distribucí Hadoop je klient příkazové řádky, přes kterého lze spouštět příkazy podobné těm linuxovým přímo nad HDFS -- existenci, mazaní, kopírování, přesouvání souborů, nebo nastavení přístupových práv. Tento nástroj je dostupný pouze přes příkazovou řádku, což stěžuje použití přímo z Java aplikace. Spring Hadoop poskytuje plně zabudovanou funkcionalitu výše zmíněného nástroje uvnitř třídy \texttt{FsShell}, která zrcadlí většinu příkazů dostupných z příkazové řádky (metody typu \texttt{chmod}, \texttt{cp}, \texttt{copyFromLocal}, \texttt{ls}, \texttt{mkdir}, \texttt{put}, \texttt{rm}, atd) \cite{springHadoopReference}. Pomocí této třídy jsou prováděny veškeré operace s HDFS.
+Praktickým nástrojem poskytovaným distribucí Hadoop je klient příkazové řádky, přes kterého lze spouštět příkazy podobné těm linuxovým přímo nad HDFS -- existenci, mazaní, kopírování, přesouvání souborů, nebo nastavení přístupových práv. Tento nástroj je dostupný pouze přes příkazovou řádku, což stěžuje použití přímo z~Java aplikace. Spring Hadoop poskytuje plně zabudovanou funkcionalitu výše zmíněného nástroje uvnitř třídy \texttt{FsShell}, která zrcadlí většinu příkazů dostupných z~příkazové řádky (metody typu \texttt{chmod}, \texttt{cp}, \texttt{copyFromLocal}, \texttt{ls}, \texttt{mkdir}, \texttt{put}, \texttt{rm}, atd) \cite{springHadoopReference}. Pomocí této třídy jsou prováděny veškeré operace s~HDFS.
 
 \section{Úložiště}
-Jak už bylo uvedeno v kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a MongoDB, a distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a práce s nimi.
+Jak už bylo uvedeno v~kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a~MongoDB, a~distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a~práce s~nimi.
 
 \subsection{Cassandra} \label{cassandra}
-Schéma databáze Cassandra je aktuálně velmi jednoduché. Nejzevnější úroveň tvoří tzv. \texttt{Keyspace} představující kontejner tabulek. Keyspace svými atributy udává replikační faktor (angl. \texttt{replication factor}), strategii umísťování replik (angl. \texttt{replica placement strategy}), a třídy sloupců (angl. \texttt{column families}). Aktuální nastavení keyspace vypadá následovně:
+Schéma databáze Cassandra je aktuálně velmi jednoduché. Nejzevnější úroveň tvoří tzv. \texttt{Keyspace} představující kontejner tabulek. Keyspace svými atributy udává replikační faktor (angl. \texttt{replication factor}), strategii umísťování replik (angl. \texttt{replica placement strategy}), a~třídy sloupců (angl. \texttt{column families}). Aktuální nastavení keyspace vypadá následovně:
 
 \vspace{0.5cm}
 \texttt{CREATE KEYSPACE structured\_data WITH replication = }
@@ -595,9 +595,9 @@ Schéma databáze Cassandra je aktuálně velmi jednoduché. Nejzevnější úro
 \texttt{\string{ 'class':'SimpleStrategy', 'replication\_factor':1 \string} }
 
 \vspace{0.5cm}
-\noindent Je použita strategie \texttt{SimpleStrategy}, vhodná pouze pro jedno sdružení počítačových uzlů (\texttt{rack}). Není optimální pro současné použití mnoha datovými centry, k tomu slouží strategie \texttt{ NetworkTopologyStrategy}. Replikační faktor vyjadřuje počet strojů v clusteru, které obdrží stejnou kopii dat. Zde nastaveno na hodnotu 1.
+\noindent Je použita strategie \texttt{SimpleStrategy}, vhodná pouze pro jedno sdružení počítačových uzlů (\texttt{rack}). Není optimální pro současné použití mnoha datovými centry, k~tomu slouží strategie \texttt{ NetworkTopologyStrategy}. Replikační faktor vyjadřuje počet strojů v~clusteru, které obdrží stejnou kopii dat. Zde nastaveno na hodnotu 1.
 
-Schéma tabulky pro ukládání paketů je taktéž velmi jednoduché. Tabulka obsahuje pouze primární klíč ID a hodnotu paketu v binární podobě. Struktura tabulky:
+Schéma tabulky pro ukládání paketů je taktéž velmi jednoduché. Tabulka obsahuje pouze primární klíč ID a~hodnotu paketu v~binární podobě. Struktura tabulky:
 
 \vspace{0.5cm}
 \texttt{packet (
@@ -606,7 +606,7 @@ Schéma tabulky pro ukládání paketů je taktéž velmi jednoduché. Tabulka o
 )}
 
 \subsubsection{Asynchronní dotazy}
-Distribuovaný repositář komunikuje s databází asynchronně z důvodu co největší propustnosti a rychlosti. Asynchronní komunikace je umožněna díky třídám a metodám ovladače pro jazyk Java od společnosti DataStax, který je stále ve vývoji \footnote{https://github.com/datastax/java-driver}. Tento ovladač používá asynchronní architekturu. Takový způsob komunikace dovoluje klientské aplikaci ukládat data a provádět nad nimi dotazy neblokujícím způsobem, díky tzv. \texttt{Future} instancím \cite{asyncQueriesCassandra}.
+Distribuovaný repositář komunikuje s~databází asynchronně z~důvodu co největší propustnosti a~rychlosti. Asynchronní komunikace je umožněna díky třídám a~metodám ovladače pro jazyk Java od společnosti DataStax, který je stále ve vývoji \footnote{https://github.com/datastax/java-driver}. Tento ovladač používá asynchronní architekturu. Takový způsob komunikace dovoluje klientské aplikaci ukládat data a~provádět nad nimi dotazy neblokujícím způsobem, díky tzv. \texttt{Future} instancím \cite{asyncQueriesCassandra}.
 
 \begin{figure}[!h]
   \centering
@@ -615,14 +615,14 @@ Distribuovaný repositář komunikuje s databází asynchronně z důvodu co nej
   \label{FIG_CassandraAsyncQueries}
 \end{figure}
 
-\noindent Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a dále s ním pracovat.
-Až databáze dotaz dokončí a vrátí odpověď, ovladač avizuje ResponseHandler (obecně může být zaregistrováno mnoho takových obsluh pro různé dotazy, párování je provedeno pomocí unikátního ID \texttt{streamId}, které bylo zasláno s dotazem). Obsluha třídy ResponseHandler dokončí volání upozorněním objektu třídy ResultSetFuture.
+\noindent Kromě zaslání dotazu do databáze, ovladač registruje interní obsluhu v~podobě objektu \texttt{ResponseHandler}, který zpracuje odpověď dotazu, až bude k~dispozici. Po zaregistrování obsluhy je předáno řízení vykonávání volajícímu programu společně s~objektem třídy \texttt{ResultSetFuture}, pomocí kterého klient dokáže získat výsledek dotazu a~dále s~ním pracovat.
+Až databáze dotaz dokončí a~vrátí odpověď, ovladač avizuje ResponseHandler (obecně může být zaregistrováno mnoho takových obsluh pro různé dotazy, párování je provedeno pomocí unikátního ID \texttt{streamId}, které bylo zasláno s~dotazem). Obsluha třídy ResponseHandler dokončí volání upozorněním objektu třídy ResultSetFuture.
 Klientský kód získá výsledek dotazu provedením metody \texttt{get} nad objektem ResultSetFuture. Volání této metody je blokující, pokud ještě nebyl nastaven výsledek objektu ResultSetFuture \cite{asyncQueriesCassandra}.
 
-Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i způsob bez blokování. V takovém případě musí klient k objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k dispozici.
-Lze zvolit i jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a jejich tříd \texttt{Futures} a \texttt{FutureCallback}.
+Čekat na výsledek blokujícím způsobem není efektivní, proto existuje i~způsob bez blokování. V~takovém případě musí klient k~objektu ResultSetFuture zaregistrovat svůj tzv. \texttt{callback}, který bude vykonán, až bude výsledek k~dispozici.
+Lze zvolit i~jiné vlákno pro jeho vykonání, aby aktuálně běžící kód nemusel být pozastaven. To lze například pomocí knihovny \texttt{Guava} od Google a~jejich tříd \texttt{Futures} a~\texttt{FutureCallback}.
 
-Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a pak okamžitě blokující metoda get. Ovladač umožňuje paralelně provádět pouze omezený počet dotazů. Tento počet je udán vnitřními parametry \texttt{Cluster} objektu (více detailních informací lze nalézt na referenčních www stránkách ovladače v sekci \texttt{Connection pooling} \footnote{https://docs.datastax.com/en/developer/java-driver/2.1/manual/pooling/}):
+Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních metod je zavolána asynchronní verze, a~pak okamžitě blokující metoda get. Ovladač umožňuje paralelně provádět pouze omezený počet dotazů. Tento počet je udán vnitřními parametry \texttt{Cluster} objektu (více detailních informací lze nalézt na referenčních www stránkách ovladače v~sekci \texttt{Connection pooling} \footnote{https://docs.datastax.com/en/developer/java-driver/2.1/manual/pooling/}):
 
 \begin{itemize}
     \item \texttt{maxRequestsPerConnection} -- Udává maximální počet požadavků na jedno připojení.
@@ -630,58 +630,58 @@ Ovladač od DataStax je obecně celý asynchronní, uvnitř jeho synchronních m
     \item \texttt{maxConnectionsPerHost} -- Udává maximální počet připojení na uzel.
 \end{itemize}
 
-\noindent Počet paralelních připojení do databáze Cassandra je v systému limitován semaforem. Jinak by vždy při vyčerpání dostupných připojení docházelo k selhání ve formě výjimky \texttt{NoHostAvailableException}. Při každém dotazu do databáze, čtení nebo zápis, tedy dojde k uzamčení semaforu, při dokončení operace (či při chybě) zase k odemknutí semaforu. Semafor byl nastaven na počet přístupů daných výrazem:
+\noindent Počet paralelních připojení do databáze Cassandra je v~systému limitován semaforem. Jinak by vždy při vyčerpání dostupných připojení docházelo k~selhání ve formě výjimky \texttt{NoHostAvailableException}. Při každém dotazu do databáze, čtení nebo zápis, tedy dojde k~uzamčení semaforu, při dokončení operace (či při chybě) zase k~odemknutí semaforu. Semafor byl nastaven na počet přístupů daných výrazem:
 
 \vspace{0.5cm}
 \texttt{maxConnectionsPerHost * maxRequestsPerConnection}
 
 \vspace{0.5cm}
-\noindent Tímto přístupem je tedy maximálně využito systémových prostředků a docíleno zrychlení provádění dotazů.
+\noindent Tímto přístupem je tedy maximálně využito systémových prostředků a~docíleno zrychlení provádění dotazů.
 
 \subsection{MongoDB} \label{mongoDB}
 
 \begin{figure}[!h]
   \centering
   \includegraphics[width=13cm]{template-fig/MetadataSchema.pdf}
-  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna.}
+  \caption{Schéma databáze pro metadata, obsahuje zatím pouze metadata pro pakety sdružované v~kolekci dokumentů typu PacketMetadata. Kolekce dokumentů typu \texttt{OtherForensicMetadata} je zde uvedena jako příklad pro rozšíření do budoucna.}
   \label{FIG_MetadataSchema}
 \end{figure}
 
-MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému metadat jsou uvedeny v \ref{metadata}. Druh metadat pro nějaký typ forenzních dat lze reprezentovat jako dokument ve formátu JSON. Dokumenty stejného typu jsou pak ukládány do kolekce. Pro každý typ ukládaných forenzních dat existuje takový dokument. Při ukládání dat do Cassandry nebo HDFS je dokument metadat sestaven a vyplněn klíčovými atributy, podle kterých bude možné později vyhledávat.
+MongoDB slouží k~uchování registru metadat. Důvody k~zavedení podsystému metadat jsou uvedeny v~\ref{metadata}. Druh metadat pro nějaký typ forenzních dat lze reprezentovat jako dokument ve formátu JSON. Dokumenty stejného typu jsou pak ukládány do kolekce. Pro každý typ ukládaných forenzních dat existuje takový dokument. Při ukládání dat do Cassandry nebo HDFS je dokument metadat sestaven a~vyplněn klíčovými atributy, podle kterých bude možné později vyhledávat.
 
 \vspace{0.5cm}
-\noindent Pro pakety byl zvolen dokument typu \texttt{PacketMetadata} s těmito atributy:
+\noindent Pro pakety byl zvolen dokument typu \texttt{PacketMetadata} s~těmito atributy:
 
 \begin{itemize}
-    \item \texttt{id} -- Unikátní ID v rámci MongoDB.
+    \item \texttt{id} -- Unikátní ID v~rámci MongoDB.
     
-    \item \texttt{refId} -- Unikátní ID pro záznamy v databázi Cassandra.
+    \item \texttt{refId} -- Unikátní ID pro záznamy v~databázi Cassandra.
     
-    \item \texttt{uri} -- Pokud jsou korespondující forenzní data uložena v HDFS, je vyplněn tento atribut cestou k datům v HDFS.
+    \item \texttt{uri} -- Pokud jsou korespondující forenzní data uložena v~HDFS, je vyplněn tento atribut cestou k~datům v~HDFS.
     
-    \item \texttt{databaseType} -- Určuje typ úložiště, povolenými hodnotami jsou: \texttt{Cassandra} a \texttt{HDFS}.
+    \item \texttt{databaseType} -- Určuje typ úložiště, povolenými hodnotami jsou: \texttt{Cassandra} a~\texttt{HDFS}.
     
     \item \texttt{timestamp} -- Časové razítko paketu.
     
-    \item \texttt{originalLength} -- Délka paketu v bajtech.
+    \item \texttt{originalLength} -- Délka paketu v~bajtech.
     
-    \item \texttt{ethernetTypeValue} -- Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
+    \item \texttt{ethernetTypeValue} -- Hodnota z~ethernetové hlavičky paketu, která udává typ protokolu v~hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
     
-    \item \texttt{ethernetTypeName} -- Hodnota z ethernetové hlavičky paketu, která udává typ protokolu v řetězcovém formátu, např. IPv4, IPv6, ARP atd.
+    \item \texttt{ethernetTypeName} -- Hodnota z~ethernetové hlavičky paketu, která udává typ protokolu v~řetězcovém formátu, např. IPv4, IPv6, ARP atd.
     
     \item \texttt{srcLinkLayerAddress} -- Zdrojová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
     
     \item \texttt{dstLinkLayerAddress} -- Cílová fyzická adresa ve formátu \texttt{xx:xx:xx:xx:xx:xx}.
     
-    \item \texttt{ipProtocolValue} -- Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v celočíselném formátu, např. 4 pro ICMPv4, 6 pro TCP, 17 pro UDP atd.
+    \item \texttt{ipProtocolValue} -- Hodnota z~IP hlavičky paketu, která udává typ transportního protokolu v~celočíselném formátu, např. 4 pro ICMPv4, 6 pro TCP, 17 pro UDP atd.
     
-    \item \texttt{ipProtocolName} -- Hodnota z IP hlavičky paketu, která udává typ transportního protokolu v řetězcovém formátu, např ICMPv4, IGMP, TCP, IGP atd.
+    \item \texttt{ipProtocolName} -- Hodnota z~IP hlavičky paketu, která udává typ transportního protokolu v~řetězcovém formátu, např ICMPv4, IGMP, TCP, IGP atd.
     
-    \item \texttt{ipVersionValue} -- Hodnota z IP hlavičky paketu udávající číslo verze IP protokolu, 4 pro IPv4, 5 pro ST, 6 pro IPv6 apod.
+    \item \texttt{ipVersionValue} -- Hodnota z~IP hlavičky paketu udávající číslo verze IP protokolu, 4 pro IPv4, 5 pro ST, 6 pro IPv6 apod.
     
-    \item \texttt{ipVersionName} -- Hodnota z IP hlavičky paketu udávající verzi IP protokolu v řetězcovém formátu, např. IPv4, ST, IPv6 atd.
+    \item \texttt{ipVersionName} -- Hodnota z~IP hlavičky paketu udávající verzi IP protokolu v~řetězcovém formátu, např. IPv4, ST, IPv6 atd.
     
-    \item \texttt{srcIpAddress} -- Zdrojová IP adresa v řetězcovém formátu, lze tedy uchovat IPv4 i IPv6 adresu. IPv6 adresa může mít více řetězcových interpretací, např. řetězce \texttt{ff02:0:0:0:0:0:0:c} a \texttt{ff02::c} vyjadřují tu samou IPv6 adresu. IP adresy jsou získány z paketu pomocí knihovny Pcap4J \ref{pcap4j}, která IP adresy vrací jako Java objekty typu \texttt{InetAddress}. Tyto objekty nelze serializovat do databáze, proto jsou ukládány jen řetězcové hodnoty. Nicméně třída InetAddress nabízí statickou metodu \texttt{InetAddress 	getByName(String host)}, kterou lze IP adresy normalizovat na stejný řetězcový tvar. Obě následující volání vrátí stejný řetězec:
+    \item \texttt{srcIpAddress} -- Zdrojová IP adresa v~řetězcovém formátu, lze tedy uchovat IPv4 i~IPv6 adresu. IPv6 adresa může mít více řetězcových interpretací, např. řetězce \texttt{ff02:0:0:0:0:0:0:c} a~\texttt{ff02::c} vyjadřují tu samou IPv6 adresu. IP adresy jsou získány z~paketu pomocí knihovny Pcap4J \ref{pcap4j}, která IP adresy vrací jako Java objekty typu \texttt{InetAddress}. Tyto objekty nelze serializovat do databáze, proto jsou ukládány jen řetězcové hodnoty. Nicméně třída InetAddress nabízí statickou metodu \texttt{InetAddress 	getByName(String host)}, kterou lze IP adresy normalizovat na stejný řetězcový tvar. Obě následující volání vrátí stejný řetězec:
     
     \indent \texttt{InetAddress.getByName("ff02:0:0:0:0:0:0:c").getHostAddress()}
     
@@ -697,57 +697,57 @@ MongoDB slouží k uchování registru metadat. Důvody k zavedení podsystému 
 \noindent První čtyři atributy jsou společné pro všechny druhy metadat.
 
 \subsubsection{Reaktivní dotazy}
-Pro komunikaci s databází MongoDB existuje několik ovladačů, tzn. synchronní, asynchronní, a také ovladač založen na reaktivním paradigmatu. Poslední zmíněný byl využit pro distribuovaný repositář. Tento ovladač poskytuje asynchronní zpracování dotazů neblokujícím způsobem. Zcela implementuje aplikační rozhraní tzv. \texttt{Reactive Streams} \footnote{http://www.reactive-streams.org/}. Mezi silné stránky tohoto paradigmatu patří: funkcionální přístup, asynchronní zpracování chyb, jednoduchá multivláknovost \cite{oficReactiveX}. Často je prezentováno jako rozšíření návrhových vzorů Pozorovatel (angl. \texttt{Observer}) a iterátor (angl. \texttt{Iterator}). Reaktivní paradigma se samozřejmě netýká jen databází, platí obecně a lze s ním vyvíjet celé aplikace.
+Pro komunikaci s~databází MongoDB existuje několik ovladačů, tzn. synchronní, asynchronní, a~také ovladač založen na reaktivním paradigmatu. Poslední zmíněný byl využit pro distribuovaný repositář. Tento ovladač poskytuje asynchronní zpracování dotazů neblokujícím způsobem. Zcela implementuje aplikační rozhraní tzv. \texttt{Reactive Streams} \footnote{http://www.reactive-streams.org/}. Mezi silné stránky tohoto paradigmatu patří: funkcionální přístup, asynchronní zpracování chyb, jednoduchá multivláknovost \cite{oficReactiveX}. Často je prezentováno jako rozšíření návrhových vzorů Pozorovatel (angl. \texttt{Observer}) a~iterátor (angl. \texttt{Iterator}). Reaktivní paradigma se samozřejmě netýká jen databází, platí obecně a~lze s~ním vyvíjet celé aplikace.
 
 % https://dzone.com/articles/what-are-reactive-streams-in-java
 % http://vsadnajavu.cz/2017-06/odborne/spring-framework/spring-5-0-reactive/
 
-Manipulaci s metadaty zajišťuje tzv. reaktivní JPA (\texttt{Java Persistence API}) patřící pod projekt Spring. Tato vrstva využívá výše zmíněného reaktivního ovladače pro MongoDB. Následuje detailnější pohled na tento programovací model a aplikační rozhraní \cite{springDataReactive}.
+Manipulaci s~metadaty zajišťuje tzv. reaktivní JPA (\texttt{Java Persistence API}) patřící pod projekt Spring. Tato vrstva využívá výše zmíněného reaktivního ovladače pro MongoDB. Následuje detailnější pohled na tento programovací model a~aplikační rozhraní \cite{springDataReactive}.
 
-Základem je vytvoření entitní třídy, která reprezentuje objekty ukládané do tabulky databáze nebo v tomto případě do kolekce. Pro entitní třídu lze definovat rozhraní, které představuje použití návrhového vzoru \texttt{Repository}. Výhodou je, že objekty nemají ponětí o tom, jakým způsobem jsou ukládány. O persistenci se postará Repository. Definované rozhraní představující Repository musí dědit rozhraní
+Základem je vytvoření entitní třídy, která reprezentuje objekty ukládané do tabulky databáze nebo v~tomto případě do kolekce. Pro entitní třídu lze definovat rozhraní, které představuje použití návrhového vzoru \texttt{Repository}. Výhodou je, že objekty nemají ponětí o~tom, jakým způsobem jsou ukládány. O~persistenci se postará Repository. Definované rozhraní představující Repository musí dědit rozhraní
 
 \begin{lstlisting}[language=Java]
     interface ReactiveCrudRepository<T, ID>
 \end{lstlisting}
 
-\noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s parametry reaktivních typů \texttt{Flux} a \texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s metadaty je rozhraní:
+\noindent se dvěma typovými parametry, kde typ \texttt{T} udává typ entitní třídy a~typ \texttt{ID} udává typ unikátního ID pro záznamy dané entitní třídy. Toto rozhraní definuje doménově specifické \texttt{CRUD} metody s~parametry reaktivních typů \texttt{Flux} a~\texttt{Mono}, které budou vysvětleny dále. Příkladem pro manipulaci s~metadaty je rozhraní:
 
 \begin{lstlisting}[language=Java]
     interface PacketMetadataRepository extends
             ReactiveCrudRepository<PacketMetadata, String>
 \end{lstlisting}
 
-\noindent Framework Spring se postará o implementaci tohoto rozhraní pro všechny CRUD operace nabízené tímto rozhraním.
+\noindent Framework Spring se postará o~implementaci tohoto rozhraní pro všechny CRUD operace nabízené tímto rozhraním.
 
-Reaktivní přístup byl zvolen hlavně z důvodu vrstvy JPA, kterou zajišťuje sám Spring. Přístup pomocí asynchronních dotazů by šel využít taktéž, ale manipulace s metadaty, ukládání a dotazování, by byla těžkopádná, potřebovala výrazně více režijního kódu, a byla by nepřehledná, protože asynchronní ovladač pracuje primárně na úrovně dokumentů vkládaných do kolekcí. S tím by souviselo manuální sestavování a parsování objektů reprezentujících dokument.
+Reaktivní přístup byl zvolen hlavně z~důvodu vrstvy JPA, kterou zajišťuje sám Spring. Přístup pomocí asynchronních dotazů by šel využít taktéž, ale manipulace s~metadaty, ukládání a~dotazování, by byla těžkopádná, potřebovala výrazně více režijního kódu, a~byla by nepřehledná, protože asynchronní ovladač pracuje primárně na úrovně dokumentů vkládaných do kolekcí. S~tím by souviselo manuální sestavování a~parsování objektů reprezentujících dokument.
 
 \subsubsection{Reaktivní typy}
-Výchozími reaktivními typy jsou Flux a Mono pocházející z projektu \texttt{Project Reactor} (implementací reaktivních typů existuje více, další je např. \texttt{ReactiveX}). Flux slouží pro vztahy typu N, Mono pak pro vztahy typu 0 nebo 1 \cite{projectReactor}.
-Reaktivní typy nejsou určeny k tomu, aby zpracovaly požadavky nebo data rychleji, ve skutečnosti představují malou režii ve srovnání s běžným blokujícím zpracováním. Jejich síla spočívá v obsluze více požadavků paralelně, a ve zpracování operací s latencemi, např. dotaz pro data z databáze nebo ze vzdáleného serveru, mnohem efektivněji. Poskytují lepší plánování zdrojů, zacházení s časem a latencemi. Na rozdíl od tradičního zpracování blokujícím způsobem, které pozastaví aktuální vlákno čekáním na výsledek operace, reaktivní aplikační rozhraní čekající na výsledek nestojí žádný čas, dotazuje se pouze na objem dat, který je schopné zpracovat. Zabývá se celými streamy dat, nikoliv pouze individuálními elementy jeden za druhým \cite{springReactiveTypes}.
+Výchozími reaktivními typy jsou Flux a~Mono pocházející z~projektu \texttt{Project Reactor} (implementací reaktivních typů existuje více, další je např. \texttt{ReactiveX}). Flux slouží pro vztahy typu N, Mono pak pro vztahy typu 0 nebo 1 \cite{projectReactor}.
+Reaktivní typy nejsou určeny k~tomu, aby zpracovaly požadavky nebo data rychleji, ve skutečnosti představují malou režii ve srovnání s~běžným blokujícím zpracováním. Jejich síla spočívá v~obsluze více požadavků paralelně, a~ve zpracování operací s~latencemi, např. dotaz pro data z~databáze nebo ze vzdáleného serveru, mnohem efektivněji. Poskytují lepší plánování zdrojů, zacházení s~časem a~latencemi. Na rozdíl od tradičního zpracování blokujícím způsobem, které pozastaví aktuální vlákno čekáním na výsledek operace, reaktivní aplikační rozhraní čekající na výsledek nestojí žádný čas, dotazuje se pouze na objem dat, který je schopné zpracovat. Zabývá se celými streamy dat, nikoliv pouze individuálními elementy jeden za druhým \cite{springReactiveTypes}.
 
-Reaktivní aplikační rozhraní poskytuje operátory podobné streamům z jazyka Java, ale tyto operátory pracují obecně s jakoukoliv sekvencí, nejsou omezeny pouze na kolekce, a umožňují definovat řetězec transformačních operací, které se aplikují na data procházející streamem. Streamy dokáží zpracovat synchronní i asynchronní operace, data lze řetězit, sloučit, nebo na ně aplikovat různé transformace \cite{springReactiveTypes}.
+Reaktivní aplikační rozhraní poskytuje operátory podobné streamům z~jazyka Java, ale tyto operátory pracují obecně s~jakoukoliv sekvencí, nejsou omezeny pouze na kolekce, a~umožňují definovat řetězec transformačních operací, které se aplikují na data procházející streamem. Streamy dokáží zpracovat synchronní i~asynchronní operace, data lze řetězit, sloučit, nebo na ně aplikovat různé transformace \cite{springReactiveTypes}.
 
-Implementace reaktivního rozhraní je založena na výše zmíněné specifikaci Reactive Streams. Základním kamenem jsou čtyři rozhraní \texttt{Publisher}, \texttt{Subscriber}, \texttt{Subscription} a \texttt{Processor}. Jejich zodpovědnosti jsou:
+Implementace reaktivního rozhraní je založena na výše zmíněné specifikaci Reactive Streams. Základním kamenem jsou čtyři rozhraní \texttt{Publisher}, \texttt{Subscriber}, \texttt{Subscription} a~\texttt{Processor}. Jejich zodpovědnosti jsou:
 \begin{itemize}
-    \item Publisher -- Poskytovatel potenciálně neomezeného počtu elementů v sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v čase mnoho příjemců.
+    \item Publisher -- Poskytovatel potenciálně neomezeného počtu elementů v~sekvenci, odesílá je podle požadavků obdržených od svých příjemců. Může obsluhovat dynamicky v~čase mnoho příjemců.
     
-    \item Subscriber -- Příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} -- zpracování elementu, \texttt{onError} -- zpracování chyby, a \texttt{onComplete} -- signalizace dokončení operace onNext.
+    \item Subscriber -- Příjem elementů od poskytovatele, na elementy se dotáže sám. Typicky má tyto 3 metody: \texttt{onNext} -- zpracování elementu, \texttt{onError} -- zpracování chyby, a~\texttt{onComplete} -- signalizace dokončení operace onNext.
     
-    \item Subscription -- Může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k odběrateli.
+    \item Subscription -- Může být použito pouze jedním příjemcem. Představuje jednotku přijetí elementu od poskytovatele k~odběrateli.
     
     \item Processor -- Procesory jsou speciálním případem poskytovatele, který je zároveň příjemcem \cite{reactoreRefGuide}. Reprezentují jednotku vykonávání.
 \end{itemize}
 
-\noindent Reaktivní typy Flux a Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a \texttt{catch}. Klientský kód se chová jako odběratel.
+\noindent Reaktivní typy Flux a~Mono implementují rozhraní poskytovatele. Současně umožňují přidávat transformační operace ke každému elementu sekvence. Jednoduché je i~zpracování chyb asynchronním způsobem bez použití bloků \texttt{try} a~\texttt{catch}. Klientský kód se chová jako odběratel.
 
 \section{Architektura systému} \label{architecture}
-Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a \ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti (vynechány jsou především závislosti na třídy pocházející z knihoven).
+Tato sekce se zabývá architekturou systému. Následující dva diagramy tříd \ref{FIG_CommunicationClassDiagram} a~\ref{FIG_DRCoreClassDiagram} zobrazují klíčové třídy, metody a~závislosti. Z~důvodu přehlednosti obsahují pouze důležitá rozhraní a~třídy systému. Nejsou zde vyznačeny všechny implementační třídy a~všechny vazby závislosti (vynechány jsou především závislosti na třídy pocházející z~knihoven).
 
-Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} (je označena anotací \texttt{@KafkaListener} -- více v \ref{springKafka}), je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující obsluhu ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v \ref{designCommunication}.
+Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro systému z~pohledu distribuovaného repositáře. Repositář obsahuje třídu \texttt{DistributedRepositoryConsumer} obsluhující komunikaci s~Kafkou. Má také referenci na správce všech obslužných akcí pro příkazy -- \texttt{handlerManager}. Všechny typy příkazů jsou určeny výčtovým typem \texttt{Command}. Metoda \texttt{listen} (je označena anotací \texttt{@KafkaListener} -- více v~\ref{springKafka}), je zavolána při přečtení zprávy požadavku, která je reprezentována třídou \texttt{KafkaRequest}, z~fronty. Konzument přijme zprávu z~fronty, zjistí typ příkazu a~vybere podle něj korespondující obsluhu ze správce handlerů. Handler potom zpracuje příkaz. V~rámci zpracování může být odeslána asynchronní odpověď klientovi, pokud klient nastavil při odeslání zprávy parametry \texttt{awaitsResponse} a~\texttt{responseTopic}. K~odesílání odpovědí do Kafka fronty slouží třída \texttt{ResponseProducer}. Odpověď bude obsahovat základní informace jako například kód a~status, a~také ID, aby si klient dokázal spárovat zpracované zprávy. Více informací ohledně sktruktury odpovědí je uvedeno v~\ref{designCommunication}.
 
 Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
 
-Konfigurace parametrů systému a~technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota (konfigurace uvedena v \ref{configuration}).
+Konfigurace parametrů systému a~technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota (konfigurace uvedena v~\ref{configuration}).
 
 \begin{figure}[!h]
   \centering
@@ -764,38 +764,38 @@ Konfigurace parametrů systému a~technologií je možná pomocí specifických 
 \end{figure}
 
 \subsection{Rozhraní pro dotazování dat} \label{queryDataInterface}
-V této sekci bude uvedeno jakým způsobem lze zadávat kritéria pro dotazování. Kritéria slouží k filtrování záznamů, uplatní se na záznamy -- dokumenty metadat. Formát jednotlivých kritérií výrazně odpovídá tvaru parametrů dokumentů v MongoDB.
+V~této sekci bude uvedeno jakým způsobem lze zadávat kritéria pro dotazování. Kritéria slouží k~filtrování záznamů, uplatní se na záznamy -- dokumenty metadat. Formát jednotlivých kritérií výrazně odpovídá tvaru parametrů dokumentů v~MongoDB.
 
-Jeden objekt kritéria je reprezentován instancí třídy \texttt{KafkaCriteria} pocházející z modulu Communication. Obsahuje tyto parametry:
+Jeden objekt kritéria je reprezentován instancí třídy \texttt{KafkaCriteria} pocházející z~modulu Communication. Obsahuje tyto parametry:
 
 \begin{itemize}
-    \item \texttt{field} -- Řetězcová hodnota udávající název atributu v dokumentu MongoDB.
+    \item \texttt{field} -- Řetězcová hodnota udávající název atributu v~dokumentu MongoDB.
     
-    \item \texttt{operation} -- Jedná se o hodnotu výčtu \texttt{MetadataOperation}, který obsahuje tyto názvy operací -- \texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}. Tyto názvy porovnávacích operací reflektují názvy metod ve třídě \texttt{Criteria} z modulu Spring Data, takže lze pomocí reflexe tento objekt sestavit. Způsob sestavení přes reflexi je zvolen kvůli chybějící závislosti modulu Persistence klientské aplikaci.
+    \item \texttt{operation} -- Jedná se o~hodnotu výčtu \texttt{MetadataOperation}, který obsahuje tyto názvy operací -- \texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}. Tyto názvy porovnávacích operací reflektují názvy metod ve třídě \texttt{Criteria} z~modulu Spring Data, takže lze pomocí reflexe tento objekt sestavit. Způsob sestavení přes reflexi je zvolen kvůli chybějící závislosti modulu Persistence klientské aplikaci.
     Objekt \texttt{Criteria} lze potom předat do reaktivního dotazu do MongoDB.
     
     \item \texttt{value} -- Představuje hodnotu, podle které se atribut \texttt{field} bude filtrovat. Lze zadat libovolný Java objekt.
     
-    \item \texttt{values} -- Operace \texttt{in} a \texttt{nin} vyžadují seznam hodnot k filtrování. K předání seznamu objektů slouží tento parametr.
+    \item \texttt{values} -- Operace \texttt{in} a~\texttt{nin} vyžadují seznam hodnot k~filtrování. K~předání seznamu objektů slouží tento parametr.
 \end{itemize}
 
-\noindent Objektů typu \texttt{KafkaCriteria} lze sestavit libovolné množství, a předat je poté do zprávy požadavku \texttt{KafkaRequest} \ref{designCommunication}.
+\noindent Objektů typu \texttt{KafkaCriteria} lze sestavit libovolné množství, a~předat je poté do zprávy požadavku \texttt{KafkaRequest} \ref{designCommunication}.
 
 \subsection{Scénáře}
-Tato sekce uvede podporované příkazy a jakým způsobem jsou zpracovány. Podporovány jsou dva scénáře -- uložení PCAP souboru a čtení paketů podle zadaných kritérií. Jádro distribuovaného repositáře ilustruje diagram tříd \ref{FIG_DRCoreClassDiagram}.
+Tato sekce uvede podporované příkazy a~jakým způsobem jsou zpracovány. Podporovány jsou dva scénáře -- uložení PCAP souboru a~čtení paketů podle zadaných kritérií. Jádro distribuovaného repositáře ilustruje diagram tříd \ref{FIG_DRCoreClassDiagram}.
 
-Zpracování proběhne následovně -- metoda \texttt{listen} třídy DistributedRepositoryConsumer zkonzumuje zprávu z fronty a zavolá metodu \texttt{consume}, která spustí obsluhu příkazu. Aktuálně jsou definovány dvě obsluhy:
+Zpracování proběhne následovně -- metoda \texttt{listen} třídy DistributedRepositoryConsumer zkonzumuje zprávu z~fronty a~zavolá metodu \texttt{consume}, která spustí obsluhu příkazu. Aktuálně jsou definovány dvě obsluhy:
 
 \begin{itemize}
     \item Příkaz \texttt{STORE\_PCAP} - Zpracování řeší třída \texttt{StorePcapHandler}.
     \item Příkaz \texttt{LOAD\_PCAP} - Obsluhu poskytuje třída \texttt{LoadPcapHandler}. 
 \end{itemize}
 
-\subsubsection{Zpracování a uložení PCAP souboru}
-Klient odešle příkaz \texttt{STORE\_PCAP} s dodatečnými parametry udávajícími zdroj dat a výstupní frontu (více v \ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z HDFS a nebo z paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z HDFS ani z paměti RAM. Následně proběhne parsování na jednotlivé pakety. K tomu slouží rozhraní \texttt{PcapParser<T>} s implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a \texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z lokálního disku. Poté je případně odeslána odpověď klientovi s návratovým kódem \texttt{OK(200)}.
+\subsubsection{Zpracování a~uložení PCAP souboru}
+Klient odešle příkaz \texttt{STORE\_PCAP} s~dodatečnými parametry udávajícími zdroj dat a~výstupní frontu (více v~\ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z~HDFS a~nebo z~paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z~HDFS ani z~paměti RAM. Následně proběhne parsování na jednotlivé pakety. K~tomu slouží rozhraní \texttt{PcapParser<T>} s~implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z~paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s~několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a~\texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i~záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z~lokálního disku. Poté je případně odeslána odpověď klientovi s~návratovým kódem \texttt{OK(200)}.
 
 \subsubsection{Čtení paketů podle kritérií}
-Klient odešle příkaz \texttt{LOAD\_PCAP} s dodatečnými parametry podobně jako v předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v \ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v tomto případě už hodnoty celého paketu z databáze Cassandra. Načítání paketů probíhá zase asynchronně, k metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z důvodu neznámé velikosti a počtu nalezených paketů). Přístup k výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>}, implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
+Klient odešle příkaz \texttt{LOAD\_PCAP} s~dodatečnými parametry podobně jako v~předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v~\ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z~kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z~MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v~tomto případě už hodnoty celého paketu z~databáze Cassandra. Načítání paketů probíhá zase asynchronně, k~metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k~výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z~důvodu neznámé velikosti a~počtu nalezených paketů). Přístup k~výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>}, implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
 
 \subsection{Rozšíření pro nový typ forenzních dat}
 Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~přídání implementace:
@@ -803,30 +803,30 @@ Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je 
 \begin{itemize}
     \item Rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}, kde lze přidat nové typy příkazů.
     
-    \item Zpracování příkazu -- Je potřeba specializovat třídu \texttt{BaseHandler} novou implementací, která bude kompletně řídit zpracování příkazu (\texttt{BaseHandler} má přístup k HDFS a k šabloně obsluhující komunikaci s Kafkou). Tato implementace se musí nakonfigurovat jako bean ve třídě \texttt{HandlerBeans} a asociovat s typem příkazu přes správce handlerů v \texttt{HandlerManagerBeans}.
+    \item Zpracování příkazu -- Je potřeba specializovat třídu \texttt{BaseHandler} novou implementací, která bude kompletně řídit zpracování příkazu (\texttt{BaseHandler} má přístup k~HDFS a~k~šabloně obsluhující komunikaci s~Kafkou). Tato implementace se musí nakonfigurovat jako bean ve třídě \texttt{HandlerBeans} a~asociovat s~typem příkazu přes správce handlerů v~\texttt{HandlerManagerBeans}.
 \end{itemize}
 
-\noindent Po těchto krocích lze zasílat zprávy požadavků s novým typem příkazu z klientské aplikace.
+\noindent Po těchto krocích lze zasílat zprávy požadavků s~novým typem příkazu z~klientské aplikace.
 
 \section{Klientská aplikace}
-Pro účely testování byla implementována i klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. 
-Jedná se také o aplikaci postavené na Spring Boot s možností auto-konfigurace. Systém podporuje zaslání zpráv požadavků pro dva výše zmíněné scénáře -- požadavek pro uložení PCAP souboru, a požadavek pro čtení paketů podle kritérií. Data předává v obou případech přes HDFS z důvodu šetření paměti RAM. Odpovědi z distribuovaného úložiště přijímají dvě rozdílné komponenty:
+Pro účely testování byla implementována i~klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. 
+Jedná se také o~aplikaci postavené na Spring Boot s~možností auto-konfigurace. Systém podporuje zaslání zpráv požadavků pro dva výše zmíněné scénáře -- požadavek pro uložení PCAP souboru, a~požadavek pro čtení paketů podle kritérií. Data předává v~obou případech přes HDFS z~důvodu šetření paměti RAM. Odpovědi z~distribuovaného úložiště přijímají dvě rozdílné komponenty:
 
 \begin{itemize}
-    \item \texttt{AcknowledgementConsumerHandler} -- Přijímá zprávy pouze z výstupní Kafka fronty \texttt{output\_topic}.
+    \item \texttt{AcknowledgementConsumerHandler} -- Přijímá zprávy pouze z~výstupní Kafka fronty \texttt{output\_topic}.
     
-    \item \texttt{ErrorConsumerHandler} -- Přijímá zprávy z chybové fronty \texttt{error\_topic}.
+    \item \texttt{ErrorConsumerHandler} -- Přijímá zprávy z~chybové fronty \texttt{error\_topic}.
 \end{itemize}
 
-\noindent Čtení zpráv z těchto dvou front je rozděleno do různých tříd pro potenciálně lepší zpracování chyb. Aktuálně jsou všechny příchozí odpovědi (v obou třídách) zapsány do logů.
+\noindent Čtení zpráv z~těchto dvou front je rozděleno do různých tříd pro potenciálně lepší zpracování chyb. Aktuálně jsou všechny příchozí odpovědi (v~obou třídách) zapsány do logů.
 
-Příklady spuštění aplikací jsou uvedeny v \ref{launching}.
+Příklady spuštění aplikací jsou uvedeny v~\ref{launching}.
 
 \section{Logování}
-Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v logu. Odpovídající nastavení v systému distribuovaného úložiště lze vidět v \ref{configuration}.
+Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v~Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v~sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v~logu. Odpovídající nastavení v~systému distribuovaného úložiště lze vidět v~\ref{configuration}.
 
 \section{Zpracování chyb}
-Při běhu systému může nastat několik druhů chyb -- nefungující připojení k databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v blocích \texttt{try} a \texttt{catch}, v případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
+Při běhu systému může nastat několik druhů chyb -- nefungující připojení k~databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v~blocích \texttt{try} a~\texttt{catch}, v~případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s~úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s~návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a~odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
 
 \chapter{Výkon} \label{chapter_performance}
 
@@ -834,7 +834,7 @@ Při běhu systému může nastat několik druhů chyb -- nefungující připoje
 \section{Výsledky}
 V~rámci semestrálního projektu jsem se seznámil s~formáty digitálních forenzních dat a~způsoby jejich uložení. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s~distribuovanými databázemi a~NoSQL databázemi. Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní.
 
-Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracovává požadavky od klienta. Provedl jsem také základní vyhodnocení z hlediska výkonnosti na běžně dostupné hardwarové konfiguraci.
+Pro ověření základních aspektů návrhu jsem také implementoval prototyp distribuovaného repositáře, který realizuje rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracovává požadavky od klienta. Provedl jsem také základní vyhodnocení z~hlediska výkonnosti na běžně dostupné hardwarové konfiguraci.
 
 Dalším krokem bude rozšíření implementace prototypu o~podporu nových druhů digitálních forenzních dat, zejména zjednodušení přidávání nových akcí, které zpracovávají příkazy od klienta. Bude také implementován podsystém metadat, který bude provádět předzpracování dat.
 Implementovaný systém bude zhodnocen z~hlediska výkonu a~použití pro vybrané druhy digitálních forenzních dat.
