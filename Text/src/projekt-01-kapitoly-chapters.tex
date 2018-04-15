@@ -519,7 +519,7 @@ Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a~konfigurac
 \begin{itemize}
     \item Jednoduchá správa závislostí -- Pokud chceme použít Spring Boot k~běhu aplikace, je potřeba importovat \texttt{spring-boot-starter-parent} jako modulovou závislost. Existují další \texttt{Spring Boot Starter} závislosti, které se hodí pro určitý typ nebo aspekt vyvíjené aplikace. Existují např. \texttt{Test Starter}, \texttt{Web Starter}, \texttt{Security Starter}, \texttt{Data JPA Starter}, \texttt{AOP Starter} atd. Pokud chceme vyvíjet např. webovou aplikaci, Web Starter poskytne všechny potřebné závislosti zahrnující MVC modul, validační API, prostředky k~serializaci dat atp. Webová aplikace typicky potřebuje pracovat s~databází -- Data JPA Starter poskytne všechny potřebné závislosti zahrnující transakční API, \texttt{Hibernate} knihovny, ORM implementaci atd.
     
-    \item Auto-konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k~používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a~\texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o~jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v~konfiguračním souboru \texttt{application.properties} (příklad konfigurace aplikace uveden v~\ref{configuration}). Spring Boot tedy podle zdrojů uvedených v~\texttt{classpath} provádí konfiguraci celé aplikace.
+    \item Auto-konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k~používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a~\texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o~jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v~konfiguračním souboru \texttt{application.properties} (příklad konfigurace aplikace uveden v~příloze \ref{configuration}). Spring Boot tedy podle zdrojů uvedených v~\texttt{classpath} provádí konfiguraci celé aplikace.
     
     \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v~nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je při kompilaci automaticky stažen spolu s~ostatními závislostmi a~je zabudovaný, takže aplikaci stačí pouze spustit a~Spring Boot se postará o~nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i~jiný typ kontejneru, např. \texttt{Jetty} apod.
 \end{itemize}
@@ -558,7 +558,7 @@ Velmi jednoduše lze integrovat se Spring Boot pro zjednodušení připojení k~
 
 Pro účely distribuovaného repositáře byla využita převážně možnost propojení s~HDFS. Přistupovat k~HDFS lze obecně několika způsoby -- použít Java API \footnote{https://hadoop.apache.org/docs/r2.7.3/api/org/apache/hadoop/fs/FileSystem.html} (nutno stále kontrolovat výjimky a~ošetřovat chybové stavy), nebo souborový systém ovládat pomocí příkazové řádky nástrojem \texttt{hadoop} \footnote{https://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-common/FileSystemShell.html} mimo Java aplikaci. Oba způsoby nejsou uživatelsky přívětivé. Spring Hadoop propojuje tyto dva způsoby skrze intuitivní jednoduché Java API \cite{springHadoopReference}.
 
-HDFS nabízí tři API:
+HDFS nabízí tři API, jejichž vlastnosti znázorňuje tabulka \ref{HDFSApi}.
 \begin{table}[h!]
     \centering
     \begin{tabular}{| l | l | l | l | l |}
@@ -742,7 +742,7 @@ Diagram \ref{FIG_CommunicationClassDiagram} představuje komunikační jádro sy
 
 Všechny použité technologie, tzn. Kafka, Cassandra, MongoDB, i~HDFS, jsou distribuované, je možné přidávat další výpočetní uzly pro navýšení výkonu, a~všechny tak počítají s~rozšiřitelností do budoucna.
 
-Konfigurace parametrů systému a~technologií je možná pomocí specifických souborů s~příponou \texttt{.properties} skládajících se z~dvojic klíč-hodnota (konfigurace uvedena v~\ref{configuration}).
+Konfiguraci parametrů systému a~technologií lze provést pomocí specifických souborů s~příponou \texttt{.properties} obsahujících páry klíč-hodnota (konfigurace uvedena v~příloze \ref{configuration}).
 
 \begin{figure}[!h]
   \centering
@@ -815,10 +815,10 @@ Jedná se také o~aplikaci postavené na Spring Boot s~možností auto-konfigura
 
 \noindent Čtení zpráv z~těchto dvou front je rozděleno do různých tříd pro potenciálně lepší zpracování chyb. Aktuálně jsou všechny příchozí odpovědi (v~obou třídách) zapsány do logů.
 
-Příklady spuštění aplikací jsou uvedeny v~\ref{launching}.
+Příklady spuštění aplikací jsou uvedeny v~příloze \ref{launching}.
 
 \section{Logování}
-Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v~Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v~sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v~logu. Odpovídající nastavení v~systému distribuovaného úložiště lze vidět v~\ref{configuration}.
+Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. Existuje mnoho implementací pro trasování v~Java (\texttt{Log4j}, \texttt{Log4j 2}, \texttt{Logback} atd.). Konkrétní implementaci už v~sobě jako závislost zahrnuje přímo Spring Boot. Logování lze konfigurovat mnoha parametry. Lze určit, do kterého souboru se bude zapisovat, jakou úroveň logování použít, formát zapisovaných zpráv, nastavení se může lišit pro jednotlivé balíčky apod. Každá implementace logovacího systému by měla podporovat následující úrovně logování -- \texttt{TRACE}, \texttt{DEBUG}, \texttt{INFO}, \texttt{WARN}, \texttt{ERROR}, \texttt{OFF}. Jednotlivé úrovně potom vyjadřují význam zprávy v~logu. Odpovídající nastavení v~systému distribuovaného úložiště lze vidět v~příloze \ref{configuration}.
 
 \section{Zpracování chyb}
 Při běhu systému může nastat několik druhů chyb -- nefungující připojení k~databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v~blocích \texttt{try} a~\texttt{catch}, v~případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s~úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s~návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a~odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
@@ -832,7 +832,7 @@ V~rámci teoretické části práce jsem se seznámil s~forenzní analýzou digi
 
 Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní, a~vybral vhodné technologie pro realizaci.
 
-Implementovaný systém řeší požadované aspekty, je založen na distribuovaných technologiích počítajících se škálovatelností. Architektura umožňuje přidat podporu pro nové druhy forenzních dat. S~pomocí Spring Boot a~ostatních Spring projektů je jednoduchá konfigurace celého systému. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~\ref{dockerEnv}.
+Implementovaný systém řeší požadované aspekty, je založen na distribuovaných technologiích počítajících se škálovatelností. Architektura umožňuje přidat podporu pro nové druhy forenzních dat. S~pomocí Spring Boot a~ostatních Spring projektů je jednoduchá konfigurace celého systému. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~příloze \ref{dockerEnv}.
 
 \vspace{0.5cm}
 \noindent \textbf{TODO: Vyhodnocení výkonu}
