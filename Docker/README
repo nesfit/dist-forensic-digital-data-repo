@@ -53,7 +53,7 @@ Navod pro ovladani technologii v Docker prostredi
 	
 	MongoDB
 		Otevreni Mongo shell
-			$ docker run -it --link mongodb:mongodb --rm mongo mongo 192.168.99.100:27017
+			$ docker run -it --link mongodb:mongo --rm mongo:3.4 mongo 192.168.99.100:27017
 
 
 Distribuovany repositar

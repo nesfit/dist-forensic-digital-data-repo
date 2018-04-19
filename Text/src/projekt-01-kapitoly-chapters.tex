@@ -48,7 +48,7 @@ Vyšetřovatel zanalyzuje obraz pomocí snímacích technik, aby získal relevan
 \begin{figure}[!h]
   \centering
   \includegraphics[width=10.5cm]{template-fig/SlackSpace.pdf}
-  \caption{Příklad znázorňuje slack space pro parametry -- sektory velikosti 512 bajtů jsou shluknuty v~operačním systému do skupin po čtyřech, tzn. velikost svazku je 2048 bajtů; velikost souboru je 1280 bajtů (vyznačen modrou barvou). Pro tento soubor byl alokován celý svazek 2048 bajtů. Nevyužité místo (označeno bílou barvou) je slack space, v~tomto případě se jedná o~768 bajtů \cite{slacSpace}.}
+  \caption{Příklad znázorňuje slack space pro parametry -- sektory velikosti 512 bytů jsou shluknuty v~operačním systému do skupin po čtyřech, tzn. velikost svazku je 2048 bytů; velikost souboru je 1280 bytů (vyznačen modrou barvou). Pro tento soubor byl alokován celý svazek 2048 bytů. Nevyužité místo (označeno bílou barvou) je slack space, v~tomto případě se jedná o~768 bytů \cite{slacSpace}.}
   \label{FIG_SlackSpace}
 \end{figure}
 
@@ -66,7 +66,7 @@ Zástupci jsou například \texttt{Encase image file format}, \texttt{ProDiscove
 
 \subsubsection{Identifikace formátu}
 %File Format Identification
-Identifikace formátu souboru je proces určení formátu nějaké sekvence bajtů. Operační systém toto typicky dělá rozpoznáním přípony souboru nebo podle zabudované \texttt{MIME} informace. Forenzní aplikace musí identifikovat typy souborů podle obsahu. Mezi existující systémy patří například tyto projekty -- \texttt{libmagic}, \texttt{PRONOM}, \texttt{Apache Tika} \footnote{http://tika.apache.org/} \cite{forensicswikiFFIdentification}.
+Identifikace formátu souboru je proces určení formátu nějaké sekvence bytů. Operační systém toto typicky dělá rozpoznáním přípony souboru nebo podle zabudované \texttt{MIME} informace. Forenzní aplikace musí identifikovat typy souborů podle obsahu. Mezi existující systémy patří například tyto projekty -- \texttt{libmagic}, \texttt{PRONOM}, \texttt{Apache Tika} \footnote{http://tika.apache.org/} \cite{forensicswikiFFIdentification}.
 
 \section{Existující systémy}
 Vyznamným zástupcem pro uložení digitálních forenzních dat je systém AFF4, který bude popsán detailněji.
@@ -123,7 +123,7 @@ Streamy jsou základním rozhraním pro ukládání dat obrazu. Stream obsahuje 
 \begin{itemize}
 \item \texttt{FileBackedObjects} -- Stream, který ukládá data v~souboru v~souborovém systému, jehož pozice je určena URN souboru.
 
-\item \texttt{HTTPObject} -- Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bajtů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z~důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah systému AFF4.
+\item \texttt{HTTPObject} -- Pozice souboru je udána pomocí URL. Objekt lze ukládat a~číst z~HTTP serveru. Implementace umožňuje přečíst určité rozmezí bytů. Režie síťového provozu mezi klientem a~serverem je minimální. Je možné vyšetřit vzdálený obraz přes HTTP bez potřeby celé kopie obrazu. Z~důvodu bezpečnosti by měl být server pro zápis nějak omezen, například hesly, SSL certifikáty apod. Podpora čtení může být poskytnuta bez omezení, pokud je zdroj dat zašifrován. Zabezpečení serveru je ale mimo rozsah systému AFF4.
 
 \item \texttt{Segments} -- Segmenty jsou komponenty uloženy přímo ve \texttt{Volume}. Volume je zjednodušeně řečeno objekt uchovávající segmenty. Segmenty by měly být použity pro malé streamy, protože prohledávat v~komprimovaných segmentech může být drahá operace. Segmenty jsou užitečné, pokud potřebujeme vytvořit logický obraz nějaké podmnožiny souborového systému (pouze některé soubory) a~ne forenzní obraz celkového systému.
 
@@ -361,11 +361,11 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
 \begin{itemize}
     \item Spolehlivost -- Kafka je distribuovaný systém, segmentovaný, replikovaný a~odolný proti chybám.
     
-    \item Škálovatelnost -- Možnost připojení nových uzlů do clusteru.
+    \item Škálovatelnost -- Je možné připojit nové uzly do clusteru.
     
     \item Odolnost -- Zprávy jsou uloženy na disku.
     
-    \item Výkon -- Vysoká propustnost pro obě akce \texttt{publish} a~\texttt{subscribe}. Je zachován stabilní výkon i~při objemu zpráv v~terabajtech.
+    \item Výkon -- Vysoká propustnost pro obě akce \texttt{publish} a~\texttt{subscribe}, je zachován stabilní výkon i~při objemu zpráv v~terabytech.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -401,7 +401,7 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
 Tato sekce se zaměřuje na úložiště, kde budou digitální forenzní data uchována. Můžeme je rozdělit na strukturovaná a~nestrukturovaná.
 
 \subsection{Strukturovaná data}
-V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou být rozdělena na menší části při zachování možnosti interpretace, a~mohou být efektivně serializována pro uložení. Mezi strukturovaná data můžeme zařadit například soubory formátu PCAP obsahující síťovou komunikaci. Tyto soubory lze rozparsovat na jednotlivé segmenty pakety. Pakety lze potom serializovat na pole bajtů a~uložit do NoSQL databáze. Pro strukturovaná data byla vybrána databáze Cassandra.
+V~souvislosti se systémem repositáře se obecně jedná o~data, která mohou být rozdělena na menší části při zachování možnosti interpretace, a~mohou být efektivně serializována pro uložení. Mezi strukturovaná data můžeme zařadit například soubory formátu PCAP obsahující síťovou komunikaci. Tyto soubory lze rozparsovat na jednotlivé segmenty pakety. Pakety lze potom serializovat na pole bytů a~uložit do NoSQL databáze. Pro strukturovaná data byla vybrána databáze Cassandra.
 
 \subsubsection{Cassandra}
 Jedná se o~zástupce sloupcových NoSQL databází. Výhodami jsou předně: škálovatelnost, odolnost proti chybám, rychlost, distribuovanost, konzistence a~podpora transakcí. Cassandru využívají i~světoznámé společnosti Facebook, Twitter, Cisco, ebay, Twitter, Netflix a~další. Cílem Cassandry je zvládat vysoké objemy dat napříč mnoha uzly. Data jsou pak distribuována na všech uzlech clusteru. Uzly lze libovolně přidávat. Každý uzel je nezávislý a~zároveň propojený s~ostatními. Každý uzel v~clusteru se může podílet na požadavcích čtení či zápisu nezávisle na tom, kde jsou data skutečně uložena. Když uzel selže, požadavky čtení a~zápisu mohou být obslouženy jinými uzly sítě \cite{cassandraTutorialsPoint}.
@@ -511,7 +511,7 @@ Knihovna reflektuje zapouzdření, které spočívá ve vložení protokolové d
   \label{FIG_Pcap4JExample}
 \end{figure}
 
-\subsection{Spring, Spring Boot a~Spring projekty}
+\subsection{Spring, Spring Boot a~Spring projekty} \label{springProjects}
 Spring je velmi populární framework pro jazyk Java umožňující vytvářet webové a~enterprise aplikace. Věnuje se mnoha obecným principům a~problémům jako jsou například \texttt{dependency injection}, konfigurace, aspektově orientované programování, ORM, validace, bezpečnost, testování, integrace s~jinými frameworky atd. V~současné době pod něj spadají desítky projektů, každý zaměřený na jiný aspekt \footnote{https://spring.io/docs/reference}.
 
 Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a~konfigurace přímo v~Java. S~rozšiřující se funkcionalitou se zvyšuje komplexita a~i~konfigurace se stává obtížná a~náchylná k~chybám. Z~důvodu lepšího způsobu konfigurace byl vyvinut Spring Boot. Spring Boot přichází s~principem auto-konfigurace, ponechává však možnost předefinovat výchozí nastavení. Klíčovými vlastnostmi jsou \cite{whySpringBoot}:
@@ -658,7 +658,7 @@ MongoDB slouží k~uchování registru metadat. Důvody k~zavedení podsystému 
     
     \item \texttt{timestamp} -- Časové razítko paketu.
     
-    \item \texttt{originalLength} -- Délka paketu v~bajtech.
+    \item \texttt{originalLength} -- Délka paketu v~bytech.
     
     \item \texttt{ethernetTypeValue} -- Hodnota z~ethernetové hlavičky paketu, která udává typ protokolu v~hexadecimálním formátu, např. 0x0800 pro IPv4, 0x86dd pro IPv6 atd.
     
@@ -824,6 +824,80 @@ Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. 
 Při běhu systému může nastat několik druhů chyb -- nefungující připojení k~databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v~blocích \texttt{try} a~\texttt{catch}, v~případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s~úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s~návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a~odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
 
 \chapter{Výkon} \label{chapter_performance}
+Tato kapitola uvádí zhodnocení výkonosti systému, počáteční a finální implementace. Zaměřuje se také na optimální hardwarové konfigurace, které jsou doporučeny pro provoz použitých distribuovaných technologií.
+
+\section{Prototyp}
+V rámci semestrálního projektu byl implementován jednoduchý prototyp distribuovaného repositáře reflektující body uvedené v kapitole Návrhu distribuovaného úložiště \ref{distrRepDesignChapter}. Prototyp sloužil pouze pro ověření základních aspektů návrhu jako např. komunikace s klientem, práce s databází Cassandra a parsování PCAP souborů na pakety. Podporoval pouze jeden příkaz -- \texttt{STORE\_PCAP}, a to také bez použití metadat. Prototyp nebyl vhodný pro nasazení neboť obsahoval několik nedostatků, které byly v průběhu další implementace eliminovány. Mezi nejdůležitější nedostatky patřily tyto záležitosti:
+
+\begin{itemize}
+    \item předávání všech dat libovolné velikosti v binární podobě přes systém Kafka,
+    
+    \item manuální a neprůhledná konfigurace technologií,
+    
+    \item neefektivní komunikace s databází,
+    
+    \item nebylo optimálně využito hardwarových prostředků,
+    
+    \item celé objekty paketů byly do databáze serializovány.
+\end{itemize}
+
+\subsection{Eliminace nedostatků prototypu} \label{improvementsInImpl}
+Původně bylo navrženo a i v prototypu implementováno předávání dat pouze přes systém Kafka. Při velkých objemech přenášených dat bylo plýtváno pamětí RAM a současně také diskovým prostorem, protože Kafka ukládá přijaté zprávy i na disk. Tento problém vyřešilo předávání dat přes HDFS. Tímto způsobem jsou data uložena jen jednou a to na disku, zároveň je šetřena paměť RAM.
+
+Po přidání HDFS a databáze MongoDB pro metadata značně narostl počet konfigurovatelných parametrů. Manuálním načítáním konfiguračních parametrů a vytvářením mnoha objektů realizujících připojení do databází nebo na disk se také ztížila orientace v kódu, který se stal nepřehledným. Tyto operace velmi usnadnila integrace stávajícího kódu s projekty Spring, a hlavně získání auto-konfigurace ze Spring Boot \ref{springProjects}.
+
+\noindent Ukládání paketů do databáze Cassandra probíhalo i v prototypu asynchronně, ale nebylo žádným způsobem řešeno vykonávání několika dotazů současně. Díky tomu nastávalo často čekání vlákna apod. Přístupy pro řízení dotazů a pro maximální využití dostupných prostředků jsou uvedeny v sekci \ref{cassandra}.
+
+V původní implementaci byly pakety také ukládány neefektivně z pohledu výkonu a velikosti dat. Každý objekt reprezentující paket byl serializován na pole bytů a toto pole pak uloženo do databáze. Konverze na pole bytů vyžadovala značnou režii, a hlavně velikost serializovaného paketu byla značně vyšší než jeho skutečná velikost. Ve finální implementaci je pole bytů, které obsahuje hodnotu paketu, získáno přímo z objektu paketu pomocí metody \texttt{byte[] getRawData()} knihovny Pcap4J.
+
+\subsection{Porovnání výkonu prototypu a finálního systému}
+Test rychlosti byl proveden na této hardwarové konfiguraci:
+
+\vspace{0.5cm}
+\noindent \texttt{CPU: Intel Core i5-4200U 1.6Ghz @ 2.6Ghz} \\
+\texttt{RAM: 8 GB} \\
+\texttt{OS: Windows 8.1}
+
+\vspace{0.5cm}
+\noindent Big data technologie Kafka, ZooKeeper, HDFS, Cassandra a~MongoDB běžely jako oddělené kontejnery v~prostředí Docker, více informací o~běhovém prostředí je uvedeno v~příloze \ref{dockerEnv}. Virtuální stroj v~rámci Docker měl toto nastavení:
+
+\vspace{0.5cm}
+\noindent \texttt{CPU: 2 cores} \\
+\texttt{RAM: 4 GB} \\
+\texttt{OS: boot2docker}
+
+\subsubsection{Prototyp}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=15cm]{template-fig/PrototypePerformanceChart.pdf}
+    \caption{Graf zobrazující počet uložených paketů z~jednoho PCAP souboru za čas.}
+    \label{FIG_PerformanceChartPrototype}
+\end{figure}
+
+\noindent Pro toto srovnávací testování byly použity pouze PCAP soubory obsahující od stovkek paketů po několik tisíc. Větší PCAP soubory už prototyp na uvedené HW konfiguraci nedokázal zpracovávat z důvodu vyčerpání paměti RAM.
+
+Tabulka \ref{tablePerformancePrototype} obsahuje informace z~měření rychlosti prototypu. První sloupec udává velikost PCAP souboru v~bytech, druhý sloupec obsahuje počet paketů na daný PCAP soubor a~třetí sloupec zobrazuje průměrnou velikost paketu. Čas uvedený ve čtvrtém sloupci je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Poslední pátý sloupec udává počet paketů zpracovaných za sekundu. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
+
+\subsubsection{Finální systém}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=15cm]{template-fig/PerformanceChartFinal.pdf}
+    \caption{Graf zobrazující počet uložených paketů z~jednoho PCAP souboru za čas.}
+    \label{FIG_PerformanceChartFinalSystem}
+\end{figure}
+
+\noindent Tabulka \ref{tablePerformanceFinalSystem} udává naměřená data pro výsledný systém. Z tabulky, i porovnáním grafů \ref{FIG_PerformanceChartPrototype} a \ref{FIG_PerformanceChartFinalSystem}, lze vidět podstatné zvýšení výkonu. Pro takto malé PCAP soubory je už ve finálním systému většina času spotřebována komunikací klienta se systémem přes Kafku než parsováním paketů, získáváním metadat, a ukládáním metadat a hodnot paketů do databází. I přes přidaný podsystém metadat a předávání PCAP souborů přes HDFS bylo pomocí vylepšení uvedených v \ref{improvementsInImpl} docíleno zrychlení systému.
+
+Z uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vyplývá lineární složitost. Podle údajů v~tabulce \ref{tablePerformancePrototype} lze průměrně zpracovat 89 paketů za sekundu při průměrné velikosti jednoho paketu 450 bytů. V grafu výsledného systému \ref{FIG_PerformanceChartFinalSystem} už se jedná o velmi malá čísla a tak lineární složitost není z grafu přímo patrná. Přesto pro úplnost, lze zpracovat přibližně 2242 paketů za sekundu, při průměrné velikosti jednoho paketu 450 bytů.
+
+\vspace{0.5cm}
+\noindent Pozn.: Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí a s rychlým internetovým připojením by byla výkonnost systému znatelně vyšší.
+
+\section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
+
+\section{Doporučené HW požadavky distribuovaných technologií}
 
 \chapter{Závěr}
 
