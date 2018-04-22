@@ -897,7 +897,9 @@ Z uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vy
 
 \section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
 
+\newpage
 \section{Doporučené HW požadavky distribuovaných technologií}
+I když se jedná o distribuované technologie schopné běžet na mnoha uzlech, každý uzel by měl splňovat základní hardwarové požadavky podle dané nasazené technologie.
 
 \subsection{Kafka}
 Sekce zmiňuje klíčové záležitosti před nasazením Kafky do clusteru. Zdrojem je převážně dokument věnující se nasazení Kafky \cite{kafkaDeployment}.
@@ -912,18 +914,40 @@ Je také doporučeno nainstalovat více disků pro získání optimální propus
 Důležitou součástí distribuovaného systému je rychlá a spolehlivá síť. Nízká latence zajišťuje, aby mohly uzly jednoduše komunikovat. Moderní ethernetová připojení s rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v geograficky vzdálených lokacích.
 
 \subsection{Cassandra}
-Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a pro prostředí s nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na referenčních webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
+Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a pro prostředí s nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
 
 Cassandra běží ve virtuálním stroji Java s přidělenou fixní velikostí \texttt{heap}-u. Cassandra používá značný objem paměti RAM mimo \texttt{heap} pro kompresi metadat, \texttt{bloom} filtry, řádky, klíče, čítače atd. Využívá výhod \texttt{pagecache} operačního systému, kam ukládá části naposledy manipulovaných souborů z RAM pro okamžité znovupoužití. 
-Minimální produkční server vyžaduje aspoň 2 jádra procesoru a aspoň 8 GB RAM. Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM \cite{cassandraHW}.
+Minimální produkční server vyžaduje aspoň 2 jádra procesoru a aspoň 8 GB RAM \cite{cassandraHW}.
+%Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM.
 
 Cassandra je vysoce vícevláknová, obsluhující mnoho souběžných požadavků (čtení i zápisů) v mnoha vláknech běžících na tolika jádrech CPU, kolik je dostupných. Zápis probíhá do tzv. \texttt{commitlog}-u a poté vkládáním dat do \texttt{memtable} (optimalizovaná cache pro data, která mohou být vyhledána pomocí klíče), takže operace zápisu bývají především limitované procesorem. V důsledku toho se po přidání dalších výpočetních jader zvýší propustnost čtení i zápisů \cite{cassandraHW}.
 
-Jako diskové jednotky jsou doporučeny SSD disky pro všechny připojené uzly. Poskytují extrémně nízkou latenci pro náhodné čtení, zároveň také dostatečný výkon pro sekvenční operace zápisů. Pokud Cassandra běží na více uzlech, minimální požadovaná rychlost sítě je 1 Gb/s.
+Jako diskové jednotky jsou doporučeny SSD pro všechny připojené uzly. Poskytují extrémně nízkou latenci pro náhodná čtení, zároveň i dostatečný výkon pro sekvenční operace zápisů. Pokud Cassandra běží na více uzlech, minimální požadovaná rychlost sítě je 1 Gb/s.
 
 \subsection{MongoDB}
+I když je MongoDB velmi flexibilní a jednoduchá databáze z hlediska vývoje aplikací, liší se od běžných relačních databází ve správě zdrojů, takže je potřeba pečlivě zvážit výběr hardware pro nasazení.
+
+Existují dva základní koncepty týkající se architektury MongoDB \cite{hwProvisioningMongoDB}:
+
+\begin{itemize}
+    \item Technika \texttt{sharding} - MongoDB spravuje oddíly dat napříč servery použitím techniky \texttt{sharding}. Vyvažování dat napříč úseky (angl. \texttt{shards}) je automatické, úseky lze přidávat nebo odpojovat bez přerušení běhu databáze.
+    
+    \item Replikace - MongoDB spravuje mnoho redundantních kopií dat pro okamžitou dostupnost.
+\end{itemize}
+
+\noindent Pro aplikace zaměřující se na masivní čtení dat, je doporučeno dimenzovat servery tak, aby udržely celou množinu dat v paměti, kvůli okamžité dostupnosti \cite{hwProvisioningMongoDB}.
+
+Ukládací nástroj \texttt{WiredTiger}, který MongoDB používá, poskytuje vylepšenou propustnost a kompresi. Má cache, která zahrnuje soubor pro každou kolekci a index. Hrubě řečeno, 50\% paměti RAM serveru bude určeno této cache. Pracovní množina je soubor indexů a dokumentů, ke kterým je často přistupováno. Pokud lze uchovat pracovní množinu v paměti RAM, bude docházet k menšímu počtu I/O operací. Vhodné je, aby byla velikost paměti RAM větší než pracovní množina, ale menší než skutečná velikost dat \cite{sizeYourMongoDBClusters}.
+
+\texttt{WiredTiger} je vícevláknový, dokáže těžit z dodatečných procesorových jader. Konkrétně, celkový počet aktivních vláken vztahujících se k počtu dostupných procesorů dokáže ovlivnit výkon. Propustnost se zvyšuje společně s rostoucím počtem souběžných aktivních operací až do počtu procesorů. Propustnost se snižuje, jestli počet souběžných aktivních operací převýší počet procesorových jader. Očividné zrychlení poskytnou také SSD jednotky výměnou za standardní plotnové pevné disky \cite{mongoDBProductionNotes}.
 
 \subsection{HDFS}
+U HDFS a Hadoop obecně záleží na konkrétním použití. Jiná konfigurace bude vyžadována pro MapReduce úlohy, jiná pro integraci s technologiemi \texttt{Apache Spark}, \texttt{Apache HBase} apod. Cílem používání platformy Hadoop je provoz na cenově dostupném hardware místo vysokorychlostních strojů \cite{hadoopHardware}.
+
+
+MapReduce ani další technologie nejsou v distribuovaném úložišti použity. HDFS slouží pouze jako úložiště dat, důležitým požadavkem je zajistit dostatek diskového prostoru. Hadoop je náročný na ukládací prostor a je efektivní v prohledávání, nevyžaduje však drahé a velmi rychlé disky \cite{bestPracticesHadoopHW}.
+
+Pokud dojde k nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostatečně rychlé síťové připojení, aby uzly mohly rychle a efektivně komunikovat.
 
 \chapter{Závěr}
 
