@@ -49,7 +49,7 @@ Navod pro ovladani technologii v Docker prostredi
 
 	Cassandra
 		Otevreni CSLSH
-			$ docker run -it --link cassandra:cassandra --rm cassandra cqlsh cassandra
+			$ docker run -it --link cassandra:cassandra --rm martinfit/cassandra:3 cqlsh cassandra
 	
 	MongoDB
 		Otevreni Mongo shell
@@ -60,7 +60,7 @@ Distribuovany repositar
 
 	Implementace se sklada ze ctyr Maven modulu:
 		- Communication							rozhrani pro komunikaci
-		- Persistence							Obsluha Cassandry a MongoDB
+		- Persistence							obsluha Cassandry a MongoDB
 		- DistributedRepository					system distribuovaneho repositare, po spusteni bezi nepretrzite
 		- ProducerDemo							klientska aplikace
 	

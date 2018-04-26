@@ -29,7 +29,7 @@ Maven:
 
 Cassandra:
 	Otevreni CSLSH
-		$ docker run -it --link cassandra:cassandra --rm cassandra cqlsh cassandra
+		$ docker run -it --link cassandra:cassandra --rm martinfit/cassandra:3 cqlsh cassandra
 
 MongoDB:
 	Otevreni shell
