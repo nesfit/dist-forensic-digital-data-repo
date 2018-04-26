@@ -23,4 +23,4 @@ docker run \
 			-Dspring.kafka.bootstrap-servers=$SPRING_KAFKA_BOOTSTRAP_SERVERS \
 			-Dspring.kafka.producer.bootstrap-servers=$SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS \
 			-cp producer-demo-1.0-SNAPSHOT.jar \
-			-jar target/producer-demo-1.0.jar target/classes/PCAP
+			-jar target/producer-demo-1.0.jar ../../PCAP_Input
