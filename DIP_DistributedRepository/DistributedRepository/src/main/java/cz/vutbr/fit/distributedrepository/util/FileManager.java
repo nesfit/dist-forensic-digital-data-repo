@@ -22,7 +22,7 @@ public class FileManager {
     }
 
     public static String GenerateTmpPath(String tmpDirectory) {
-        return tmpDirectory + UUID.randomUUID() + FileExtension.PCAP;
+        return tmpDirectory + UUID.randomUUID();
     }
 
 }

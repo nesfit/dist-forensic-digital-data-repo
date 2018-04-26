@@ -1,7 +1,7 @@
-package cz.vutbr.fit.producerdemo.communication.consumer.handler;
+package cz.vutbr.fit.producerdemo.service.handler;
 
 import cz.vutbr.fit.communication.KafkaResponse;
-import cz.vutbr.fit.communication.consumer.handler.ICommandHandler;
+import cz.vutbr.fit.communication.service.handler.ICommandHandler;
 import cz.vutbr.fit.producerdemo.stats.CollectStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

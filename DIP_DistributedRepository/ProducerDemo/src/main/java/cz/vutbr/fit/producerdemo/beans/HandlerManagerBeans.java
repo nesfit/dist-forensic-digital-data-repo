@@ -2,9 +2,9 @@ package cz.vutbr.fit.producerdemo.beans;
 
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.command.Command;
-import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
-import cz.vutbr.fit.producerdemo.communication.consumer.handler.AcknowledgementConsumerHandler;
-import cz.vutbr.fit.producerdemo.communication.consumer.handler.ErrorConsumerHandler;
+import cz.vutbr.fit.communication.service.handler.HandlerManager;
+import cz.vutbr.fit.producerdemo.service.handler.AcknowledgementConsumerHandler;
+import cz.vutbr.fit.producerdemo.service.handler.ErrorConsumerHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

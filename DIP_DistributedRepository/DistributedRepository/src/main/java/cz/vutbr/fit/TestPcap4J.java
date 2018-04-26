@@ -6,7 +6,6 @@ import org.pcap4j.core.*;
 import org.pcap4j.packet.namednumber.DataLinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 
 import java.io.IOException;
 
@@ -15,9 +14,7 @@ import java.io.IOException;
  * The method loadAndSavePcapFile loops all packets inside pcap file, each packet
  * is dumped inside output pcap file using dumper.dumpRaw(packet.getRawData()).
  */
-//@SpringBootApplication
-//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
-public class TestPcap4J implements CommandLineRunner {
+public class TestPcap4J {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestPcap4J.class);
 
@@ -39,9 +36,7 @@ public class TestPcap4J implements CommandLineRunner {
 
     public void loadAndSavePcapFile(String input) throws IOException {
         ParserImpl pcapParser = new ParserImpl();
-        pcapParser.parseInput(input, this::doOnPacket, () -> {
-            LOGGER.debug("Completed");
-        }, TestPcap4J::handleError);
+        pcapParser.parseInput(input, this::doOnPacket, () -> LOGGER.debug("Completed"), TestPcap4J::handleError);
         closeResources();
     }
 
@@ -64,18 +59,8 @@ public class TestPcap4J implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        /*new SpringApplicationBuilder(TestPcap4J.class)
-                .web(WebApplicationType.NONE)
-                .bannerMode(Banner.Mode.OFF)
-                .build()
-                .run(args);*/
         TestPcap4J testPcap4J = new TestPcap4J();
         testPcap4J.runApp(args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        runApp(args);
     }
 
     public void runApp(String... args) {

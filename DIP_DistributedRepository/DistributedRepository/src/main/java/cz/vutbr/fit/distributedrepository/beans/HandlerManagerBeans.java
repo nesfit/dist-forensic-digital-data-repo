@@ -2,7 +2,7 @@ package cz.vutbr.fit.distributedrepository.beans;
 
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
-import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
+import cz.vutbr.fit.communication.service.handler.HandlerManager;
 import cz.vutbr.fit.distributedrepository.communication.consumer.handler.LoadPcapHandler;
 import cz.vutbr.fit.distributedrepository.communication.consumer.handler.StorePcapHandler;
 import org.springframework.beans.factory.annotation.Autowired;

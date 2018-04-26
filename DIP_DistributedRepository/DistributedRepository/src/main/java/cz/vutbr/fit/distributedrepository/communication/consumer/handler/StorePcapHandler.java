@@ -65,7 +65,6 @@ public class StorePcapHandler extends BaseHandler {
     @PostConstruct
     public void init() {
         postConstructValidation();
-        LOGGER.debug("StorePcapHandler initialized");
     }
 
     private void postConstructValidation() {
@@ -80,12 +79,9 @@ public class StorePcapHandler extends BaseHandler {
             bufferRequest(request);
             storePayload(value);
             processPackets();
-            removePayload();
 
-            if (request.getAwaitsResponse()) {
-                String detailMessage = String.format("Successfully stored %d packets", count);
-                sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
-            }
+            // Packets are processed, PCAP file can be removed
+            removePayload();
 
         } catch (Exception exception) {
             handleFailure(exception);
@@ -109,7 +105,7 @@ public class StorePcapHandler extends BaseHandler {
         count = 0;
 
         packetMetadataList = new ArrayList<>(maxListSize);
-        pcapParser.parseInput(processedTmpFile, this::processPacket, this::storeMetadata, this::handleFailure);
+        pcapParser.parseInput(processedTmpFile, this::processPacket, this::packetsProcessed, this::handleFailure);
 
         LOGGER.debug("Packets processed successfully.");
     }
@@ -155,6 +151,17 @@ public class StorePcapHandler extends BaseHandler {
     private void handleFailure(Throwable throwable) {
         LOGGER.error(throwable.getMessage(), throwable);
         sendAcknowledgement(buildFailureResponse(request, throwable.getMessage()), new byte[]{});
+    }
+
+    private void packetsProcessed() {
+        // Last bulk of metadata records
+        storeMetadata();
+
+        // If client awaits response, it will be sent
+        if (request.getAwaitsResponse()) {
+            String detailMessage = String.format("Successfully stored %d packets", count);
+            sendAcknowledgement(buildSuccessResponse(request, detailMessage), new byte[]{});
+        }
     }
 
     private void removePayload() {

@@ -32,6 +32,8 @@ public class LoadPcapHandler extends BaseHandler {
     @Autowired
     private PcapDumper<byte[]> pcapDumper;
 
+    private String resultingPcapFile;
+
     private long packetsToLoad;
     private long packetsLoaded;
 
@@ -51,7 +53,8 @@ public class LoadPcapHandler extends BaseHandler {
         packetsToLoad = 0;
         packetsLoaded = 0;
 
-        pcapDumper.initDumper(request.getDataSource().getUri(), this::handleFailure);
+        resultingPcapFile = request.getDataSource().getUri();
+        pcapDumper.initDumper(resultingPcapFile, this::handleFailure);
 
         Criteria criteria = prepareCriteria(request.getCriterias());
         packetsToLoad = packetMetadataRepository.findByDynamicCriteria(criteria)
@@ -60,8 +63,7 @@ public class LoadPcapHandler extends BaseHandler {
                 .count().block();
 
         if (packetsToLoad == 0) {
-            LOGGER.debug("Zero packets loaded, closing dumper.");
-            pcapDumper.closeDumper();
+            onFinishLoaded();
         }
     }
 
@@ -91,7 +93,7 @@ public class LoadPcapHandler extends BaseHandler {
         pcapDumper.closeDumper();
 
         String localFile, dstFile;
-        localFile = dstFile = request.getDataSource().getUri();
+        localFile = dstFile = resultingPcapFile;
         storePayloadIntoHDFS(localFile, dstFile);
 
         removeTmpFile(localFile);

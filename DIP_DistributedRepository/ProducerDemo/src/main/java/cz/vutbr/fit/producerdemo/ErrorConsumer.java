@@ -2,7 +2,7 @@ package cz.vutbr.fit.producerdemo;
 
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.command.Command;
-import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
+import cz.vutbr.fit.communication.service.handler.HandlerManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.communication.consumer.handler;
+package cz.vutbr.fit.communication.service.handler;
 
 public interface ICommandHandler<K, V> {
 

@@ -3,7 +3,7 @@ package cz.vutbr.fit.distributedrepository.communication.consumer.handler;
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.KafkaResponse;
 import cz.vutbr.fit.communication.ResponseCode;
-import cz.vutbr.fit.communication.consumer.handler.ICommandHandler;
+import cz.vutbr.fit.communication.service.handler.ICommandHandler;
 import cz.vutbr.fit.distributedrepository.communication.producer.ResponseProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.hadoop.fs.FsShell;

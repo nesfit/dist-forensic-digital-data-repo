@@ -2,7 +2,7 @@ package cz.vutbr.fit.distributedrepository;
 
 import cz.vutbr.fit.communication.KafkaRequest;
 import cz.vutbr.fit.communication.command.Command;
-import cz.vutbr.fit.communication.consumer.handler.HandlerManager;
+import cz.vutbr.fit.communication.service.handler.HandlerManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

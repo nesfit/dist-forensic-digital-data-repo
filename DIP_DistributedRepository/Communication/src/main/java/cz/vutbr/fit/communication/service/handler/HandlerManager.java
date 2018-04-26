@@ -1,4 +1,4 @@
-package cz.vutbr.fit.communication.consumer.handler;
+package cz.vutbr.fit.communication.service.handler;
 
 import cz.vutbr.fit.communication.command.Command;
 import org.slf4j.Logger;
