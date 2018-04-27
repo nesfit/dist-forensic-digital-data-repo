@@ -183,12 +183,12 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=13cm]{template-fig/DistributedDatabase.pdf}
+  \includegraphics[width=15cm]{template-fig/DistributedDatabase.pdf}
   \caption{Schéma distribuované databáze a~současný přístup více zařízení k~ní \cite{distributedDBMSPic}.}
   \label{FIG_DistrDB}
 \end{figure}
 
-\noindent Výhody
+\subsection{Výhody}
 \begin{itemize}
 \item Rozšiřitelnost -- Pokud je potřeba databázový systém rozšířit do nových míst nebo přidat další uzly, stačí přidat nový(é) počítač(e) a~lokální data v~nové pozici, a~nakonec je připojit k~distribuovanému systému, bez jakéhokoliv přerušení funkcionality. Analogický postup je při odebrání uzlu.
 
@@ -199,9 +199,9 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 \item Výkonnost -- Pokud jsou data efektivně distribuována, může být uživatelův požadavek uspokojen rychleji. Transakce mohou být také distribuované a~provedeny rychleji. 
 \end{itemize}
 
-\noindent Nevýhody
+\subsection{Nevýhody}
 \begin{itemize}
-\item CAP teorém -- Pojednává o~tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u~ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z~těchto 3 vlastností -- konzistence (angl. Consistency), dostupnost (angl. Availability) a~odolnost k~přerušení (angl. Partition tolerance). Je nutné si zvolit mezi konzistencí a~dostupností v~případě výpadku části sítě.
+\item CAP teorém -- Pojednává o~tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u~ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z~těchto 3 vlastností -- konzistence (angl. \texttt{Consistency}), dostupnost (angl. \texttt{Availability}) a~odolnost k~přerušení (angl. \texttt{Partition tolerance}). Je nutné si zvolit mezi konzistencí a~dostupností v~případě výpadku části sítě.
 
 \item Integrita dat -- Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
 
@@ -214,26 +214,25 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=14.2cm]{template-fig/DistributedDatabasesClassification.pdf}
+  \includegraphics[width=15cm]{template-fig/DistributedDatabasesClassification.pdf}
   \caption{Distribuované databáze můžeme podle jejich vlastností dělit \cite{distributedDBMS}.}
   \label{FIG_DivDistrDB}
 \end{figure}
 
 \subsection{Rozdělení}
 \subsubsection{Homogenní}
-Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a~spravovat.
+Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a~spravovat. Homogenní distribuované databáze můžeme ještě dělit na autonomní a neautonomní:
 
-\vspace{0.5cm}
-\noindent Autonomní -- Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
-
-\vspace{0.5cm}
-\noindent Neautonomní -- Data jsou distribuována napříč homogenními uzly. O~aktualizaci a~správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
+\begin{itemize}
+    \item Autonomní -- Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
+    
+    \item Neautonomní -- Data jsou distribuována napříč homogenními uzly. O~aktualizaci a~správu dat se stará systém řízení distribuované báze dat, který běží na centrálním nebo také master uzlu.
+\end{itemize}
 
 \subsubsection{Heterogenní}
 Uzly mohou mít rozdílné operační systémy a~SŘBD, které nejsou kompatibilní. Mohou také využívat rozdílná schémata (relační, objektově orientované, hierarchické, \ldots). Rozdílnost schématu je hlavním problémem při zpracování dotazu a~transakcí. Kvůli tomu je také složité dotazování \cite{wikiDBMS}. Heterogenní distribuované databáze můžeme rozdělit na federované (angl. \texttt{federated}) nebo multidatabázové.
 
-\vspace{0.5cm}
-\noindent Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a~multi-databázová architektura.
+Architekturami distribuovaných databází jsou centrální architektura, klient-server, peer-to-peer, a~multi-databázová architektura.
 
 \section{Úložiště} \label{storage}
 V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je mezi nimi rozdíl a~jaká jsou jejich úložiště.
@@ -242,7 +241,7 @@ V~této sekci budou popsána strukturovaná a~nestrukturovaná data, jaký je me
 Strukturovanými daty jsou libovolná data, pro která lze sestavit datový model. Datový model přesně organizuje jednotlivé elementy dat a~specifikuje, jak spolu elementy souvisí, jaké mají vazby, jak budou uloženy, přístup k~nim, a~jak souvisí s~jednotlivými elementy reálného světa \cite{structData}. Typickým úložištěm strukturovaných dat je relační databáze. Pro čtení a~dotazování byl vytvořen dotazovací jazyk SQL.
 
 \subsection{Nestrukturovaná data}
-Jak už bylo zmíněno v~sekci \ref{bigDataSection}, Big data patří převážně mezi nestrukturovaná data. Data nemají přesně definovanou strukturu, neexistuje datový model, který by definoval jednotlivé dílčí elementy a~jejich vztahy. Mezi typické zástupce patří: videa, obrázky, audio, webové stránky, text, obsah e-mailové komunikace apod. Mezi vhodná úložiště mohou patřit disková úložiště, NAS (celým názvem \texttt{Network Attached Storage}), HDFS (\texttt{Hadoop Distributed File System}) a~NoSQL databáze.
+Jak už bylo zmíněno v~sekci \ref{bigDataSection}, Big data patří převážně mezi nestrukturovaná data. Data nemají přesně definovanou strukturu, neexistuje datový model, který by definoval jednotlivé dílčí elementy a~jejich vztahy. Mezi typické zástupce patří: videa, obrázky, audio, webové stránky, text, obsah e-mailové komunikace apod. Mezi vhodná úložiště mohou patřit disková úložiště, HDFS (\texttt{Hadoop Distributed File System}) a~NoSQL databáze.
 
 \subsubsection{NoSQL databáze}
 Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jedná se o~databázový koncept, ve kterém datové úložiště i~zpracování dat používají jiné prostředky než tabulková schémata tradiční relační databáze \cite{noSqlWiki}. NoSQL databáze jsou navrženy pro distribuovaná ukládání a~dotazování dat, souběžný přístup, a~manipulaci s~obrovským objemem dat. Mezi výhody patří: horizontální i~vertikální škálovatelnost, distribuovaný přístup, flexibilita schématu, dynamičnost. Nevýhodami však mohou být: absence standardizace, omezené schopnosti dotazování, konzistence \cite{noSqlIntro}.
@@ -250,15 +249,15 @@ Pod zkratkou se nachází \texttt{non SQL} nebo také \texttt{Not only SQL}. Jed
 \vspace{0.5cm}
 \noindent NoSQL databáze mohou být rozděleny do čtyř kategorií \cite{noSqlOverview}:
 \begin{itemize}
-    \item Klíč-hodnota (angl. Key-Value databases) -- Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z~několika částí, které lze použít jako ID do struktury a~nebo ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
+    \item Klíč-hodnota (angl. \texttt{Key-Value databases}) -- Jsou nejjednoduššími NoSQL úložišti. Každá položka v~databázi je uložena jako atribut (klíč) společně se svou hodnotou. Hodnota je typu \texttt{blob}, takže pouze aplikace dokáže hodnotu správně interpretovat. Databáze pouze ukládá binární data, kterým nerozumí. Klíč může být složený, např. z~několika částí, které lze použít jako ID do struktury a~nebo ID jejich položek. Klíče mohou být seřazené, což umožňuje efektivní procházení, nebo také organizovány do hierarchií. Zástupci jsou databáze \texttt{Riak} a~\texttt{Redis}.
     
-    \item Dokumentové (angl. Document databases) -- Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v~podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
+    \item Dokumentové (angl. \texttt{Document databases}) -- Párují každý klíč se složitou datovou strukturou, nazývanou dokument. Představuje v~podstatě princip klíč-hodnota, ale hodnota je strukturovaná. Dokument může obsahovat mnoho rozdílných párů klíč-hodnota, párů klíč-pole, nebo dokonce vnořené dokumenty. Jsou vhodné pro dokumenty formátu XML a~JSON (BSON).
     Databáze dokáže interpretovat strukturovanou hodnotu (dokument), toho lze efektivně využít hlavně při dotazování. Dotazy mohou být i~složitější než přes klíče, např. pomocí \texttt{XPath}. Mezi zástupce patří \texttt{MongoDB} a~\texttt{CouchDB}.
     
-    \item Grafové (angl. Graph databases) -- Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a~jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
+    \item Grafové (angl. \texttt{Graph databases}) -- Jsou navrženy pro ukládání entit (uzly) a~jejich vztahů (hrany). Uzly i~hrany mohou mít svoje atributy. Jsou vhodné pro reprezentaci sítí a~jejich topologií, např. sociální či dopravní sítě, topologie počítačových sítí a~další \cite{noSqlPdb}.
     Zástupcem je \texttt{Neo4J}.
     
-    \item Sloupcové (angl. Column-oriented databases / Column family stores) -- Data jsou organizována v~tabulkách. Tabulka má řádky jako v~relační databázi, ale u~řádku pak lze definovat sloupce s~hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i~různý počet (řídké pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a~z~nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
+    \item Sloupcové (angl. \texttt{Column-oriented databases} / \texttt{Column family stores}) -- Data jsou organizována v~tabulkách. Tabulka má řádky jako v~relační databázi, ale u~řádku pak lze definovat sloupce s~hodnotami. Sloupce mohou být pro každý řádek různé (flexibilní schéma), i~různý počet (řídká pole). Sloupcové databáze jsou optimalizovány pro dotazování nad velkými objemy dat. Sloupce mohou být zobecněny na adresáře (anglicky \texttt{supercolumn}), kde potom řádek obsahuje kolekci supersloupců, a~z~nich každý obsahuje kolekci sloupců \cite{noSqlPdb}. Zástupci sloupcových databází jsou například \texttt{Cassandra} a~\texttt{HBase}.
 \end{itemize}
 
 \subsection{Srovnání relačních a~NoSQL databází}
@@ -312,7 +311,7 @@ Aplikační rozhraní umožňuje klientovi komunikovat s~distribuovaným reposit
 V~následující sekci bude vysvětleno, jak ovládání repositáře probíhá, jak vypadá zpráva, a~bude také uvedeno schéma celé komunikace jako příklad.
 
 \subsection{Komunikace} \label{designCommunication}
-Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}u Kafka. Systém bude pracovat na principu požadavek -- odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry -- atributy příkazu a~případně řetězec dat.
+Komunikace s~klientem, který chce do distribuovaného repositáře data uložit, nebo naopak z~něj nějaká data získat, probíhá pomocí zaslání zprávy tzv. \texttt{MQ broker}-u Kafka. Systém bude pracovat na principu požadavek -- odpověď, ale asynchronním způsobem. Zpráva požadavku obsahuje parametry -- atributy příkazu a~případně řetězec dat.
 
 \vspace{0.5cm}
 \noindent Název a~význam parametrů:
@@ -328,7 +327,7 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
     
     \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a~další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení. Jedná se o~povinný parametr.
     
-    \item \texttt{dataSource} -- Zdrojová data k~uložení lze zaslat dvojím způsobem. První z~nich je poslat data v~binární podobě přímo přes systém Kafka společně s~příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a~to předat data přes distribuovaný souborový systém HDFS. Parametr dataSource obsahuje název úložiště v~podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k~souboru, pokud se jedná o~HDFS, a~také atribut \texttt{removeAfterUse} pro odstranění souboru po použití. Lze využít i~pro příkazy čtení dat ke způsobu předání výsledku -- přes HDFS nebo Kafku.
+    \item \texttt{dataSource} -- Zdrojová data k~uložení lze zaslat dvojím způsobem. První z~nich je poslat data v~binární podobě přímo přes systém Kafka společně s~příkazem. Tento způsob lze využít pro data, jejichž velikost není příliš velká, protože se data načítají do paměti RAM. Pro velké objemy dat takový přístup není vhodný. Proto existuje ještě druhý způsob, a~to předat data přes distribuovaný souborový systém HDFS. Parametr \texttt{dataSource} obsahuje název úložiště v~podobě výčtové konstanty \texttt{Kafka} nebo \texttt{HDFS}, cestu k~souboru, pokud se jedná o~HDFS, a~také atribut \texttt{removeAfterUse} pro odstranění souboru po použití. Lze využít i~pro příkazy čtení dat ke způsobu předání výsledku -- přes HDFS nebo Kafku.
     
     \item \texttt{criterias} -- Představuje seznam kritérií pro dotazování. Tento parametr je vhodné vyplnit pouze při zasílání příkazu čtení.
 \end{itemize}
@@ -352,7 +351,7 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
 \begin{figure}[!h]
   \centering
   \includegraphics[width=14cm]{template-fig/Kafka_communication.pdf}
-  \caption{Demonstrace komunikace -- zaslání zprávy požadavku pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distr. repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné -- klient zjistí, ke kterému příkazu odpověď patří.}
+  \caption{Demonstrace komunikace -- zaslání zprávy požadavku pro uložení souboru PCAP. Klient zašle příkaz přes Kafku, příkaz je zpracován na straně distribuovaného repositáře, a~případně je odeslána odpověď klientovi. Můžeme si všimnout uvedených ID, jsou stejné -- klient zjistí, ke kterému příkazu odpověď patří.}
   \label{FIG_KafkaCommunication}
 \end{figure}
 
@@ -488,13 +487,13 @@ a~poskytuje aplikační rozhraní pro jazyk Java. Mimo výše uvedené činnosti
     boolean contains(Class<T> clazz)
 \end{lstlisting}
 
-\noindent Ke konkrétnímu typu paketu, např. IP paketu, se přistupuje pomocí reflexe voláním metody:
+\noindent Ke konkrétnímu typu paketu, se přistupuje pomocí reflexe voláním metody:
 
 \begin{lstlisting}[language=Java]
     T get(Class<T> clazz)
 \end{lstlisting}
 
-\noindent Tedy například:
+\noindent Například lze získat IP paket následujícím voláním:
 
 \begin{lstlisting}[language=Java]
     IPv4Packet ipv4Packet = ethernetPacket.get(IPv4Packet.class);
@@ -521,7 +520,7 @@ Spring poskytuje tři způsoby konfigurace -- pomocí XML, anotací a~konfigurac
     
     \item Auto-konfigurace -- Nejenže Starter Web poskytne potřebné závislosti, ale proběhne konfigurace běžně používaných objektů tříd \texttt{ResourceHandlers}, \texttt{MessageSource} atd. výchozími hodnotami. Analogicky proběhne konfigurace objektů nutných k~používání JPA -- \texttt{DataSource}, \texttt{TransactionManager} a~\texttt{EntityManagerFactory}. Uživatel tyto objekty sám nevytváří, o~jejich vytvoření se postará Spring Boot na základě poskytnutých údajů v~konfiguračním souboru \texttt{application.properties} (příklad konfigurace aplikace uveden v~příloze \ref{configuration}). Spring Boot tedy podle zdrojů uvedených v~\texttt{classpath} provádí konfiguraci celé aplikace.
     
-    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v~nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je při kompilaci automaticky stažen spolu s~ostatními závislostmi a~je zabudovaný, takže aplikaci stačí pouze spustit a~Spring Boot se postará o~nasazení do zabudovaného kontejneru. Samozřejmě lze zvolit i~jiný typ kontejneru, např. \texttt{Jetty} apod.
+    \item Podpora zabudovaného kontejneru -- Pokud vyvíjíme webovou aplikaci, která bude běžet v~nějakém kontejneru typu \texttt{Tomcat}, není potřeba provádět žádná nasazení do externího kontejneru. Kontejner je při kompilaci automaticky stažen spolu s~ostatními závislostmi a~je zabudovaný, takže aplikaci stačí pouze spustit a~Spring Boot se postará o~nasazení aplikace do zabudovaného kontejneru. Samozřejmě lze zvolit i~jiný typ kontejneru, např. \texttt{Jetty} apod.
 \end{itemize}
 
 \noindent Spring Boot umožňuje vytvářet tzv. \texttt{beans} přímo v~Java kódu, bez použití XML konfiguračních souborů. Každou bean lze vytvořit pomocí anotace \texttt{@Bean}, např.
@@ -546,11 +545,11 @@ private PcapParser<PcapPacket> pcapParser;
 \noindent Uživatel tedy definoval bean v~konfigurační třídě označené anotací \texttt{@Configuration}, a~tato instance je pak dodána principem dependency injection.
 
 \subsubsection{Spring Kafka} \label{springKafka}
-Projekt Spring Kafka aplikuje klíčové koncepty Springu pro vývoj systémů založených na platformě Kafka. Poskytuje šablonu jako vysokoúrovňovou abstrakci pro zasílání zpráv \cite{springKafka}. Velkým přínosem je výše zmíněná auto-konfigurace ze zadaných parametrů, která umožňuje okamžité použití komponent bez vytváření instancí uživatelem.
+Projekt Spring Kafka aplikuje klíčové koncepty Spring-u pro vývoj systémů založených na platformě Kafka. Poskytuje šablonu jako vysokoúrovňovou abstrakci pro zasílání zpráv \cite{springKafka}. Velkým přínosem je výše zmíněná auto-konfigurace ze zadaných parametrů, která umožňuje okamžité použití komponent bez vytváření instancí uživatelem.
 
 Mezi nejdůležitější třídy patří \texttt{KafkaTemplate}, která zapouzdřuje mnoho metod pro odeslání zpráv do Kafka front. Podporuje asynchronní i~synchronní odesílání. Použití této šablony lze vidět ve třídě \texttt{ResponseProducer} z~diagramu tříd \ref{FIG_CommunicationClassDiagram}.
 
-Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageListenerContainer}, který poskytuje implementaci tzv. \texttt{Message Listener} nebo je označen pomocí anotace \texttt{@KafkaListener}. Existují 2 implementace kontejneru -- \texttt{KafkaMessageListenerContainer} (aktuálně použitá implementace v~systému repositáře), kde jsou přijímány všechny zprávy ze všech front a~oddílů v~jednom vláknu; a~\texttt{ConcurrentMessageListenerContainer}, který deleguje zpracování 1 nebo více kontejnerům, což poskytuje vícevláknový odběr zpráv a~tudíž i~vícevláknové zpracování \cite{springKafka}, více v~\footnote{https://docs.spring.io/spring-kafka/docs/2.1.6.BUILD-SNAPSHOT/reference/html/\_reference.html}. Lze také nastavit různé filtry a~vzorce pro přijímané zprávy, a~rozdělit tak příjem zpráv podle jejich struktury jiným objektům.
+Zprávy mohou být přijímány pomocí zvoleného kontejneru \texttt{MessageListenerContainer}, který poskytuje implementaci tzv. \texttt{Message Listener}-u nebo je označen pomocí anotace \texttt{@KafkaListener}. Existují 2 implementace kontejneru -- \texttt{KafkaMessageListenerContainer} (aktuálně použitá implementace v~systému repositáře), kde jsou přijímány všechny zprávy ze všech front a~oddílů v~jednom vláknu; a~\texttt{ConcurrentMessageListenerContainer}, který deleguje zpracování 1 nebo více kontejnerům, což poskytuje vícevláknový odběr zpráv a~tudíž i~vícevláknové zpracování \cite{springKafka}, více v~\footnote{https://docs.spring.io/spring-kafka/docs/2.1.6.BUILD-SNAPSHOT/reference/html/\_reference.html}. Lze také nastavit různé filtry a~vzorce pro přijímané zprávy, a~rozdělit tak příjem zpráv podle jejich struktury jiným objektům.
 
 \subsubsection{Spring Hadoop}
 Další z~projektů, které patří pod Spring, je Spring Hadoop, zjednodušující použití Hadoop API pro Javu. Přináší zase výše zmíněný jednotný konfigurační model usnadňující vývoj systémů postavených na platformě Hadoop, využívající HDFS, paradigma MapReduce, Hive a~Pig. Poskytuje také integraci s~jinými projekty ze Spring ekosystému jako například \texttt{Spring Integration} a~\texttt{Spring Batch}. Podporuje tvorbu Hadoop aplikací, které jsou konfigurovány principem dependency injection a~spuštěny jako standardní Java aplikace nebo pomocí nástrojů Hadoop pro příkazovou řádku.
@@ -848,7 +847,7 @@ Po přidání HDFS a~databáze MongoDB pro metadata značně narostl počet konf
 
 \noindent Ukládání paketů do databáze Cassandra probíhalo i~v~prototypu asynchronně, ale nebylo žádným způsobem řešeno vykonávání několika dotazů současně. Díky tomu nastávalo často čekání vlákna apod. Přístupy pro řízení dotazů a~pro maximální využití dostupných prostředků jsou uvedeny v~sekci \ref{cassandra}.
 
-V~původní implementaci byly pakety také ukládány neefektivně z~pohledu výkonu a~velikosti dat. Každý objekt reprezentující paket byl serializován na pole bytů a~toto pole pak uloženo do databáze. Konverze na pole bytů vyžadovala značnou režii, a~hlavně velikost serializovaného paketu byla značně vyšší než jeho skutečná velikost. Ve finální implementaci je pole bytů, které obsahuje hodnotu paketu, získáno přímo z~objektu paketu pomocí metody \texttt{byte[] getRawData()} knihovny Pcap4J.
+V~původní implementaci byly pakety také ukládány neefektivně z~pohledu výkonu a~velikosti dat. Každý objekt reprezentující paket byl serializován na pole bytů a~toto pole pak uloženo do databáze. Konverze na pole bytů vyžadovala značnou režii, a~hlavně velikost serializovaného objektu reprezentujícího paket byla značně vyšší než skutečná velikost paketu. Ve finální implementaci je pole bytů, které obsahuje hodnotu paketu, získáno přímo z~objektu paketu pomocí metody \texttt{byte[] getRawData()} knihovny Pcap4J.
 
 \subsection{Porovnání výkonu prototypu a~finálního systému}
 Test rychlosti byl proveden na této hardwarové konfiguraci:
@@ -896,7 +895,7 @@ Z~uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vy
 \noindent Pozn.: Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí a~s~rychlým internetovým připojením by byla výkonnost systému znatelně vyšší.
 
 \section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
-Předchozí porovnání prototypu a~výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, které bývá součástí levnějších notebooků. Tomu odpovídala i~zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V~této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
+Předchozí porovnání prototypu a~výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, která bývá součástí levnějších notebooků. Tomu odpovídala i~zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V~této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
 
 \subsubsection{Ukládání paketů}
 Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z~klientské aplikace. Klient nečeká na odpovědi z~distribuovaného úložiště, prostě odesílá příkazy, dokud existují PCAP soubory ve zvoleném adresáři (název adresáře je předán jako vstupní parametr). Příkazy jsou uchovány v~Kafka frontě a~postupně čteny v~distribuovaném repositáři. Po zpracování jednotlivých příkazů se odesílají odpovědi klientovi. Testovací sada zahrnovala 102 PCAP souborů o~velikosti 67 až 270 MB, z~nichž téměř každý obsahoval 500 000 paketů. Dohromady se tedy jednalo o~10.3 GB dat a~50 851 631 paketů.
@@ -1010,8 +1009,7 @@ Ukládací nástroj \texttt{WiredTiger}, který MongoDB používá, poskytuje vy
 \texttt{WiredTiger} je vícevláknový, dokáže těžit z~dodatečných procesorových jader. Konkrétně, celkový počet aktivních vláken vztahujících se k~počtu dostupných procesorů dokáže ovlivnit výkon. Propustnost se zvyšuje společně s~rostoucím počtem souběžných aktivních operací až do počtu procesorů. Propustnost se snižuje, jestli počet souběžných aktivních operací převýší počet procesorových jader. Očividné zrychlení poskytnou také SSD jednotky výměnou za standardní plotnové pevné disky \cite{mongoDBProductionNotes}.
 
 \subsection{HDFS}
-U~HDFS a~Hadoop obecně záleží na konkrétním použití. Jiná konfigurace bude vyžadována pro MapReduce úlohy, jiná pro integraci s~technologiemi \texttt{Apache Spark}, \texttt{Apache HBase} apod. Cílem používání platformy Hadoop je provoz na cenově dostupném hardware místo vysokorychlostních strojů \cite{hadoopHardware}.
-
+U~HDFS a~Hadoop obecně záleží na konkrétním použití. Jiná konfigurace bude vyžadována pro MapReduce úlohy, jiná pro integraci s~technologiemi Apache Spark, Apache HBase apod. Cílem používání platformy Hadoop je provoz na cenově dostupném hardware místo vysokorychlostních strojů \cite{hadoopHardware}.
 
 MapReduce ani další technologie nejsou v~distribuovaném úložišti použity. HDFS slouží pouze jako úložiště dat, důležitým požadavkem je zajistit dostatek diskového prostoru. Hadoop je náročný na ukládací prostor a~je efektivní v~prohledávání, nevyžaduje však drahé a~velmi rychlé disky \cite{bestPracticesHadoopHW}.
 
@@ -1022,12 +1020,12 @@ Pokud dojde k~nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostate
 \section{Výsledky}
 Teoretická část práce se zabývá úvodem do forenzní analýzy digitálních dat. Dále jsou prozkoumány existující systémy pro uložení digitálních forenzních dat (včetně systému AFF4). Jako úložiště pro digitální forenzní data a~obecně Big data jsou představeny distribuované databáze včetně jejich vlastností, dále NoSQL databáze a~distribuovaný souborový systém HDFS z~platformy Hadoop.
 
-V~další části práce bylo navrženo distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní. Byly vybrány vhodné technologie pro realizaci -- Kafka, HDFS, a~NoSQL databáze Cassandra a~MongoDB. Komunikace klienta s~úložištěm probíhá pomocí asynchronního zasílání zpráv, které obsahují ovládací příkazy.
+V~další části diplomové práce bylo navrženo distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní. Byly vybrány vhodné komponenty a~technologie pro realizaci -- Kafka, HDFS, a~NoSQL databáze Cassandra a~MongoDB. Komunikace klienta s~úložištěm probíhá pomocí asynchronního zasílání zpráv, které obsahují ovládací příkazy.
 
 Distribuované úložiště mělo splňovat několik základních požadavků. Prvním z~nich bylo umožnit optimální přístup k~datům. Sekvenční přístup je zajištěn systémem HDFS, náhodné čtení a~dotazování je pak zajištěno podsystémem metadat.
 Architektura úložiště také počítá s~přidáváním podpory pro nové druhy forenzních dat. Přidání podpory za běhu je implicitně realizováno přijímáním zpráv přes Kafku.
 
-Implementovaný systém je založen na distribuovaných Big data technologiích počítajících se škálovatelností. S~pomocí Spring Boot a~ostatních Spring projektů lze jednoduše konfigurovat celý systém. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~příloze \ref{dockerEnv}.
+Implementovaný systém je založen na distribuovaných Big data technologiích počítajících se škálovatelností. S~podporou Spring Boot a~ostatních Spring projektů lze jednoduše konfigurovat celý systém. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~příloze \ref{dockerEnv}.
 
 V~průběhu implementace úložiště bylo provedeno několik úprav ke zvýšení propustnosti a~výkonu systému. Největší dopad na výkon potom mělo asynchronní ukládání a~čtení dat z~databáze, čímž se efektivně využívají hardwarové prostředky. Po aplikaci úprav byly zjištěny rozdíly v~rychlosti původního a~výsledného implementovaného systému.
 
