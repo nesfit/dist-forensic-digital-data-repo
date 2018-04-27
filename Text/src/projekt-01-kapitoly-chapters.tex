@@ -824,17 +824,17 @@ Logování (angl. \texttt{logging}) pomáhá trasování běžícího systému. 
 Při běhu systému může nastat několik druhů chyb -- nefungující připojení k~databázi, pokud databáze neběží korektně; nedostupnost Kafka front; chyby při ukládání souborů na HDFS např. kvůli kolizi jmen nebo nedostatečnému oprávnění; chyby při parsování PCAP souboru či zápisu do PCAP souboru. Výjimky jsou odchyceny v~blocích \texttt{try} a~\texttt{catch}, v~případě reaktivních či asynchronních dotazů jsou zaregistrovány odpovídající \texttt{callback}-y pro chybové stavy. Po odchycení výjimek jsou výjimky logovány s~úrovní \texttt{ERROR}. Poté je sestavena odpověď pro klienta s~návratovým kódem \texttt{INTERNAL\_SERVER\_ERROR(500)} a~odpověď odeslána do chybové fronty zadané parametrem \texttt{errorTopic} uvedeného ve zprávě požadavku.
 
 \chapter{Výkon} \label{chapter_performance}
-Tato kapitola uvádí zhodnocení výkonosti systému, počáteční a finální implementace. Zaměřuje se také na optimální hardwarové konfigurace, které jsou doporučeny pro provoz použitých distribuovaných technologií.
+Tato kapitola uvádí zhodnocení výkonosti systému, počáteční a~finální implementace. Zaměřuje se také na optimální hardwarové konfigurace, které jsou doporučeny pro provoz použitých distribuovaných technologií.
 
 \section{Prototyp}
-V rámci semestrálního projektu byl implementován jednoduchý prototyp distribuovaného repositáře reflektující body uvedené v kapitole Návrhu distribuovaného úložiště \ref{distrRepDesignChapter}. Prototyp sloužil pouze pro ověření základních aspektů návrhu jako např. komunikace s klientem, práce s databází Cassandra a parsování PCAP souborů na pakety. Podporoval pouze jeden příkaz -- \texttt{STORE\_PCAP}, a to také bez použití metadat. Prototyp nebyl vhodný pro nasazení neboť obsahoval několik nedostatků, které byly v průběhu další implementace eliminovány. Mezi nejdůležitější nedostatky patřily tyto záležitosti:
+V~rámci semestrálního projektu byl implementován jednoduchý prototyp distribuovaného repositáře reflektující body uvedené v~kapitole Návrhu distribuovaného úložiště \ref{distrRepDesignChapter}. Prototyp sloužil pouze pro ověření základních aspektů návrhu jako např. komunikace s~klientem, práce s~databází Cassandra a~parsování PCAP souborů na pakety. Podporoval pouze jeden příkaz -- \texttt{STORE\_PCAP}, a~to také bez použití metadat. Prototyp nebyl vhodný pro nasazení neboť obsahoval několik nedostatků, které byly v~průběhu další implementace eliminovány. Mezi nejdůležitější nedostatky patřily tyto záležitosti:
 
 \begin{itemize}
-    \item předávání všech dat libovolné velikosti v binární podobě přes systém Kafka,
+    \item předávání všech dat libovolné velikosti v~binární podobě přes systém Kafka,
     
-    \item manuální a neprůhledná konfigurace technologií,
+    \item manuální a~neprůhledná konfigurace technologií,
     
-    \item neefektivní komunikace s databází,
+    \item neefektivní komunikace s~databází,
     
     \item nebylo optimálně využito hardwarových prostředků,
     
@@ -842,15 +842,15 @@ V rámci semestrálního projektu byl implementován jednoduchý prototyp distri
 \end{itemize}
 
 \subsection{Eliminace nedostatků prototypu} \label{improvementsInImpl}
-Původně bylo navrženo a i v prototypu implementováno předávání dat pouze přes systém Kafka. Při velkých objemech přenášených dat bylo plýtváno pamětí RAM a současně také diskovým prostorem, protože Kafka ukládá přijaté zprávy i na disk. Tento problém vyřešilo předávání dat přes HDFS. Tímto způsobem jsou data uložena jen jednou a to na disku, zároveň je šetřena paměť RAM.
+Původně bylo navrženo a~i~v~prototypu implementováno předávání dat pouze přes systém Kafka. Při velkých objemech přenášených dat bylo plýtváno pamětí RAM a~současně také diskovým prostorem, protože Kafka ukládá přijaté zprávy i~na disk. Tento problém vyřešilo předávání dat přes HDFS. Tímto způsobem jsou data uložena jen jednou a~to na disku, zároveň je šetřena paměť RAM.
 
-Po přidání HDFS a databáze MongoDB pro metadata značně narostl počet konfigurovatelných parametrů. Manuálním načítáním konfiguračních parametrů a vytvářením mnoha objektů realizujících připojení do databází nebo na disk se také ztížila orientace v kódu, který se stal nepřehledným. Tyto operace velmi usnadnila integrace stávajícího kódu s projekty Spring, a hlavně získání auto-konfigurace ze Spring Boot \ref{springProjects}. Porovnáním diagramu tříd prototypu \ref{FIG_PrototypeClassDiagram} a výsledného systému \ref{FIG_CommunicationClassDiagram} lze vidět i zjednodušení v použití tříd Kafky.
+Po přidání HDFS a~databáze MongoDB pro metadata značně narostl počet konfigurovatelných parametrů. Manuálním načítáním konfiguračních parametrů a~vytvářením mnoha objektů realizujících připojení do databází nebo na disk se také ztížila orientace v~kódu, který se stal nepřehledným. Tyto operace velmi usnadnila integrace stávajícího kódu s~projekty Spring, a~hlavně získání auto-konfigurace ze Spring Boot \ref{springProjects}. Porovnáním diagramu tříd prototypu \ref{FIG_PrototypeClassDiagram} a~výsledného systému \ref{FIG_CommunicationClassDiagram} lze vidět i~zjednodušení v~použití tříd Kafky.
 
-\noindent Ukládání paketů do databáze Cassandra probíhalo i v prototypu asynchronně, ale nebylo žádným způsobem řešeno vykonávání několika dotazů současně. Díky tomu nastávalo často čekání vlákna apod. Přístupy pro řízení dotazů a pro maximální využití dostupných prostředků jsou uvedeny v sekci \ref{cassandra}.
+\noindent Ukládání paketů do databáze Cassandra probíhalo i~v~prototypu asynchronně, ale nebylo žádným způsobem řešeno vykonávání několika dotazů současně. Díky tomu nastávalo často čekání vlákna apod. Přístupy pro řízení dotazů a~pro maximální využití dostupných prostředků jsou uvedeny v~sekci \ref{cassandra}.
 
-V původní implementaci byly pakety také ukládány neefektivně z pohledu výkonu a velikosti dat. Každý objekt reprezentující paket byl serializován na pole bytů a toto pole pak uloženo do databáze. Konverze na pole bytů vyžadovala značnou režii, a hlavně velikost serializovaného paketu byla značně vyšší než jeho skutečná velikost. Ve finální implementaci je pole bytů, které obsahuje hodnotu paketu, získáno přímo z objektu paketu pomocí metody \texttt{byte[] getRawData()} knihovny Pcap4J.
+V~původní implementaci byly pakety také ukládány neefektivně z~pohledu výkonu a~velikosti dat. Každý objekt reprezentující paket byl serializován na pole bytů a~toto pole pak uloženo do databáze. Konverze na pole bytů vyžadovala značnou režii, a~hlavně velikost serializovaného paketu byla značně vyšší než jeho skutečná velikost. Ve finální implementaci je pole bytů, které obsahuje hodnotu paketu, získáno přímo z~objektu paketu pomocí metody \texttt{byte[] getRawData()} knihovny Pcap4J.
 
-\subsection{Porovnání výkonu prototypu a finálního systému}
+\subsection{Porovnání výkonu prototypu a~finálního systému}
 Test rychlosti byl proveden na této hardwarové konfiguraci:
 
 \vspace{0.5cm}
@@ -875,9 +875,9 @@ Test rychlosti byl proveden na této hardwarové konfiguraci:
     \label{FIG_PerformanceChartPrototype}
 \end{figure}
 
-\noindent Pro toto srovnávací testování byly použity pouze PCAP soubory obsahující od stovkek paketů po několik tisíc. Větší PCAP soubory už prototyp na uvedené HW konfiguraci nedokázal zpracovávat z důvodu vyčerpání paměti RAM.
+\noindent Pro toto srovnávací testování byly použity pouze PCAP soubory obsahující od stovkek paketů po několik tisíc. Větší PCAP soubory už prototyp na uvedené HW konfiguraci nedokázal zpracovávat z~důvodu vyčerpání paměti RAM.
 
-Tabulka \ref{tablePerformancePrototype} obsahuje informace z~měření rychlosti prototypu. První sloupec udává velikost PCAP souboru v~bytech, druhý sloupec obsahuje počet paketů na daný PCAP soubor a~třetí sloupec zobrazuje průměrnou velikost paketu. Čas uvedený ve čtvrtém sloupci je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Poslední pátý sloupec udává počet paketů zpracovaných za sekundu. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
+Tabulka \ref{tablePerformancePrototype} obsahuje informace z~měření rychlosti prototypu. První sloupec udává velikost PCAP souboru v~bytech, druhý sloupec obsahuje počet paketů na daný PCAP soubor a~třetí sloupec zobrazuje průměrnou velikost paketu v~bytech. Čas uvedený ve čtvrtém sloupci je měřen od odeslání příkazu od klienta po obdržení odpovědi z~repositáře. Poslední pátý sloupec udává počet paketů zpracovaných za sekundu. Pro test PCAP souborů větších než 30 MB (obsahujících přes 100 tisíc paketů) už výše uvedená konfigurace nestačila. Po několika minutách aplikace zhavarovala pro nedostatek paměti RAM.
 
 \subsubsection{Finální systém}
 
@@ -888,17 +888,34 @@ Tabulka \ref{tablePerformancePrototype} obsahuje informace z~měření rychlosti
     \label{FIG_PerformanceChartFinalSystem}
 \end{figure}
 
-\noindent Tabulka \ref{tablePerformanceFinalSystem} udává naměřená data pro výsledný systém. Z tabulky, i porovnáním grafů \ref{FIG_PerformanceChartPrototype} a \ref{FIG_PerformanceChartFinalSystem}, lze vidět podstatné zvýšení výkonu. Pro takto malé PCAP soubory je už ve finálním systému většina času spotřebována komunikací klienta se systémem přes Kafku než parsováním paketů, získáváním metadat, a ukládáním metadat a hodnot paketů do databází. I přes přidaný podsystém metadat a předávání PCAP souborů přes HDFS bylo pomocí vylepšení uvedených v \ref{improvementsInImpl} docíleno zrychlení systému.
+\noindent Tabulka \ref{tablePerformanceFinalSystem} udává naměřená data pro výsledný systém. Z~tabulky, i~porovnáním grafů \ref{FIG_PerformanceChartPrototype} a~\ref{FIG_PerformanceChartFinalSystem}, lze vidět podstatné zvýšení výkonu. Pro takto malé PCAP soubory je už ve finálním systému většina času spotřebována komunikací klienta se systémem přes Kafku než parsováním paketů, získáváním metadat, a~ukládáním metadat a~hodnot paketů do databází. I~přes přidaný podsystém metadat a~předávání PCAP souborů přes HDFS bylo pomocí úprav uvedených v~\ref{improvementsInImpl} docíleno zrychlení systému.
 
-Z uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vyplývá lineární složitost. Podle údajů v~tabulce \ref{tablePerformancePrototype} lze průměrně zpracovat 89 paketů za sekundu při průměrné velikosti jednoho paketu 450 bytů. V grafu výsledného systému \ref{FIG_PerformanceChartFinalSystem} už se jedná o velmi malá čísla a tak lineární složitost není z grafu přímo patrná. Přesto pro úplnost, lze zpracovat přibližně 2242 paketů za sekundu, při průměrné velikosti jednoho paketu 450 bytů.
+Z~uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vyplývá lineární složitost. Podle údajů v~tabulce \ref{tablePerformancePrototype} lze průměrně zpracovat 89 paketů za sekundu při průměrné velikosti jednoho paketu 450 bytů. V~grafu výsledného systému \ref{FIG_PerformanceChartFinalSystem} už se jedná o~velmi malá čísla a~tak lineární složitost není z~grafu přímo patrná. Přesto pro úplnost, lze zpracovat přibližně 2242 paketů za sekundu, při průměrné velikosti jednoho paketu 450 bytů.
 
 \vspace{0.5cm}
-\noindent Pozn.: Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí a s rychlým internetovým připojením by byla výkonnost systému znatelně vyšší.
+\noindent Pozn.: Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí a~s~rychlým internetovým připojením by byla výkonnost systému znatelně vyšší.
 
 \section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
-Předchozí porovnání prototypu a výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, které bývá součástí levnějších notebooků. Tomu odpovídala i zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
+Předchozí porovnání prototypu a~výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, které bývá součástí levnějších notebooků. Tomu odpovídala i~zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V~této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
 
-Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z klientské aplikace. Klient nečeká na odpovědi z distribuovaného úložiště, prostě odesílá příkazy, dokud existují PCAP soubory ve zvoleném adresáři (název adresáře je předán jako vstupní parametr). Příkazy jsou uchovány v Kafka frontě a postupně čteny v distribuovaném repositáři. Po zpracování jednotlivých příkazů se odesílají odpovědi klientovi.
+\subsubsection{Ukládání paketů}
+Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z~klientské aplikace. Klient nečeká na odpovědi z~distribuovaného úložiště, prostě odesílá příkazy, dokud existují PCAP soubory ve zvoleném adresáři (název adresáře je předán jako vstupní parametr). Příkazy jsou uchovány v~Kafka frontě a~postupně čteny v~distribuovaném repositáři. Po zpracování jednotlivých příkazů se odesílají odpovědi klientovi. Testovací sada zahrnovala 102 PCAP souborů o~velikosti 67 až 270 MB, z~nichž téměř každý obsahoval 500 000 paketů. Dohromady se tedy jednalo o~10.3 GB dat a~50 851 631 paketů.
+
+\subsubsection{Čtení paketů}
+Pro otestování rychlosti systému pro čtení paketů podle kritérií byla odeslána zpráva obsahující příkaz \texttt{LOAD\_PCAP} s~následujícími kritérii:
+
+\vspace{0.5cm}
+\texttt{field = ipProtocolName} \\
+\indent \texttt{operation = EQ} \\
+\indent \texttt{value = TCP}
+
+\vspace{0.5cm}
+\texttt{field = dstPort} \\
+\indent \texttt{operation = IN} \\
+\indent \texttt{value = [443, 80]}
+
+\vspace{0.5cm}
+\noindent Prohledávání bylo spuštěno nad 50 851 631 pakety uloženými v~předchozím scénáři.
 
 \subsection{HW konfigurace A}
 Prvním testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifikace:
@@ -917,38 +934,66 @@ Prvním testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifika
 \texttt{RAM: 24 GB} \\
 \texttt{OS: boot2docker}
 
+\subsubsection{Ukládání paketů}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=15cm]{template-fig/PerformanceChartFinalBigData.pdf}
+    \caption{Graf zobrazující počet uložených paketů z~jednoho PCAP souboru za čas.}
+    \label{FIG_PerformanceChartFinalBigData}
+\end{figure}
+
+\noindent Tabulka \ref{tablePerformanceFinalSystemBigData} udává souhrn statistických informací z~měření. První sloupec uvádí celkovou velikost všech vstupních PCAP souborů v~bytech, druhý sloupec počet paketů, které byly ukládány. Třetí sloupec zobrazuje průměrnou velikost paketu v~bytech. Čas uvedený ve čtvrtém sloupci je měřen od odeslání prvního PCAP souboru z~klientské aplikace do obdržení odpovědi z~distribuovaného úložiště posledního zpracovaného PCAP souboru. Průměrně bylo zpracování a~uloženo 20 850 paketů za sekundu.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{| l | l | l | l | l |}
+    \hline
+    \texttt{PCAP size (B)}   &   \texttt{Count of packets}   &   \texttt{Avg. packet size} &  \texttt{Time (s)} &   \texttt{Packets/s} \\ \hline
+    11 156 484 529 & 50 851 631 & 220 & 2516 & 20 850 \\ \hline
+    \end{tabular}\par
+    \bigskip
+    \caption{Tabulka obsahuje data naměřená při testování výkonnosti finálního systému pro příkaz \texttt{STORE\_PCAP}.}
+    \label{tablePerformanceFinalSystemBigData}
+\end{table}
+
+\subsubsection{Čtení paketů}
+Čas realizace operace od odeslání zprávy od klienta po obdržení odpovědi byl 122 sekund. Celkem bylo načteno 473 243 paketů průměrnou rychlostí 3880 paketů za sekundu. Tyto pakety byly uloženy do jednoho výsledného PCAP souboru na HDFS.
 
 \subsection{HW konfigurace B}
 
-\newpage
+\noindent \textbf{TODO: Vyhodnocení výkonu na Linux stroji}
+
+\noindent \textbf{TODO: Rozdíl ve výkonu na Linux stroji a~virtuálním stroji pod Windows}
+
 \section{Doporučené HW požadavky distribuovaných technologií}
-I když se jedná o distribuované technologie schopné běžet na mnoha uzlech, každý uzel by měl splňovat základní hardwarové požadavky podle dané nasazené technologie.
+I~když se jedná o~distribuované technologie schopné běžet na mnoha uzlech, každý uzel by měl splňovat základní hardwarové požadavky podle dané nasazené technologie.
 
 \subsection{Kafka}
 Sekce zmiňuje klíčové záležitosti před nasazením Kafky do clusteru. Zdrojem je převážně dokument věnující se nasazení Kafky \cite{kafkaDeployment}.
 
-Kafka velmi spoléhá na souborový systém pro ukládání zpráv. Všechna data jsou okamžitě zapisována do perzistentního logu v souborovém systému, do \texttt{pagecache} kernelu. Kafka moc nevyužívá \texttt{heap space}, nevyžaduje pro něj přiřazení víc než 5 GB.
-Je ale potřeba mít dostatečnou velikost paměti RAM k načtení aktivních příjemců a odesílatelů. Vhodnou volbou je 32-64 GB paměti.
+Kafka velmi spoléhá na souborový systém pro ukládání zpráv. Všechna data jsou okamžitě zapisována do perzistentního logu v~souborovém systému, do \texttt{pagecache} kernelu. Kafka moc nevyužívá \texttt{heap space}, nevyžaduje pro něj přiřazení víc než 5 GB.
+Je ale potřeba mít dostatečnou velikost paměti RAM k~načtení aktivních příjemců a~odesílatelů. Vhodnou volbou je 32-64 GB paměti.
 
-Většina konfigurací, kde je Kafka nasazena, nevyžaduje značný výkon procesoru. Výjimkou je však případ, kdy je zapnuto \texttt{SSL}, požadavky na výkon CPU potom mohou vzrůst. Je doporučeno zvolit moderní procesor s více jádry, běžný Kafka cluster využije 24 jader. Větší počet jader má větší význam než vyšší frekvence procesoru.
+Většina konfigurací, kde je Kafka nasazena, nevyžaduje značný výkon procesoru. Výjimkou je však případ, kdy je zapnuto \texttt{SSL}, požadavky na výkon CPU potom mohou vzrůst. Je doporučeno zvolit moderní procesor s~více jádry, běžný Kafka cluster využije 24 jader. Větší počet jader má větší význam než vyšší frekvence procesoru.
 
-Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a nesdílet tyto disky s jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i SSD disky, případně zapojení disků v \texttt{RAID}.
+Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}.
 
-Důležitou součástí distribuovaného systému je rychlá a spolehlivá síť. Nízká latence zajišťuje, aby mohly uzly jednoduše komunikovat. Moderní ethernetová připojení s rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v geograficky vzdálených lokacích.
+Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť. Nízká latence zajišťuje, aby mohly uzly jednoduše komunikovat. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
 
 \subsection{Cassandra}
-Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a pro prostředí s nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
+Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a~sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a~pro prostředí s~nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
 
-Cassandra běží ve virtuálním stroji Java s přidělenou fixní velikostí \texttt{heap}-u. Cassandra používá značný objem paměti RAM mimo \texttt{heap} pro kompresi metadat, \texttt{bloom} filtry, řádky, klíče, čítače atd. Využívá výhod \texttt{pagecache} operačního systému, kam ukládá části naposledy manipulovaných souborů z RAM pro okamžité znovupoužití. 
-Minimální produkční server vyžaduje aspoň 2 jádra procesoru a aspoň 8 GB RAM \cite{cassandraHW}.
+Cassandra běží ve virtuálním stroji Java s~přidělenou fixní velikostí \texttt{heap}-u. Cassandra používá značný objem paměti RAM mimo \texttt{heap} pro kompresi metadat, \texttt{bloom} filtry, řádky, klíče, čítače atd. Využívá výhod \texttt{pagecache} operačního systému, kam ukládá části naposledy manipulovaných souborů z~RAM pro okamžité znovupoužití. 
+Minimální produkční server vyžaduje aspoň 2 jádra procesoru a~aspoň 8 GB RAM \cite{cassandraHW}.
 %Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM.
 
-Cassandra je vysoce vícevláknová, obsluhující mnoho souběžných požadavků (čtení i zápisů) v mnoha vláknech běžících na tolika jádrech CPU, kolik je dostupných. Zápis probíhá do tzv. \texttt{commitlog}-u a poté vkládáním dat do \texttt{memtable} (optimalizovaná cache pro data, která mohou být vyhledána pomocí klíče), takže operace zápisu bývají především limitované procesorem. V důsledku toho se po přidání dalších výpočetních jader zvýší propustnost čtení i zápisů \cite{cassandraHW}.
+Cassandra je vysoce vícevláknová, obsluhující mnoho souběžných požadavků (čtení i~zápisů) v~mnoha vláknech běžících na tolika jádrech CPU, kolik je dostupných. Zápis probíhá do tzv. \texttt{commitlog}-u a~poté vkládáním dat do \texttt{memtable} (optimalizovaná cache pro data, která mohou být vyhledána pomocí klíče), takže operace zápisu bývají především limitované procesorem. V~důsledku toho se po přidání dalších výpočetních jader zvýší propustnost čtení i~zápisů \cite{cassandraHW}.
 
-Jako diskové jednotky jsou doporučeny SSD pro všechny připojené uzly. Poskytují extrémně nízkou latenci pro náhodná čtení, zároveň i dostatečný výkon pro sekvenční operace zápisů. Pokud Cassandra běží na více uzlech, minimální požadovaná rychlost sítě je 1 Gb/s.
+Jako diskové jednotky jsou doporučeny SSD pro všechny připojené uzly. Poskytují extrémně nízkou latenci pro náhodná čtení, zároveň i~dostatečný výkon pro sekvenční operace zápisů. Pokud Cassandra běží na více uzlech, minimální požadovaná rychlost sítě je 1 Gb/s.
 
 \subsection{MongoDB}
-I když je MongoDB velmi flexibilní a jednoduchá databáze z hlediska vývoje aplikací, liší se od běžných relačních databází ve správě zdrojů, takže je potřeba pečlivě zvážit výběr hardware pro nasazení.
+I~když je MongoDB velmi flexibilní a~jednoduchá databáze z~hlediska vývoje aplikací, liší se od běžných relačních databází ve správě zdrojů, takže je potřeba pečlivě zvážit výběr hardware pro nasazení.
 
 Existují dva základní koncepty týkající se architektury MongoDB \cite{hwProvisioningMongoDB}:
 
@@ -958,19 +1003,19 @@ Existují dva základní koncepty týkající se architektury MongoDB \cite{hwPr
     \item Replikace - MongoDB spravuje mnoho redundantních kopií dat pro okamžitou dostupnost.
 \end{itemize}
 
-\noindent Pro aplikace zaměřující se na masivní čtení dat, je doporučeno dimenzovat servery tak, aby udržely celou množinu dat v paměti, kvůli okamžité dostupnosti \cite{hwProvisioningMongoDB}.
+\noindent Pro aplikace zaměřující se na masivní čtení dat, je doporučeno dimenzovat servery tak, aby udržely celou množinu dat v~paměti, kvůli okamžité dostupnosti \cite{hwProvisioningMongoDB}.
 
-Ukládací nástroj \texttt{WiredTiger}, který MongoDB používá, poskytuje vylepšenou propustnost a kompresi. Má cache, která zahrnuje soubor pro každou kolekci a index. Hrubě řečeno, 50\% paměti RAM serveru bude určeno této cache. Pracovní množina je soubor indexů a dokumentů, ke kterým je často přistupováno. Pokud lze uchovat pracovní množinu v paměti RAM, bude docházet k menšímu počtu I/O operací. Vhodné je, aby byla velikost paměti RAM větší než pracovní množina, ale menší než skutečná velikost dat \cite{sizeYourMongoDBClusters}.
+Ukládací nástroj \texttt{WiredTiger}, který MongoDB používá, poskytuje vylepšenou propustnost a~kompresi. Má cache, která zahrnuje soubor pro každou kolekci a~index. Hrubě řečeno, 50\% paměti RAM serveru bude určeno této cache. Pracovní množina je soubor indexů a~dokumentů, ke kterým je často přistupováno. Pokud lze uchovat pracovní množinu v~paměti RAM, bude docházet k~menšímu počtu I/O operací. Vhodné je, aby byla velikost paměti RAM větší než pracovní množina, ale menší než skutečná velikost dat \cite{sizeYourMongoDBClusters}.
 
-\texttt{WiredTiger} je vícevláknový, dokáže těžit z dodatečných procesorových jader. Konkrétně, celkový počet aktivních vláken vztahujících se k počtu dostupných procesorů dokáže ovlivnit výkon. Propustnost se zvyšuje společně s rostoucím počtem souběžných aktivních operací až do počtu procesorů. Propustnost se snižuje, jestli počet souběžných aktivních operací převýší počet procesorových jader. Očividné zrychlení poskytnou také SSD jednotky výměnou za standardní plotnové pevné disky \cite{mongoDBProductionNotes}.
+\texttt{WiredTiger} je vícevláknový, dokáže těžit z~dodatečných procesorových jader. Konkrétně, celkový počet aktivních vláken vztahujících se k~počtu dostupných procesorů dokáže ovlivnit výkon. Propustnost se zvyšuje společně s~rostoucím počtem souběžných aktivních operací až do počtu procesorů. Propustnost se snižuje, jestli počet souběžných aktivních operací převýší počet procesorových jader. Očividné zrychlení poskytnou také SSD jednotky výměnou za standardní plotnové pevné disky \cite{mongoDBProductionNotes}.
 
 \subsection{HDFS}
-U HDFS a Hadoop obecně záleží na konkrétním použití. Jiná konfigurace bude vyžadována pro MapReduce úlohy, jiná pro integraci s technologiemi \texttt{Apache Spark}, \texttt{Apache HBase} apod. Cílem používání platformy Hadoop je provoz na cenově dostupném hardware místo vysokorychlostních strojů \cite{hadoopHardware}.
+U~HDFS a~Hadoop obecně záleží na konkrétním použití. Jiná konfigurace bude vyžadována pro MapReduce úlohy, jiná pro integraci s~technologiemi \texttt{Apache Spark}, \texttt{Apache HBase} apod. Cílem používání platformy Hadoop je provoz na cenově dostupném hardware místo vysokorychlostních strojů \cite{hadoopHardware}.
 
 
-MapReduce ani další technologie nejsou v distribuovaném úložišti použity. HDFS slouží pouze jako úložiště dat, důležitým požadavkem je zajistit dostatek diskového prostoru. Hadoop je náročný na ukládací prostor a je efektivní v prohledávání, nevyžaduje však drahé a velmi rychlé disky \cite{bestPracticesHadoopHW}.
+MapReduce ani další technologie nejsou v~distribuovaném úložišti použity. HDFS slouží pouze jako úložiště dat, důležitým požadavkem je zajistit dostatek diskového prostoru. Hadoop je náročný na ukládací prostor a~je efektivní v~prohledávání, nevyžaduje však drahé a~velmi rychlé disky \cite{bestPracticesHadoopHW}.
 
-Pokud dojde k nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostatečně rychlé síťové připojení, aby uzly mohly rychle a efektivně komunikovat.
+Pokud dojde k~nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostatečně rychlé síťové připojení, aby uzly mohly rychle a~efektivně komunikovat.
 
 \chapter{Závěr}
 
@@ -984,18 +1029,18 @@ Implementovaný systém řeší požadované aspekty, je založen na distribuova
 \vspace{0.5cm}
 \noindent \textbf{TODO: Vyhodnocení výkonu}
 
-\section{Navržená rozšíření}
-Zde budou diskutována případná rozšíření, která by poskytla pokročilé vlastnosti nástroje, a ještě větší použitelnost.
+\section{Návrh rozšíření}
+Zde budou diskutována případná rozšíření, která by poskytla pokročilé vlastnosti nástroje, a~ještě větší použitelnost.
 
 \subsubsection{Kritéria pro dotazování}
-Aktuální stav dotazování podle kritérií zahrnuje pouze tvorbu výrazu, jehož podvýrazy jsou propojeny pouze operátorem \texttt{AND}. Podvýraz je tvořen porovnávacím operátorem (\texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}) a hledanou hodnotou. Dodáním implementace podporující ostatní logické operátory \texttt{OR}, \texttt{NOT} a \texttt{NOR}, by šlo vytvářet složitější dotazy.
+Aktuální stav dotazování podle kritérií zahrnuje pouze tvorbu výrazu, jehož podvýrazy jsou propojeny pouze operátorem \texttt{AND}. Podvýraz je tvořen porovnávacím operátorem (\texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}) a~hledanou hodnotou. Dodáním implementace podporující ostatní logické operátory \texttt{OR}, \texttt{NOT} a~\texttt{NOR}, by šlo vytvářet složitější dotazy bez nutnosti transformace dotazu pouze na spojení pomocí \texttt{AND}.
 
-\subsubsection{Klientská aplikace s grafickým rozhraním}
-Systém distribuovaného úložiště lze ovládat pomocí mnoha parametrů, lze specifikovat příkazy, umístění vstupních dat, názvy front, a v neposlední řadě také variabilní kritéria pro dotazování. Dodaná klientská aplikace představuje jednoduchý demonstrativní nástroj, který lze spustit z příkazové řádky. Zahrnuje pouze malou podmnožinu případů použití celého systému, napevno zadaná kritéria pro dotazování, a také neobsahuje párování zpráv požadavků a odpovědí pomocí ID.
+\subsubsection{Klientská aplikace s~grafickým rozhraním}
+Systém distribuovaného úložiště lze ovládat pomocí mnoha parametrů, lze specifikovat příkazy, umístění vstupních dat, názvy front, a~v~neposlední řadě také variabilní kritéria pro dotazování. Dodaná klientská aplikace představuje jednoduchý demonstrativní nástroj, který lze spustit z~příkazové řádky. Zahrnuje pouze malou podmnožinu případů použití celého systému, napevno zadaná kritéria pro dotazování, a~také neobsahuje párování zpráv požadavků a~odpovědí pomocí ID.
 
-V klientské aplikaci s grafickým rozhraním by mělo jít intuitivně sestavit zprávu požadavku výběrem parametrů a odeslat danou zprávu. Grafické rozhraní by mělo umožnit přidávání dotazovacích kritérií podle typu forenzních dat. Párování zpráv požadavků a odpovědí podle ID zpráv lze realizovat v přehledné tabulce.
+V~klientské aplikaci s~grafickým rozhraním by mělo jít intuitivně sestavit zprávu požadavku výběrem parametrů a~odeslat danou zprávu. Grafické rozhraní by mělo umožnit přidávání dotazovacích kritérií podle typu forenzních dat. Párování zpráv požadavků a~odpovědí podle ID zpráv lze realizovat v~přehledné tabulce.
 
-\subsubsection{Monitorování odchozích a příchozích zpráv}
-Jedná se zase spíše o rozšíření klientské aplikace, souvisí s párováním zpráv pomocí ID. Odchozí i příchozí zprávy by mohly být zaznamenávány do databáze a svázány vztahem přes společná ID.
+\subsubsection{Monitorování odchozích a~příchozích zpráv}
+Jedná se zase spíše o~rozšíření klientské aplikace, souvisí s~párováním zpráv pomocí ID. Odchozí i~příchozí zprávy by mohly být zaznamenávány do databáze a~svázány vztahem přes společná ID.
 
 %=========================================================================
