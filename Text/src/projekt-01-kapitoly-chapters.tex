@@ -1020,20 +1020,24 @@ Pokud dojde k~nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostate
 \chapter{Závěr}
 
 \section{Výsledky}
-V~rámci teoretické části práce jsem se seznámil s~forenzní analýzou digitálních dat. Prozkoumal jsem existující systémy pro uložení digitálních forenzních dat (včetně AFF4). Seznámil jsem se s~distribuovanými databázemi a~NoSQL databázemi.
+Teoretická část práce se zabývá úvodem do forenzní analýzy digitálních dat. Dále jsou prozkoumány existující systémy pro uložení digitálních forenzních dat (včetně systému AFF4). Jako úložiště pro digitální forenzní data a~obecně Big data jsou představeny distribuované databáze včetně jejich vlastností, dále NoSQL databáze a~distribuovaný souborový systém HDFS z~platformy Hadoop.
 
-Navrhl jsem distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní, a~vybral vhodné technologie pro realizaci.
+V~další části práce bylo navrženo distribuované úložiště rozsáhlých digitálních forenzních dat včetně aplikačního rozhraní. Byly vybrány vhodné technologie pro realizaci -- Kafka, HDFS, a~NoSQL databáze Cassandra a~MongoDB. Komunikace klienta s~úložištěm probíhá pomocí asynchronního zasílání zpráv, které obsahují ovládací příkazy.
 
-Implementovaný systém řeší požadované aspekty, je založen na distribuovaných technologiích počítajících se škálovatelností. Architektura umožňuje přidat podporu pro nové druhy forenzních dat. S~pomocí Spring Boot a~ostatních Spring projektů je jednoduchá konfigurace celého systému. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~příloze \ref{dockerEnv}.
+Distribuované úložiště mělo splňovat několik základních požadavků. Prvním z~nich bylo umožnit optimální přístup k~datům. Sekvenční přístup je zajištěn systémem HDFS, náhodné čtení a~dotazování je pak zajištěno podsystémem metadat.
+Architektura úložiště také počítá s~přidáváním podpory pro nové druhy forenzních dat. Přidání podpory za běhu je implicitně realizováno přijímáním zpráv přes Kafku.
 
-\vspace{0.5cm}
-\noindent \textbf{TODO: Vyhodnocení výkonu}
+Implementovaný systém je založen na distribuovaných Big data technologiích počítajících se škálovatelností. S~pomocí Spring Boot a~ostatních Spring projektů lze jednoduše konfigurovat celý systém. Detaily k~běhovému prostředí implementovaných aplikací jsou uvedeny v~příloze \ref{dockerEnv}.
+
+V~průběhu implementace úložiště bylo provedeno několik úprav ke zvýšení propustnosti a~výkonu systému. Největší dopad na výkon potom mělo asynchronní ukládání a~čtení dat z~databáze, čímž se efektivně využívají hardwarové prostředky. Po aplikaci úprav byly zjištěny rozdíly v~rychlosti původního a~výsledného implementovaného systému.
+
+Po realizaci distribuovaného repositáře bylo provedeno měření výkonnosti pro desítky milionů paketů vstupních dat. Rychlost ukládání a~čtení závisí na hardwarové konfiguraci, ve které je systém distribuovaného úložiště spuštěn. Na závěr byly také uvedeny hardwarové požadavky zvolených Big data technologií.
 
 \section{Návrh rozšíření}
 Zde budou diskutována případná rozšíření, která by poskytla pokročilé vlastnosti nástroje, a~ještě větší použitelnost.
 
 \subsubsection{Kritéria pro dotazování}
-Aktuální stav dotazování podle kritérií zahrnuje pouze tvorbu výrazu, jehož podvýrazy jsou propojeny pouze operátorem \texttt{AND}. Podvýraz je tvořen porovnávacím operátorem (\texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}) a~hledanou hodnotou. Dodáním implementace podporující ostatní logické operátory \texttt{OR}, \texttt{NOT} a~\texttt{NOR}, by šlo vytvářet složitější dotazy bez nutnosti transformace dotazu pouze na spojení pomocí \texttt{AND}.
+Aktuální stav dotazování podle kritérií zahrnuje tvorbu výrazu, jehož podvýrazy jsou propojeny pouze operátorem \texttt{AND}. Podvýraz je tvořen porovnávacím operátorem (\texttt{is}, \texttt{ne}, \texttt{lt}, \texttt{lte}, \texttt{gt}, \texttt{gte}, \texttt{in}, \texttt{nin}) a~hledanou hodnotou. Dodáním implementace podporující ostatní logické operátory \texttt{OR}, \texttt{NOT} a~\texttt{NOR}, by šlo vytvářet složitější dotazy bez nutnosti transformace dotazu pouze na spojení pomocí \texttt{AND}.
 
 \subsubsection{Klientská aplikace s~grafickým rozhraním}
 Systém distribuovaného úložiště lze ovládat pomocí mnoha parametrů, lze specifikovat příkazy, umístění vstupních dat, názvy front, a~v~neposlední řadě také variabilní kritéria pro dotazování. Dodaná klientská aplikace představuje jednoduchý demonstrativní nástroj, který lze spustit z~příkazové řádky. Zahrnuje pouze malou podmnožinu případů použití celého systému, napevno zadaná kritéria pro dotazování, a~také neobsahuje párování zpráv požadavků a~odpovědí pomocí ID.
