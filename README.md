@@ -33,18 +33,18 @@ Docker prostredi nachazejici se v adresari `Docker`
     * Docker Toolbox: IP virtualniho stroje (192.168.99.100)
 	
 * Pristup do beziciho kontejneru
-    * Cassandra
-      * Otevreni CSLSH
-         * `$ docker run -it --link cassandra:cassandra --rm martinfit/cassandra:3 cqlsh cassandra`
+    * Cassandra<br>
+		Otevreni CSLSH<br>
+		`$ docker run -it --link cassandra:cassandra --rm martinfit/cassandra:3 cqlsh cassandra`
 	
-    * MongoDB
-      * Otevreni Mongo shell
-         * `$ docker run -it --link mongodb:mongo --rm mongo:3.4 mongo 192.168.99.100:27017`
+    * MongoDB<br>
+		Otevreni Mongo shell<br>
+		`$ docker run -it --link mongodb:mongo --rm mongo:3.4 mongo 192.168.99.100:27017`
 	
 * Kafka
-    * Kafka fronty jsou vytvoreny automaticky, pripadne je lze vytvorit nasledujicim prikazem:
+    * Kafka fronty jsou vytvoreny automaticky, pripadne je lze vytvorit nasledujicim prikazem:<br>
 		`$ docker exec kafka kafka-topics.sh --create --zookeeper 192.168.99.100:2181 --replication-factor 1 --partitions 1 --topic input_topic`
-    * Vypsani topicu
+    * Vypsani topicu<br>
 		`$ docker exec kafka opt/kafka/bin/kafka-topics.sh --describe --zookeeper 192.168.99.100:2181`
 	
 * Hadoop/HDFS
@@ -65,7 +65,7 @@ System distribuovaneho uloziste
     * ProducerDemo: klientska aplikace
 	
 * Prvni je nutne nainstalovat moduly Communication a Persistence, ostatni 2 aplikace jsou na nich zavisle.
-    * Instalace probiha v tomto poradi:
+    * Instalace probiha v tomto poradi:<br>
 		`cd Communication`<br>
 			`./install.sh`<br>
 		`cd Persistence`<br>
@@ -75,6 +75,5 @@ System distribuovaneho uloziste
 		`cd ProducerDemo`<br>
 			`./install.sh`<br>
 	
-* Jedna se o projekty vytvorene ve vyvojovem prostredi IntelliJ IDEA.
-Pro IDEA existuje plugin Docker, kde lze videt po pripojeni obrazy
-a bezici kontejnery, zaroven lze sledovat jejich nastaveni a logy.
+* Jedna se o projekty vytvorene ve vyvojovem prostredi IntelliJ IDEA. Pro IDEA existuje plugin Docker,
+kde lze videt po pripojeni obrazy a bezici kontejnery, zaroven lze sledovat jejich nastaveni a logy.
