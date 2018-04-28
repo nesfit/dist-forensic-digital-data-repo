@@ -1,5 +1,15 @@
 # Master-Thesis
 
+Obsah
+--------
+
+* [Docker prostredi](#docker-enviroment)
+* [Instalace systemu distribuovaneho uloziste](#how-to-install)
+* [Spusteni systemu distribuovaneho uloziste](#how-to-run)
+* [Vstupni data - PCAP soubory](#input-data)
+* [Technicka zprava diplomove prace](#text)
+* [Poznamky](#notes)
+
 Docker prostredi
 --------
 
@@ -105,9 +115,9 @@ Technicka zprava diplomove prace
 
 Nachazi se v adresari `Text` spolecne s latexovymi zdrojovymi kody, a pouzitymi obrazky a schematy. Technicka zprava je PDF dokument `projekt.pdf`.
 
-Poznamka
+Poznamky
 --------
-System byl vyvijen v prostredi Docker pod Windows, a tak vsechny skripty pro Docker obrazy a kontejnery,
+* System byl vyvijen v prostredi Docker pod Windows, a tak vsechny skripty pro Docker obrazy a kontejnery,
 a take spousteci skripty jsou nastaveny tak, aby slo vysledny system spustit rovnez v prostredi Docker pod Windows.
 Pro spusteni pod Linuxem je potreba skripty upravit, prepsat IP adresy z `192.168.99.100` na `localhost` atd.
 
