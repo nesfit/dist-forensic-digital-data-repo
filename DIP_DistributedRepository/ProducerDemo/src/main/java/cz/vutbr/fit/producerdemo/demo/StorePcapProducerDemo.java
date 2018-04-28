@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.Arrays;
@@ -29,7 +28,12 @@ public class StorePcapProducerDemo extends BaseProducerDemo {
 
     public void runMultipleProducer(String directoryName) {
         File directory = new File(directoryName);
-        Assert.notNull(directory, "Directory doesn't exist");
+
+        if (!directory.isDirectory() || directory.listFiles().length == 0) {
+            LOGGER.warn(String.format("%s is not a directory or is empty.", directoryName));
+            LOGGER.warn("Stopping StorePcap UseCase...");
+            return;
+        }
 
         // TODO: Will be removed
         initStatsForDirectory(directory);

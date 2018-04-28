@@ -989,7 +989,7 @@ Je ale potřeba mít dostatečnou velikost paměti RAM k~načtení aktivních p�
 
 Většina konfigurací, kde je Kafka nasazena, nevyžaduje značný výkon procesoru. Výjimkou je však případ, kdy je zapnuto \texttt{SSL}, požadavky na výkon CPU potom mohou vzrůst. Je doporučeno zvolit moderní procesor s~více jádry, běžný Kafka cluster využije 24 jader. Větší počet jader má větší význam než vyšší frekvence procesoru.
 
-Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}.
+\noindent Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}.
 
 Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť. Nízká latence zajišťuje, aby mohly uzly jednoduše komunikovat. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
 
