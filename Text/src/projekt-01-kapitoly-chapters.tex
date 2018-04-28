@@ -894,11 +894,24 @@ Z~uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vy
 \vspace{0.5cm}
 \noindent Pozn.: Z~výše uvedené hardwarové konfigurace vyplývá, že nebylo využito maximálního potenciálu použitých technologií, a~to zejména distribuovanosti systému, který by běžel místo jednoho počítače v~clusteru. V~takovém prostředí a~s~rychlým internetovým připojením by byla výkonnost systému znatelně vyšší.
 
+\subsubsection{Výsledek srovnání}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=15cm]{template-fig/PerformanceChartComparePrototypeAndFinal.pdf}
+    \caption{Graf porovnávající rychlost prototypu a~finálního systému.}
+    \label{FIG_PerformanceChartComparePrototypeAndFinal}
+\end{figure}
+
+\noindent Graf \ref{FIG_PerformanceChartComparePrototypeAndFinal} je sloučením grafů \ref{FIG_PerformanceChartPrototype} a~\ref{FIG_PerformanceChartFinalSystem} a~zobrazuje porovnání rychlosti prototypu a~výsledného systému na zvolené množině vstupních dat. Z~grafu lze zpozorovat nárůst výkonu na stejné hardwarové konfiguraci pro stejná vstupní data. Pro tato data došlo ke 14 až 38násobnému zrychlení.
+
 \section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
 Předchozí porovnání prototypu a~výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, která bývá součástí levnějších notebooků. Tomu odpovídala i~zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V~této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
 
 \subsubsection{Ukládání paketů}
-Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z~klientské aplikace. Klient nečeká na odpovědi z~distribuovaného úložiště, prostě odesílá příkazy, dokud existují PCAP soubory ve zvoleném adresáři (název adresáře je předán jako vstupní parametr). Příkazy jsou uchovány v~Kafka frontě a~postupně čteny v~distribuovaném repositáři. Po zpracování jednotlivých příkazů se odesílají odpovědi klientovi. Testovací sada zahrnovala 102 PCAP souborů o~velikosti 67 až 270 MB, z~nichž téměř každý obsahoval 500 000 paketů. Dohromady se tedy jednalo o~10.3 GB dat a~50 851 631 paketů.
+Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z~klientské aplikace. Klient nečeká na odpovědi z~distribuovaného úložiště, prostě odesílá zprávy s~příkazy, dokud existují PCAP soubory ve zvoleném adresáři (název adresáře obsahující PCAP soubory je předán jako vstupní parametr přes příkazovou řádku). Příkazy jsou uchovány v~Kafka frontě a~postupně čteny v~distribuovaném repositáři. Po zpracování jednotlivých příkazů se odesílají odpovědi klientské aplikaci.
+
+Testovací sada zahrnovala 102 PCAP souborů o~velikosti 67 až 270 MB, z~nichž každý obsahoval 500 000 paketů s~výjimkou posledního souboru, ten pouze 351 631 paketů. Dohromady se tedy jednalo o~10.3 GB dat a~50 851 631 paketů.
 
 \subsubsection{Čtení paketů}
 Pro otestování rychlosti systému pro čtení paketů podle kritérií byla odeslána zpráva obsahující příkaz \texttt{LOAD\_PCAP} s~následujícími kritérii:
