@@ -31,8 +31,6 @@ services:
         image: sequenceiq/hadoop-docker:2.7.1
         container_name: hadoop
         network_mode: "bridge"
-        #environment:
-        #    CORE_CONF_fs_defaultFS: hdfs://192.168.99.100:9000
         ports:
             - 8020:8020
             - 8042:8042
