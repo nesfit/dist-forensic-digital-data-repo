@@ -5,12 +5,12 @@
 Obsah
 --------
 
-* [Docker prostredi](#docker-enviroment)
-* [Instalace systemu distribuovaneho uloziste](#how-to-install)
-* [Spusteni systemu distribuovaneho uloziste](#how-to-run)
-* [Vstupni data - PCAP soubory](#input-data)
-* [Technicka zprava diplomove prace](#text)
-* [Poznamky](#notes)
+* [Docker prostredi](#docker-prostredi)
+* [Instalace systemu distribuovaneho uloziste](#instalace-systemu-distribuovaneho-uloziste)
+* [Spusteni systemu distribuovaneho uloziste](#Spusteni-systemu-distribuovaneho-uloziste)
+* [Vstupni data](#vstupni-data)
+* [Technicka zprava diplomove prace](#technicka-zprava-diplomove-prace)
+* [Poznamky](#poznamky)
 
 Docker prostredi
 --------
