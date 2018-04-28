@@ -11,8 +11,8 @@ Obsah
 * [Vstupni data](#vstupni-data)
 * [Technicka zprava diplomove prace](#technicka-zprava-diplomove-prace)
 * [Poznamky](#poznamky)
-* [Licence] (#licence)
-* [Kontakt] (#kontakt)
+* [Licence](#licence)
+* [Kontakt](#kontakt)
 
 Docker prostredi
 --------
