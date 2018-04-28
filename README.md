@@ -30,7 +30,7 @@ Docker prostredi nachazejici se v adresari `Docker`
 
 * V zavislosti na pouziti Docker nebo Docker Toolbox se pouzivaji ruzne IP adresy:
     * Docker: localhost
-    * Docker Toolbox: IP virtualniho stroje (192.168.99.100)
+    * Docker Toolbox: IP virtualniho stroje (`192.168.99.100`)
 	
 * Pristup do beziciho kontejneru
     * Cassandra<br>
@@ -55,7 +55,7 @@ Docker prostredi nachazejici se v adresari `Docker`
 		`route add 172.18.0.0/16 192.168.99.100`<br>
 	  atd., z duvodu pritomnosti virtualniho stroje, pod Linuxem neni potreba
 
-System distribuovaneho uloziste
+Instalace systemu distribuovaneho uloziste
 --------
 
 * Implementace se sklada ze ctyr Maven modulu:
@@ -77,3 +77,23 @@ System distribuovaneho uloziste
 	
 * Jedna se o projekty vytvorene ve vyvojovem prostredi IntelliJ IDEA. Pro IDEA existuje plugin Docker,
 kde lze videt po pripojeni obrazy a bezici kontejnery, zaroven lze sledovat jejich nastaveni a logy.
+
+Spusteni systemu distribuovaneho uloziste
+--------
+
+Oba dva moduly `DistributedRepository` a `ProducerDemo` maji ve svych adresarich skript `run.sh`.
+Skript vzdy zjisti adresu kontejneru, ve kterem bezi HDFS, a preda tuto adresu jako aplikacni promennou.
+Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP adresa virtualniho stroje `192.168.99.100`).
+
+* Spusteni
+	`cd DistributedRepository`<br>
+		`./run.sh`<br>
+	`cd ProducerDemo`<br>
+		`./run.sh`<br>
+
+Poznamka
+--------
+System byl vyvijen v prostredi Docker pod Windows, a tak vsechny skripty pro Docker obrazy a kontejnery,
+a take spousteci skripty jsou nastaveny tak, aby slo vysledny system spustit rovnez v prostredi Docker pod Windows.
+Pro spusteni pod Linuxem je potreba skripty upravit, prepsat IP adresy z `192.168.99.100` na `localhost` atd.
+
