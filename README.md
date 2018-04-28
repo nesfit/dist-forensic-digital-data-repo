@@ -7,7 +7,7 @@ Obsah
 
 * [Docker prostredi](#docker-prostredi)
 * [Instalace systemu distribuovaneho uloziste](#instalace-systemu-distribuovaneho-uloziste)
-* [Spusteni systemu distribuovaneho uloziste](#Spusteni-systemu-distribuovaneho-uloziste)
+* [Spusteni systemu distribuovaneho uloziste](#spusteni-systemu-distribuovaneho-uloziste)
 * [Vstupni data](#vstupni-data)
 * [Technicka zprava diplomove prace](#technicka-zprava-diplomove-prace)
 * [Poznamky](#poznamky)
@@ -107,7 +107,7 @@ Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP
 	`cd ProducerDemo`<br>
 		`./run.sh`<br>
 
-Vstupni data - PCAP soubory
+Vstupni data
 --------
 
 Vstupni data se nachazi v adresari `PCAP_Input`.
