@@ -1,7 +1,9 @@
 # Master-Thesis
 
-Docker prostredi nachazejici se v adresari `Docker`
+Docker prostredi
 --------
+
+Nachazi se v adresari `Docker`.
 
 * Pozadavky
     * Mit nainstalovany Docker (Docker Toolbox a Oracle VM VirtualBox pod Windows),
@@ -58,6 +60,8 @@ Docker prostredi nachazejici se v adresari `Docker`
 Instalace systemu distribuovaneho uloziste
 --------
 
+System se nachazi se v adresari `DIP_DistributedRepository`.
+
 * Implementace se sklada ze ctyr Maven modulu:
     * Communication: rozhrani pro komunikaci
     * Persistence: obsluha Cassandry a MongoDB
@@ -85,11 +89,21 @@ Oba dva moduly `DistributedRepository` a `ProducerDemo` maji ve svych adresarich
 Skript vzdy zjisti adresu kontejneru, ve kterem bezi HDFS, a preda tuto adresu jako aplikacni promennou.
 Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP adresa virtualniho stroje `192.168.99.100`).
 
-* Spusteni
+* Spusteni<br>
 	`cd DistributedRepository`<br>
 		`./run.sh`<br>
 	`cd ProducerDemo`<br>
 		`./run.sh`<br>
+
+Vstupni data - PCAP soubory
+--------
+
+Vstupni data se nachazi v adresari `PCAP_Input`.
+
+Technicka zprava diplomove prace
+--------
+
+Nachazi se v adresari `Text` spolecne s latexovymi zdrojovymi kody, a pouzitymi obrazky a schematy. Technicka zprava je PDF dokument `projekt.pdf`.
 
 Poznamka
 --------
