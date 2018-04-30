@@ -101,7 +101,7 @@ Spusteni systemu distribuovaneho uloziste
 
 Oba dva moduly `DistributedRepository` a `ProducerDemo` maji ve svych adresarich skript `run.sh`
 ([DistributedRepository run.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/DIP_DistributedRepository/DistributedRepository/run.sh),
-[ProducerDemo](https://github.com/MartinFIT/Master-Thesis/blob/master/DIP_DistributedRepository/ProducerDemo/run.sh)).
+[ProducerDemo run.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/DIP_DistributedRepository/ProducerDemo/run.sh)).
 Skript vzdy zjisti adresu kontejneru, ve kterem bezi HDFS, a preda tuto adresu jako aplikacni promennou.
 Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP adresa virtualniho stroje `192.168.99.100`).
 
