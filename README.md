@@ -17,29 +17,29 @@ Obsah
 Docker prostredi
 --------
 
-Nachazi se v adresari `Docker`.
+Nachazi se v adresari [Docker](https://github.com/MartinFIT/Master-Thesis/tree/master/Docker).
 
 * Pozadavky
     * Mit nainstalovany Docker (Docker Toolbox a Oracle VM VirtualBox pod Windows),
-    * Aktualni konfigurace v `Environment/docker-compose.yml` je pro prostredi
+    * Aktualni konfigurace v [Environment/docker-compose.yml](https://github.com/MartinFIT/Master-Thesis/blob/master/Docker/Environment/docker-compose.yml) je pro prostredi
 	  Docker pod Windows, pod Linuxem bude potreba mirne upravit konfiguraci
 	  (IP adresu virtualniho stroje zamenit za localhost apod.)
     * Pod Windows: spustit Docker daemona napr. pomoci Docker Quickstart Terminal
 
 * Vytvoreni virtualniho stroje
     * Virtualni stroj by mel byt vytvoren pri instalaci Docker Toolbox, ale
-	  lze jej i znovu vytvorit spustenim skriptu `docker-machine-recreate.sh`
+	  lze jej i znovu vytvorit spustenim skriptu [docker-machine-recreate.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/Docker/docker-machine-recreate.sh)
 	  (pozor na parametry stroje - lze nastavit velikost RAM, pocet CPU jader, velikost disku)
 
 * Stazeni technologii v prostredi Docker
-    * Spusteni skriptu `install-docker-enviroment.sh`, ktery provede stazeni obrazu
+    * Spusteni skriptu [install-docker-enviroment.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/Docker/install-docker-enviroment.sh), ktery provede stazeni obrazu
 	  technologii z DockerHub: Cassandra, Kafka, ZooKeeper, MongoDB, Hadoop
 
 * Spusteni technologii v prostredi Docker
-    * Spusteni skriptu `run-docker-enviroment.sh`, spusti vsechny vyse zminene technologie
+    * Spusteni skriptu [run-docker-enviroment.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/Docker/run-docker-enviroment.sh), spusti vsechny vyse zminene technologie
 
 * Ukonceni behu technologii v prostredi Docker
-    * Spusteni skriptu `stop-docker-enviroment.sh`
+    * Spusteni skriptu [stop-docker-enviroment.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/Docker/stop-docker-enviroment.sh)
 	
 * Statistiky bezicich kontejneru (vyuziti RAM, CPU, ...) lze sledovat v prehledne tabulce pomoci prikazu
     * `$ docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"`
@@ -74,7 +74,7 @@ Nachazi se v adresari `Docker`.
 Instalace systemu distribuovaneho uloziste
 --------
 
-System se nachazi se v adresari `DIP_DistributedRepository`.
+System se nachazi se v adresari [DIP_DistributedRepository](https://github.com/MartinFIT/Master-Thesis/tree/master/DIP_DistributedRepository).
 
 * Implementace se sklada ze ctyr Maven modulu:
     * Communication: rozhrani pro komunikaci
@@ -99,7 +99,9 @@ kde lze videt po pripojeni obrazy a bezici kontejnery, zaroven lze sledovat jeji
 Spusteni systemu distribuovaneho uloziste
 --------
 
-Oba dva moduly `DistributedRepository` a `ProducerDemo` maji ve svych adresarich skript `run.sh`.
+Oba dva moduly `DistributedRepository` a `ProducerDemo` maji ve svych adresarich skript `run.sh`
+([DistributedRepository run.sh](https://github.com/MartinFIT/Master-Thesis/blob/master/DIP_DistributedRepository/DistributedRepository/run.sh),
+[ProducerDemo](https://github.com/MartinFIT/Master-Thesis/blob/master/DIP_DistributedRepository/ProducerDemo/run.sh)).
 Skript vzdy zjisti adresu kontejneru, ve kterem bezi HDFS, a preda tuto adresu jako aplikacni promennou.
 Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP adresa virtualniho stroje `192.168.99.100`).
 
@@ -112,12 +114,13 @@ Jsou take nastaveny aplikacni promenne IP adres pro ostatni technologie (jako IP
 Vstupni data
 --------
 
-Vstupni data se nachazi v adresari `PCAP_Input`.
+Vstupni data se nachazi v adresari [PCAP_Input](https://github.com/MartinFIT/Master-Thesis/tree/master/PCAP_Input).
 
 Technicka zprava diplomove prace
 --------
 
-Nachazi se v adresari `Text` spolecne s latexovymi zdrojovymi kody, a pouzitymi obrazky a schematy. Technicka zprava je PDF dokument `projekt.pdf`.
+Nachazi se v adresari [Text](https://github.com/MartinFIT/Master-Thesis/tree/master/Text) spolecne s latexovymi zdrojovymi kody,
+a pouzitymi obrazky a schematy. Technicka zprava je PDF dokument [projekt.pdf](https://github.com/MartinFIT/Master-Thesis/blob/master/Text/src/projekt.pdf).
 
 Poznamky
 --------
