@@ -3,23 +3,23 @@
 
 
 \chapter{Úvod}
-Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů a~dalších digitálních zařízení, či mobilních plateb a~on-line transakcí. V~podstatě ve všech oblastech jako je například věda, politika, strojírenství, medicína, doprava, energetika, se nevyhneme použití digitálních zařízení. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, a~také vyšetřovat.
+Během začátku 21. století došlo k~ohromnému růstu v~oblastech internetu, sociálních sítí, multimédií, chytrých telefonů či dalších digitálních zařízení, mobilních plateb a~on-line transakcí. V~podstatě ve všech oblastech jako je např. věda, politika, medicína, doprava, energetika, se nevyhneme použití digitálních zařízení. S~tím velmi úzce souvisí nárůst objemu digitálních dat, která je potřeba ukládat, analyzovat, zpracovávat, a~také vyšetřovat.
 
 Digitální zařízení se mohou stát terčem útoků, může se jednat o~krádež citlivých dat, podvržení dat, sledování a~další. Digitální zařízení mohou být také nástrojem zločinu.
 
 Rozdílnost mezi formáty digitálních dat, jejich strukturované a~nestrukturované vlastnosti, a~také prudký nárůst vyžadují mnoho rozličných přístupů a~technologií pro jejich zpracování.
 
-Cílem této práce je navrhnout a~vytvořit distribuované úložiště pro digitální forenzní data. V~rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat, vysvětluje, jak probíhá a~co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a~existujícími systémy, které slouží k~uchování těchto dat a~důkazního materiálu. Následně je představen systém AFF4.
+Cílem této práce je navrhnout a~vytvořit distribuované úložiště pro digitální forenzní data. V~rámci teoretické části práce, se kapitola \ref{chapter1} zaměřuje na forenzní analýzu digitálních dat. Vysvětluje jak probíhá a~co je jejím cílem. Zabývá se také formáty digitálních forenzních dat a~existujícími systémy, které slouží k~uchování těchto dat a~důkazního materiálu. Následně je představen systém AFF4.
 
 Kapitola \ref{chapter2} pojednává o~úložištích pro rozsáhlá strukturovaná i~nestrukturovaná data. V~jejich kontextu vysvětluje také termín Big data. Následují odstavce zaměřeny na distribuované databáze včetně jejich výhod a~nevýhod. Kapitola je završena uvedením principů NoSQL databází, rozdělení podle typů, a~srovnání s~relačními databázemi. Na NoSQL databázích bude založeno úložiště distribuovaného repositáře.
 
 Cílem praktické části práce je navrhnout a~implementovat distribuovaný repositář. V~kapitole návrhu \ref{distrRepDesignChapter} je vysvětlena architektura systému, aplikační rozhraní, vlastnosti úložišť, princip ovládání repositáře a~také rozšiřitelnost pro nové druhy digitálních forenzních dat. Systém využívá Big data technologie. Pro komunikaci s~klientem jsou zprávy přenášeny tzv. \texttt{Message broker}-em Kafka. Jako úložiště slouží, v~závislosti na tom, o~jaký typ forenzních digitálních dat se jedná, NoSQL databáze a~distribuovaný souborový systém HDFS.
 
-Kapitola \ref{chapter_impl} se zabývá implementací distribuovaného úložiště,  technickými detaily, způsobem asynchronní komunikace s~databázemi, ukládáním a~dotazováním nad daty (sekvenčním i~náhodným). Systém pracuje nad frameworkem Spring, který usnadňuje konfiguraci a~použití Big data komponent. Jako běhové prostředí byl zvolen projekt \texttt{Docker}, který poskytuje jednotné rozhraní pro izolaci aplikací do kontejnerů.
+Kapitola \ref{chapter_impl} se zabývá implementací distribuovaného úložiště,  technickými detaily, způsobem asynchronní komunikace s~databázemi, ukládáním a~dotazováním nad daty (sekvenčním i~náhodným). Systém pracuje nad frameworkem Spring Boot, který usnadňuje konfiguraci a~použití Big data komponent. Jako běhové prostředí byl zvolen projekt \texttt{Docker}, který poskytuje jednotné rozhraní pro izolaci aplikací do kontejnerů.
 
 Poslední kapitola \ref{chapter_performance} se věnuje výkonnosti systému, hardwarovým požadavkům a~konfiguraci, a~použití systému pro vybrané druhy digitálních forenzních dat.
 
-%Pro ověření základních aspektů návrhu byl také implementován prototyp distribuovaného repositáře, který řeší převážně rozhraní komunikace s~klientem, způsob ovládání repositáře, a~rovněž zpracování požadavků od klienta. Prototypem se zabývá kapitola \ref{chapterPrototype}.
+V~rámci semestrálního projektu byly zpracovány kapitoly týkající se teoretické části \ref{chapter1}, \ref{chapter2} a~\ref{distrRepDesignChapter}. Byl také implementován jednoduchý prototyp systému, kterým se zabývá sekce \ref{prototypeSection}.
 
 \chapter{Forenzní analýza digitálních dat} \label{chapter1}
 Forenzní analýza digitálních dat je věda identifikující, zachovávající, obnovující, analyzující a~předávající fakta ohledně digitálních důkazů nalezených v~počítačích nebo digitálních úložištích mediálních zařízení.
@@ -30,7 +30,7 @@ Forenzní analýza digitálních dat slouží k~získání digitálního důkazn
 Pod výše uvedenými aktivitami se skrývá \cite{whatIsDigFor}:
 
 \begin{itemize}
-\item Identifikace -- Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash klíčenkách, síťových zařízeních.
+\item Identifikace -- Jedná se o~první část celého procesu. Předtím, než je cokoliv zkoumáno a~analyzováno, je důležité identifikovat, kde jsou data uložena. Typicky jsou uložena na diskových jednotkách, serverech, flash paměti, nebo síťových zařízeních.
 
 \item Zachování -- Důležitá je ochrana důkazů, tzn. pro sběr a~analýzu informací je potřeba zachovat původní data, musí se zabránit jejich změně a~ztrátě. Bez integrity je důkazní materiál nepoužitelný. Identifikovaná původní data mohou být zajištěna chronologickým řetězcem dokumentů (anglicky \texttt{chain of custody}), který zaznamenává veškeré aktivity s~digitálním důkazem jako je přenos, úschova, kontrola a~stav.
 
@@ -104,13 +104,13 @@ Jedná se o~open source formát pro ukládání digitálních důkazů a~dat. Je
 
 \noindent Příklad ukazuje, že objekt má tyto atributy a~hodnoty. Nazýváme je relace nebo fakta. Celý AFF4 universe je sestavený z~takových faktů.
 
-\noindent AFF4 objekty existují, protože dělají něco užitečného, což závisí na rozhraní, které představují. Aktuálně existuje několik rozhraní, nejvýznamnější jsou \texttt{Volume} a~\texttt{Stream}. Rozhraní objektu je fakt o~objektu, který nalezneme v~atributu \texttt{aff4:interface}.
+\noindent AFF4 objekty existují, protože dělají něco užitečného, což závisí na rozhraní, které představují. Aktuálně existuje několik rozhraní, nejvýznamnější jsou \texttt{Volume} a~\texttt{Stream}. Rozhraní objektu je fakt o~objektu, který se nachází v~atributu \texttt{aff4:interface}.
 
 \subsubsection{Rozhraní Volume}
-Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno, a~získat jej podle tohoto jména. Aktuálně existují dvě implementace: \texttt{Directory} a~\texttt{ZipFile}.
+Rozhraní Volume definujeme jako mechanismus ukládání, který dokáže uložit segment (bit binárních dat) pod nějaké jméno, a~získat jej podle tohoto jména. Aktuálně existují dvě implementace -- \texttt{Directory} a~\texttt{ZipFile}.
 
 \begin{itemize}
-\item \texttt{Directory Volume} -- Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké HTTP adrese, což nám umožní používat obraz přímo z~webu.
+\item \texttt{Directory Volume} -- Tato implementace ukládá segmenty jako soubory uvnitř běžného adresáře v~souborovém systému. Hodí se zejména v~případech, pokud potřebujeme uložit obraz na souborový systém FAT, přičemž velikost segmentu je malá a~nenarazíme tak na omezení velikosti souboru. Je také možné založit adresář na nějaké HTTP adrese, což umožní používat obraz přímo z~webu.
 
 \item \texttt{ZipFile Volume} -- Jak napovídá název, tato implementace ukládá segmenty uvnitř zip archivu. Malé soubory lze bez problémů otevřít obyčejným průzkumníkem (v~OS Windows např. \texttt{Windows Explorer}) a~data extrahovat. Zase je možné zapsat zip archiv přímo na HTTP server a~používat obraz přímo ze serveru.
 \end{itemize}
@@ -168,7 +168,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 \cite{distributedDBMS}:
 
 \begin{itemize}
-\item Umí vytvářet, získávat, upravovat a~mazat distribuované databáze.
+\item Umí vytvářet, získávat, upravovat a~odstraňovat distribuované databáze.
 
 \item Zajišťuje důvěrnost a~integritu databází.
 
@@ -201,9 +201,9 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \subsection{Nevýhody}
 \begin{itemize}
-\item CAP teorém -- Pojednává o~tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u~ACID). Definuje, že distribuovaný systém může zajistit maximálně 2 z~těchto 3 vlastností -- konzistence (angl. \texttt{Consistency}), dostupnost (angl. \texttt{Availability}) a~odolnost k~přerušení (angl. \texttt{Partition tolerance}). Je nutné si zvolit mezi konzistencí a~dostupností v~případě výpadku části sítě.
+\item CAP teorém -- Pojednává o~tzv. eventuální konzistenci (na rozdíl od absolutní konzistence u~databází splňujících vlastnosti ACID). Definuje, že distribuovaný systém může zajistit maximálně dvě z~těchto tří vlastností -- konzistence (angl. \texttt{Consistency}), dostupnost (angl. \texttt{Availability}) a~odolnost k~přerušení (angl. \texttt{Partition tolerance}). Je nutné si zvolit mezi konzistencí a~dostupností v~případě výpadku části sítě.
 
-\item Integrita dat -- Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné odpovědi.
+\item Integrita dat -- Data musí být průběžně synchronizována na více uzlech, aby na stejné dotazy nebyly z~různých uzlů vraceny rozdílné výsledky.
 
 \item Komunikační režie -- I~zdánlivě jednoduchá operace může vyžadovat spoustu zbytečné komunikace.
 
@@ -221,7 +221,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \subsection{Rozdělení}
 \subsubsection{Homogenní}
-Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se navenek jeví uživateli jako jeden systém. Je jednodušší jej navrhnout a~spravovat. Homogenní distribuované databáze můžeme ještě dělit na autonomní a neautonomní:
+Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se uživateli navenek jeví jako jeden systém. Je jednodušší jej navrhnout a~spravovat. Homogenní distribuované databáze můžeme ještě dělit na autonomní a neautonomní:
 
 \begin{itemize}
     \item Autonomní -- Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
@@ -288,18 +288,18 @@ NoSQL databáze
     
     \item Jsou navrženy pro jednoduchou škálovatelnost.
     
-    \item Mají dynamické schéma, které neomezuje definovat libovolnou strukturu a~provádět flexibilní úpravy.
+    \item Mají dynamické schéma, které dovoluje definovat libovolnou strukturu a~provádět flexibilní úpravy.
 \end{itemize}
 
 \end{multicols}
 
 \chapter{Návrh distribuovaného úložiště} \label{distrRepDesignChapter}
-Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána komunikace se systémem včetně aplikačního rozhraní, použité technologie, zvolené druhy úložišť a~také zpracování požadavků.
+Tato kapitola se zabývá návrhem distribuovaného úložiště rozsáhlých digitálních forenzních dat. Bude popsána komunikace se systémem včetně aplikačního rozhraní, použité technologie, zvolené druhy úložišť a~také zpracování požadavků od klientské aplikace.
 
 \section{Požadavky na systém}
 Nejdůležitějším požadavkem je, aby systém byl distribuovaný, tzn. škálovatelný na více výpočetních uzlech. S~tím souvisí také výběr vhodných technologií.
 
-Systém musí umožnit optimální přístup k~různým datům, jiný přístup bude pro strukturovaná data a~jiný pro nestrukturovaná. Z~forenzních digitálních dat proběhne zaměření převážně na \texttt{PCAP} soubory.
+Systém musí umožnit optimální přístup k~různým datům, jiný přístup bude pro strukturovaná data a~jiný pro nestrukturovaná. Z~forenzních digitálních dat proběhne implementace pro podporu \texttt{PCAP} souborů.
 
 Posledním klíčovým požadavkem je umožnit přidávání podpory pro nové druhy digitálních forenzních dat přímo za běhu systému.
 
@@ -323,7 +323,7 @@ Komunikace s~klientem, který chce do distribuovaného repositáře data uložit
     
     \item \texttt{awaitsResponse} -- Dvoustavová hodnota, jestli klient/odesilatel zprávy očekává od repositáře odpověď. Pokud je tento parametr zadán jako \texttt{True}, je nutné zadat také další parametr \texttt{responseTopic}.
     
-    \item \texttt{responseTopic} -- Ve které frontě (angl. topic) je odpověď na straně klienta očekávána.
+    \item \texttt{responseTopic} -- Udává název fronty (angl. \texttt{topic}), ve které je odpověď na straně klienta očekávána.
     
     \item \texttt{errorTopic} -- Na straně distribuovaného úložiště se může vyskytnout chyba, například nedostupnost databáze, chyba při zpracování příkazu a~další. Tento parametr slouží pro zadání fronty, kam se budou zasílat chybová hlášení. Jedná se o~povinný parametr.
     
@@ -393,7 +393,7 @@ Apache Kafka je distribuovaný systém zpráv s~robustními frontami založený 
     
     \item Producent -- Je odesílatel zprávy do jedné nebo více Kafka front. Producenti posílají data prostředníkům. Pokaždé když producent pošle zprávu prostředníkovi, prostředník přidá zprávu na konec oddílu. Producent nečeká na žádná potvrzení, posílá zprávy tak rychle, jak jen prostředník dokáže přijímat.
     
-    \item Konzument -- Čte data od prostředníka(ů). Odebírá z~jedné nebo více front a~konzumuje zprávy vytažením dat od prostředníků.
+    \item Konzument -- Čte data od prostředníka(ů). Odebírá z~jedné nebo více front a~konzumuje zprávy získáním dat od prostředníků.
 \end{itemize}
 
 \section{Úložiště}
@@ -435,7 +435,7 @@ Distribuovaný souborový systém HDFS patří pod projekt \texttt{Apache Hadoop
 
 \noindent HDFS je virtuální souborový systém vybudovaný nad běžnými souborovými systémy jednotlivých uzlů. Řeší problém nalezení úložiště a~přístupu k~datům, nikoliv fyzické uložení v~uzlu. Byl navržen pro sekvenční přístup k~souborům, nikoliv náhodný \cite{hadoopPdi}.
 
-\noindent HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z~jednoho uzlu nazývaného \texttt{NameNode}, který se stará o~správu metadat a~jmenného prostoru souborového systému. Dále reguluje přístup k~souborům a~provádí operace typu otevření, zavření, přejmenování souborů a~adresářů. Protože je NameNode pouze jeden, měl by být spolehlivý a~výkonný, při jeho výpadku způsobí poruchu systému (jde o~tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a~ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a~každý blok souboru je nezávisle replikován v~několika datových uzlech slave. Bloky jsou uloženy v~lokálním souborovém systému na datových uzlech. Datové uzly jsou také zodpovědné za zpracování požadavků čtení a~zápisu od klientů. NameNode se stará o~mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}.
+HDFS používá architekturu typu \texttt{master/slave}. Master se skládá z~jednoho uzlu nazývaného \texttt{NameNode}, který se stará o~správu metadat a~jmenného prostoru souborového systému. Dále reguluje přístup k~souborům a~provádí operace typu otevření, zavření, přejmenování souborů a~adresářů. Protože je NameNode pouze jeden, měl by být spolehlivý a~výkonný, při jeho výpadku způsobí poruchu systému (jde o~tzv. \texttt{single point of failure}). Uzlů typu slave může být více, jsou nazývány datové uzly (angl. \texttt{DataNodes}), a~ukládají data. Soubor je rozdělen do několika bloků (typicky po 64 nebo 128 MB), a~každý blok souboru je nezávisle replikován v~několika datových uzlech slave. Bloky jsou uloženy v~lokálním souborovém systému na datových uzlech. Datové uzly jsou také zodpovědné za zpracování požadavků čtení a~zápisu od klientů. NameNode se stará o~mapování bloků datovým uzlům, sleduje počet replik jednotlivých bloků. Pokud se nějaká replika ztratí vinou selhání datového uzlu, je vytvořena nová replika bloku \cite{hadoopHortonworks}.
 
 HDFS je implementován v~jazyce Java, na každém stroji s~nainstalovanou Javou může běžet NameNode nebo DataNode software. Typicky při nasazení existuje jeden stroj s~běžícím NameNode, na dalších strojích potom běží datové uzly (lze ovšem najít i~scénáře, kde na jednom stroji běží více datových uzlů). Důležité je, že uživatelská data nikdy neprochází přes NameNode \cite{apacheHDFSGuide}.
 
@@ -448,14 +448,12 @@ Následně uvažme, jak by vypadal postup pro zjištění informací o~komunikac
 
 Předzpracování dat je výhodné před jejich uložením, protože v~kontextu provádění aplikace jsou data interpretovatelná. Výtah základních informací z~nich nezpůsobí propad výkonu. Naopak se výkon zvýší pro případné operace čtení a~hledání.
 
-Výše uvedený princip by se dal zobecnit pro libovolný typ forenzních digitálních dat. Tak by došlo k~vytvoření tzv. registru, který by i~mimo jiné informoval, co je jak a~kde uloženo. Vhodnou strukturou pro uložení těchto metadat může být například formát XML nebo JSON. Z~toho vyplývá použití dokumentové NoSQL databáze jako například MongoDB.
+Výše uvedený princip by se dal zobecnit pro libovolný typ forenzních digitálních dat. Tak by došlo k~vytvoření tzv. registru, který by i~mimo jiné informoval, co je jak a~kde uloženo. Vhodnou strukturou pro uložení těchto metadat může být například formát XML nebo JSON. Z~toho vyplývá použití dokumentové NoSQL databáze jako například MongoDB. MongoDB umožňuje dotazování nad dokumenty podle různých kritérií. Současně se také jedná o~distribuovanou databázi, která může navíc běžet na jiném uzlu než Cassandra. Flexibilita MongoDB je vhodná pro správu metadat, zvlášť když bude do repositáře potřeba přidávat nové druhy dat.
 
 \subsubsection{MongoDB}
-MongoDB je multiplatformní, dokumentově orientovaná databáze poskytující vysoký výkon a~dostupnost a~jednoduchou škálovatelnost. Pracuje na principu kolekcí, které nevyžadují schéma. Kolekce je skupina MongoDB dokumentů, a~je ekvivalentem SŘBD tabulek. Dokumenty v~kolekcích mohou mít dynamická schémata a~rozdílné atributy. Dynamické schéma znamená, že dokumenty ve stejné kolekci nemusí mít stejnou strukturu atributů. Počet atributů, obsah a~velikost dokumentu se může mezi dokumenty lišit. Dokument je množina párů klíč-hodnota \cite{mongoDBTutorialsPoint}.
+MongoDB je multiplatformní, dokumentově orientovaná databáze poskytující vysoký výkon a~jednoduchou škálovatelnost. Pracuje na principu kolekcí, které nevyžadují schéma. Kolekce je skupina dokumentů, a~je ekvivalentem SŘBD tabulek. Dokumenty v~kolekcích mohou mít dynamická schémata a~rozdílné atributy. Dynamické schéma znamená, že dokumenty ve stejné kolekci nemusí mít stejnou strukturu atributů. Počet atributů a~obsah dokumentu se může mezi dokumenty lišit. Dokument je množina párů klíč-hodnota \cite{mongoDBTutorialsPoint}.
 
 Relační databáze má určité schéma skládající se z~tabulek a~vztahů mezi nimi. Koncept vztahu je v~MongoDB  řešen jinak. Existují dva mechanismy umožňující aplikaci reprezentovat vztahy -- reference a~vnořené dokumenty. Reference uchovávají vztahy mezi daty vložením odkazů (referencí) z~jednoho dokumentu do druhého. Aplikace může díky odkazu přistoupit k~příslušným datům. Vnořené dokumenty zachycují vztahy mezi daty ukládáním příslušných dat přímo do jednoho dokumentu. Namísto atributu dokumentu může být uložen i~jiný dokument. Výhoda tohoto modelu je, že aplikace získá všechna data v~jedné databázové operaci \cite{mongoDBDataModelingIntro}.
-
-Dynamičnost MongoDB je vhodná pro správu metadat, zvlášť když bude do repositáře potřeba přidávat nové druhy dat.
 
 \section{Jádro distribuovaného úložiště}
 V~předchozích sekcích byla představena komunikace s~repositářem, jak vypadají příkazy a~jakým způsobem jsou posílána data. Následně byly popsány možnosti ukládání. Tato sekce se zaměřuje na jádro distribuovaného repositáře, převážně na zpracování příkazů a~manipulaci s~databázemi.
@@ -465,15 +463,16 @@ Přijetí příkazu zajišťuje konzument zpráv. Konzument se v~krátkých čas
 Důležitým požadavkem je, aby úložiště umožňovalo přidávání podpory pro nové druhy forenzních dat za běhu. Tento požadavek je implicitně zajištěn systémem Kafka, který každou přijatou zprávu zapíše na disk a~zpráva tam zůstává, dokud ji konzument úspěšně nezpracuje. V~tom případě lze systém repositáře zastavit, ale Kafka zprávy bude pořád přijímat. Mezitím může proběhnout do-implementování nové funkcionality pro jiný druh forenzních dat, provést kompilaci, nasazení a~spuštění systému. Po spuštění se konzument začne dotazovat Kafky na nové nepřijaté zprávy.
 
 \chapter{Implementace} \label{chapter_impl}
+Tato kapitola se zabývá implementací distribuovaného úložiště, dekompozicí systému, technickými detaily, komunikací s~databázemi, a~architekturou systému.
 
 \section{Dekompozice do modulů}
-Repositář je komplexní distribuovaný systém, který je postaven na frameworku Spring, sestávající z~několika modulů a~knihoven. V~této sekci je uvedeno, jak byl systém dekomponován do modulů a~jaké knihovny byly zvoleny. Pro správu závislostí a~sestavení aplikace byl zvolen nástroj \texttt{Maven}. Pro přehled byly využity tyto knihovny a~frameworky -- \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a~samozřejmě ovladače pro jednotlivé databáze.
+Repositář je komplexní distribuovaný systém založen na frameworku Spring, sestávající z~několika modulů. V~této sekci je uvedeno, jak byl systém dekomponován do modulů a~jaké knihovny byly zvoleny. Pro správu závislostí a~sestavení aplikace byl zvolen nástroj \texttt{Maven}. Pro přehled byly využity tyto knihovny a~frameworky -- \texttt{Spring Boot}, \texttt{Spring Data}, \texttt{Spring Kafka}, \texttt{Spring Hadoop}, \texttt{Pcap4J}, a~samozřejmě ovladače pro jednotlivé databáze.
 
 Jedná se o~dvě Spring Boot aplikace -- \texttt{DistributedRepository} a~\texttt{ProducerDemo}, které komunikují pomocí komunikačního rozhraní implementovaného v~modulu \texttt{Communication}. Přenos zpráv zajišťuje projekt Spring Kafka. Aplikace DistributedRepository má přístup k~oběma databázím Cassandra a~MongoDB díky modulu \texttt{Persistence} obsahujícím mimo jiné projekt Spring Data, a~také k~HDFS pomocí projektu Spring Hadoop. K~HDFS má přístup i~klientská aplikace ProducerDemo.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=12.3cm]{template-fig/Architecture.pdf}
+  \includegraphics[width=12.55cm]{template-fig/Architecture.pdf}
   \caption{Schéma klíčových modulů a~závislostí systému.}
   \label{FIG_Architecture}
 \end{figure}
@@ -575,7 +574,7 @@ HDFS nabízí tři API, jejichž vlastnosti znázorňuje tabulka \ref{HDFSApi}.
 \noindent Pro účely distribuovaného úložiště bylo zvoleno první API, tzv. HDFS, založené na RPC volání -- tento způsob vyžaduje, aby klient i~Hadoop cluster běželi na stejné verzi (rozdílné verze způsobí problémy v~serializaci). Další alternativou by bylo API WebHDFS, které ovšem vyžaduje další konfiguraci, a~přenos pomocí HTTP přináší režii navíc ve formě zpomalení ukládání a~čtení dat.
 API HFTP v~tomto případě využít nelze, protože podporuje pouze čtení.
 
-Praktickým nástrojem poskytovaným distribucí Hadoop je klient příkazové řádky, přes kterého lze spouštět příkazy podobné těm linuxovým přímo nad HDFS -- existenci, mazaní, kopírování, přesouvání souborů, nebo nastavení přístupových práv. Tento nástroj je dostupný pouze přes příkazovou řádku, což stěžuje použití přímo z~Java aplikace. Spring Hadoop poskytuje plně zabudovanou funkcionalitu výše zmíněného nástroje uvnitř třídy \texttt{FsShell}, která zrcadlí většinu příkazů dostupných z~příkazové řádky (metody typu \texttt{chmod}, \texttt{cp}, \texttt{copyFromLocal}, \texttt{get}, \texttt{ls}, \texttt{mkdir}, \texttt{put}, \texttt{rm}, atd) \cite{springHadoopReference}. Pomocí této třídy jsou prováděny veškeré operace s~HDFS.
+Praktickým nástrojem poskytovaným distribucí Hadoop je klient příkazové řádky, přes kterého lze spouštět příkazy podobné těm linuxovým přímo nad HDFS -- existenci, odstranění, kopírování, přesouvání souborů, nebo nastavení přístupových práv. Tento nástroj je dostupný pouze přes příkazovou řádku, což stěžuje použití přímo z~Java aplikace. Spring Hadoop poskytuje plně zabudovanou funkcionalitu výše zmíněného nástroje uvnitř třídy \texttt{FsShell}, která zrcadlí většinu příkazů dostupných z~příkazové řádky (metody typu \texttt{chmod}, \texttt{cp}, \texttt{copyFromLocal}, \texttt{get}, \texttt{ls}, \texttt{mkdir}, \texttt{put}, \texttt{rm}, atd) \cite{springHadoopReference}. Pomocí této třídy jsou prováděny veškeré operace s~HDFS.
 
 \section{Úložiště}
 Jak už bylo uvedeno v~kapitole \ref{distrRepDesignChapter}, úložiště je tvořeno NoSQL databázemi Cassandra a~MongoDB, a~distribuovaným souborovým systémem HDFS. Zatímco předešlá kapitola jen nastínila vlastnosti těchto úložišť, zde budou vysvětleny technické detaily a~práce s~nimi.
@@ -789,7 +788,7 @@ Zpracování proběhne následovně -- metoda \texttt{listen} třídy Distribute
 Klient odešle příkaz \texttt{STORE\_PCAP} s~dodatečnými parametry udávajícími zdroj dat a~výstupní frontu (více v~\ref{designCommunication}). Po přijetí zprávy požadavku proběhne uložení PCAP souboru do pomocného souboru na lokálním disku (z~HDFS a~nebo z~paměti RAM), protože knihovna Pcap4J neumí zpracovávat PCAP soubory z~HDFS ani z~paměti RAM. Následně proběhne parsování na jednotlivé pakety. K~tomu slouží rozhraní \texttt{PcapParser<T>} s~implementací dodanou ve třídě \texttt{PcapParserImpl}. Pakety jsou jeden po druhém ukládány do databáze Cassandra asynchronním způsobem \ref{cassandra}. Současně jsou také vytvářeny záznamy metadat. Extrahování informací z~paketů zajišťuje jednotné rozhraní \texttt{PacketExtractor<T, B>} s~několika implementacemi podle vrstev TCP/IP modelu -- \texttt{EthernetPacketExtractor}, \texttt{IpPacketExtractor} a~\texttt{TransportPacketExtractor}. Záznamy metadat se ukládají reaktivním způsobem \ref{mongoDB} po kolekcích obsahujících několik záznamů (počet záznamů, které se uloží najednou, lze konfigurovat pomocí položky \texttt{packet.metadata.max.list.size} \ref{configuration}). Až jsou všechny pakety i~záznamy metadat uloženy, lze odstranit dočasný PCAP soubor z~lokálního disku. Poté je případně odeslána odpověď klientovi s~návratovým kódem \texttt{OK(200)}.
 
 \subsubsection{Čtení paketů podle kritérií}
-Klient odešle příkaz \texttt{LOAD\_PCAP} s~dodatečnými parametry podobně jako v~předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v~\ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z~kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z~MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v~tomto případě už hodnoty celého paketu z~databáze Cassandra. Načítání paketů probíhá zase asynchronně, k~metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k~výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z~důvodu neznámé velikosti a~počtu nalezených paketů). Přístup k~výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>}, implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
+Klient odešle příkaz \texttt{LOAD\_PCAP} s~dodatečnými parametry podobně jako v~předchozím případě. Navíc zadá dotazovací kritéria jejichž sémantika je uvedena v~\ref{queryDataInterface}. Po přijetí zprávy požadavku proběhne sestavení objektu \texttt{Criteria} z~kritérií uvedených ve zprávě požadavku. Tento objekt je předán do \texttt{packetMetadataRepository}, kde je pomocí Spring Data API provedeno čtení metadat paketů z~MongoDB. Čtení probíhá reaktivně se zabudovanými \texttt{callback}-y, které pro každý načtený záznam spustí další čtení, v~tomto případě už hodnoty celého paketu z~databáze Cassandra. Načítání paketů probíhá zase asynchronně, k~metodě je přidán další \texttt{callback}, který obslouží načtený paket tím, že jej zapíše do PCAP souboru (klient musí zadat cestu k~výslednému PCAP souboru pomocí atributu \texttt{dataSource} ve zprávě požadavku \ref{designCommunication}, předání souboru přes Kafku není možné z~důvodu neznámé velikosti a~počtu nalezených paketů). Přístup k~výslednému PCAP souboru je možný skrze rozhraní \texttt{PcapDumper<T>} implementovaného ve třídě \texttt{DumperImpl}. PCAP soubor je až do konce čtení paketů uložen jako dočasný soubor (kvůli limitaci Pcap4J knihovny), potom je přesunut na HDFS. Celý proces končí odesláním odpovědi klientovi.
 
 \subsection{Rozšíření pro nový typ forenzních dat}
 Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je velmi jednoduché. Spočívá v~přídání implementace:
@@ -825,8 +824,8 @@ Při běhu systému může nastat několik druhů chyb -- nefungující připoje
 \chapter{Výkon} \label{chapter_performance}
 Tato kapitola uvádí zhodnocení výkonosti systému, počáteční a~finální implementace. Zaměřuje se také na optimální hardwarové konfigurace, které jsou doporučeny pro provoz použitých distribuovaných technologií.
 
-\section{Prototyp}
-V~rámci semestrálního projektu byl implementován jednoduchý prototyp distribuovaného repositáře reflektující body uvedené v~kapitole Návrhu distribuovaného úložiště \ref{distrRepDesignChapter}. Prototyp sloužil pouze pro ověření základních aspektů návrhu jako např. komunikace s~klientem, práce s~databází Cassandra a~parsování PCAP souborů na pakety. Podporoval pouze jeden příkaz -- \texttt{STORE\_PCAP}, a~to také bez použití metadat. Prototyp nebyl vhodný pro nasazení neboť obsahoval několik nedostatků, které byly v~průběhu další implementace eliminovány. Mezi nejdůležitější nedostatky patřily tyto záležitosti:
+\section{Prototyp} \label{prototypeSection}
+V~rámci semestrálního projektu byl implementován jednoduchý prototyp distribuovaného repositáře reflektující body uvedené v~kapitole návrhu distribuovaného úložiště \ref{distrRepDesignChapter}. Prototyp sloužil pouze pro ověření základních aspektů návrhu jako např. komunikace s~klientem, práce s~databází Cassandra a~parsování PCAP souborů na pakety. Podporoval pouze jeden příkaz -- \texttt{STORE\_PCAP}, a~to také bez použití metadat. Prototyp nebyl vhodný pro nasazení neboť obsahoval několik nedostatků, které byly v~průběhu další implementace eliminovány. Mezi nejdůležitější nedostatky patřily tyto záležitosti:
 
 \begin{itemize}
     \item předávání všech dat libovolné velikosti v~binární podobě přes systém Kafka,
@@ -905,7 +904,7 @@ Z~uvedeného grafu pro rychlost prototypu \ref{FIG_PerformanceChartPrototype} vy
 
 \noindent Graf \ref{FIG_PerformanceChartComparePrototypeAndFinal} je sloučením grafů \ref{FIG_PerformanceChartPrototype} a~\ref{FIG_PerformanceChartFinalSystem} a~zobrazuje porovnání rychlosti prototypu a~výsledného systému na zvolené množině vstupních dat. Z~grafu lze zpozorovat nárůst výkonu na stejné hardwarové konfiguraci pro stejná vstupní data. Pro tato data došlo ke 14 až 38násobnému zrychlení.
 
-\section{Srovnání výkonu finálního systému na odlišných HW konfiguracích}
+\section{Výkonnostní test finálního systému}
 Předchozí porovnání prototypu a~výsledného systému bylo provedeno na běžně dostupné hardwarové konfiguraci, která bývá součástí levnějších notebooků. Tomu odpovídala i~zvolená množina vstupních dat obsahující pouze několik tisíc paketů. V~této sekci bude proveden test výkonnosti na silnější HW konfiguraci se vstupními PCAP soubory, které dohromady obsahují miliony paketů.
 
 \subsubsection{Ukládání paketů}
@@ -929,8 +928,8 @@ Pro otestování rychlosti systému pro čtení paketů podle kritérií byla od
 \vspace{0.5cm}
 \noindent Prohledávání bylo spuštěno nad 50 851 631 pakety uloženými v~předchozím scénáři.
 
-\subsection{HW konfigurace A}
-Prvním testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifikace:
+\subsection{HW konfigurace}
+Testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifikace:
 
 \vspace{0.5cm}
 \noindent \texttt{CPU: Intel Core i7-4910MQ 2.9 GHz @ 3.9 GHz} \\
@@ -955,7 +954,7 @@ Prvním testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifika
     \label{FIG_PerformanceChartFinalBigData}
 \end{figure}
 
-\noindent Tabulka \ref{tablePerformanceFinalSystemBigData} udává souhrn statistických informací z~měření. První sloupec uvádí celkovou velikost všech vstupních PCAP souborů v~bytech, druhý sloupec počet paketů, které byly ukládány. Třetí sloupec zobrazuje průměrnou velikost paketu v~bytech. Čas uvedený ve čtvrtém sloupci je měřen od odeslání prvního PCAP souboru z~klientské aplikace do obdržení odpovědi z~distribuovaného úložiště posledního zpracovaného PCAP souboru. Průměrně bylo zpracování a~uloženo 20 850 paketů za sekundu.
+\noindent Tabulka \ref{tablePerformanceFinalSystemBigData} udává souhrn statistických informací z~měření. První sloupec uvádí celkovou velikost všech vstupních PCAP souborů v~bytech, druhý sloupec počet paketů, které byly ukládány. Třetí sloupec zobrazuje průměrnou velikost paketu v~bytech. Čas uvedený ve čtvrtém sloupci je měřen od odeslání prvního PCAP souboru z~klientské aplikace do obdržení odpovědi z~distribuovaného úložiště posledního zpracovaného PCAP souboru. Průměrně bylo zpracováno a~uloženo 20 850 paketů za sekundu.
 
 \begin{table}[h!]
     \centering
@@ -972,33 +971,22 @@ Prvním testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifika
 \subsubsection{Čtení paketů}
 Čas realizace operace od odeslání zprávy od klienta po obdržení odpovědi byl 122 sekund. Celkem bylo načteno 473 243 paketů průměrnou rychlostí 3880 paketů za sekundu. Tyto pakety byly uloženy do jednoho výsledného PCAP souboru na HDFS.
 
-\subsection{HW konfigurace B}
-
-\noindent \textbf{TODO: Vyhodnocení výkonu na Linux stroji}
-
-\noindent \textbf{TODO: Rozdíl ve výkonu na Linux stroji a~virtuálním stroji pod Windows}
-
 \section{Doporučené HW požadavky distribuovaných technologií}
 I~když se jedná o~distribuované technologie schopné běžet na mnoha uzlech, každý uzel by měl splňovat základní hardwarové požadavky podle dané nasazené technologie.
 
 \subsection{Kafka}
-Sekce zmiňuje klíčové záležitosti před nasazením Kafky do clusteru. Zdrojem je převážně dokument věnující se nasazení Kafky \cite{kafkaDeployment}.
-
-Kafka velmi spoléhá na souborový systém pro ukládání zpráv. Všechna data jsou okamžitě zapisována do perzistentního logu v~souborovém systému, do \texttt{pagecache} kernelu. Kafka moc nevyužívá \texttt{heap space}, nevyžaduje pro něj přiřazení víc než 5 GB.
+Zdrojem je převážně dokument věnující se klíčovým záležitostem před nasazením Kafky \cite{kafkaDeployment}. Kafka velmi spoléhá na souborový systém pro ukládání zpráv. Všechna data jsou okamžitě zapisována do perzistentního logu v~souborovém systému, do \texttt{pagecache} kernelu. Kafka moc nevyužívá \texttt{heap space}, nevyžaduje pro něj přiřazení víc než 5 GB.
 Je ale potřeba mít dostatečnou velikost paměti RAM k~načtení aktivních příjemců a~odesílatelů. Vhodnou volbou je 32-64 GB paměti.
 
 Většina konfigurací, kde je Kafka nasazena, nevyžaduje značný výkon procesoru. Výjimkou je však případ, kdy je zapnuto \texttt{SSL}, požadavky na výkon CPU potom mohou vzrůst. Je doporučeno zvolit moderní procesor s~více jádry, běžný Kafka cluster využije 24 jader. Větší počet jader má větší význam než vyšší frekvence procesoru.
 
-\noindent Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}.
-
-Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť. Nízká latence zajišťuje, aby mohly uzly jednoduše komunikovat. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
+Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}. Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť s nízkými latencemi při přenosech. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
 
 \subsection{Cassandra}
 Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a~sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a~pro prostředí s~nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
 
 Cassandra běží ve virtuálním stroji Java s~přidělenou fixní velikostí \texttt{heap}-u. Cassandra používá značný objem paměti RAM mimo \texttt{heap} pro kompresi metadat, \texttt{bloom} filtry, řádky, klíče, čítače atd. Využívá výhod \texttt{pagecache} operačního systému, kam ukládá části naposledy manipulovaných souborů z~RAM pro okamžité znovupoužití. 
-Minimální produkční server vyžaduje aspoň 2 jádra procesoru a~aspoň 8 GB RAM \cite{cassandraHW}.
-%Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM.
+Minimální produkční server vyžaduje aspoň 2 jádra procesoru a~aspoň 8 GB RAM \cite{cassandraHW}. Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM.
 
 Cassandra je vysoce vícevláknová, obsluhující mnoho souběžných požadavků (čtení i~zápisů) v~mnoha vláknech běžících na tolika jádrech CPU, kolik je dostupných. Zápis probíhá do tzv. \texttt{commitlog}-u a~poté vkládáním dat do \texttt{memtable} (optimalizovaná cache pro data, která mohou být vyhledána pomocí klíče), takže operace zápisu bývají především limitované procesorem. V~důsledku toho se po přidání dalších výpočetních jader zvýší propustnost čtení i~zápisů \cite{cassandraHW}.
 
@@ -1029,6 +1017,7 @@ MapReduce ani další technologie nejsou v~distribuovaném úložišti použity.
 Pokud dojde k~nasazení Hadoop na více uzlů, je zapotřebí poskytnout dostatečně rychlé síťové připojení, aby uzly mohly rychle a~efektivně komunikovat.
 
 \chapter{Závěr}
+Kapitola uvede zhodnocení dosažených výsledků. Následně budou představena navržená rozšíření z~pohledu dalšího vývoje systému, po jejichž implementaci by systém nabídl nové možnosti a~lepší použitelnost.
 
 \section{Výsledky}
 Teoretická část práce se zabývá úvodem do forenzní analýzy digitálních dat. Dále jsou prozkoumány existující systémy pro uložení digitálních forenzních dat (včetně systému AFF4). Jako úložiště pro digitální forenzní data a~obecně Big data jsou představeny distribuované databáze včetně jejich vlastností, dále NoSQL databáze a~distribuovaný souborový systém HDFS z~platformy Hadoop.
@@ -1042,7 +1031,7 @@ Implementovaný systém je založen na distribuovaných Big data technologiích 
 
 V~průběhu implementace úložiště bylo provedeno několik úprav ke zvýšení propustnosti a~výkonu systému. Největší dopad na výkon potom mělo asynchronní ukládání a~čtení dat z~databáze, čímž se efektivně využívají hardwarové prostředky. Po aplikaci úprav byly zjištěny rozdíly v~rychlosti původního a~výsledného implementovaného systému.
 
-Po realizaci distribuovaného repositáře bylo provedeno měření výkonnosti pro desítky milionů paketů vstupních dat. Rychlost ukládání a~čtení závisí na hardwarové konfiguraci, ve které je systém distribuovaného úložiště spuštěn. Na závěr byly také uvedeny hardwarové požadavky zvolených Big data technologií.
+Po realizaci distribuovaného repositáře bylo provedeno měření výkonnosti pro desítky milionů paketů vstupních dat. Rychlost ukládání a~čtení závisí na hardwarové konfiguraci stroje, na kterém je systém distribuovaného úložiště nasazen. Na závěr byly také uvedeny hardwarové požadavky zvolených Big data technologií.
 
 \section{Návrh rozšíření}
 Zde budou diskutována případná rozšíření, která by poskytla pokročilé vlastnosti nástroje, a~ještě větší použitelnost.
