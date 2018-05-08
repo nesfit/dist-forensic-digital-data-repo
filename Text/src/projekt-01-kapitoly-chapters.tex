@@ -796,17 +796,20 @@ Rozšíření v~podobě podpory nových druhů digitálních forenzních dat je 
 \begin{itemize}
     \item Rozšíření výčtů \texttt{Command}, \texttt{Operation} a~\texttt{DataType}, kde lze přidat nové typy příkazů.
     
+    \item Definovat odpovídající tabulky v~databázi, přidat implementaci pro práci s~databází.
+    
+    \item K~uložení metadat je nutné definovat novou entitní třídu včetně rozhraní \texttt{Repository}.
+    
     \item Zpracování příkazu -- Je potřeba specializovat třídu \texttt{BaseHandler} novou implementací, která bude kompletně řídit zpracování příkazu (\texttt{BaseHandler} má přístup k~HDFS a~k~šabloně obsluhující komunikaci s~Kafkou). Tato implementace se musí nakonfigurovat jako bean ve třídě \texttt{HandlerBeans} a~asociovat s~typem příkazu přes správce handlerů v~\texttt{HandlerManagerBeans}.
 \end{itemize}
 
-\noindent Po těchto krocích lze zasílat zprávy požadavků s~novým typem příkazu z~klientské aplikace.
+\noindent Po těchto krocích lze z~klientské aplikace zasílat zprávy požadavků s~novým typem příkazu.
 
 \section{Klientská aplikace}
-Pro účely testování byla implementována i~klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. 
-Jedná se také o~aplikaci postavené na Spring Boot s~možností auto-konfigurace. Systém podporuje zaslání zpráv požadavků pro dva výše zmíněné scénáře -- požadavek pro uložení PCAP souboru, a~požadavek pro čtení paketů podle kritérií. Data předává v~obou případech přes HDFS z~důvodu šetření paměti RAM. Odpovědi z~distribuovaného úložiště přijímají dvě rozdílné komponenty:
+Pro účely testování byla implementována klientská demo aplikace ProducerDemo \ref{FIG_Architecture}. Jedná se o~aplikaci postavené na Spring Boot s~možností auto-konfigurace. Podporuje zaslání zpráv pro dva výše zmíněné scénáře -- požadavek pro uložení PCAP souboru, a~požadavek pro čtení paketů podle kritérií. Data předává v~obou případech přes HDFS z~důvodu šetření paměti RAM. Odpovědi z~distribuovaného úložiště přijímají dvě rozdílné komponenty:
 
 \begin{itemize}
-    \item \texttt{AcknowledgementConsumerHandler} -- Přijímá zprávy pouze z~výstupní Kafka fronty \texttt{output\_topic}.
+    \item \texttt{AcknowledgementConsumerHandler} -- Přijímá zprávy pouze z~fronty \texttt{output\_topic}.
     
     \item \texttt{ErrorConsumerHandler} -- Přijímá zprávy z~chybové fronty \texttt{error\_topic}.
 \end{itemize}
@@ -913,7 +916,7 @@ Testovací scénář zahrnuje odeslání příkazů \texttt{STORE\_PCAP} z~klien
 Testovací sada zahrnovala 102 PCAP souborů o~velikosti 67 až 270 MB, z~nichž každý obsahoval 500 000 paketů s~výjimkou posledního souboru, ten pouze 351 631 paketů. Dohromady se tedy jednalo o~10.3 GB dat a~50 851 631 paketů.
 
 \subsubsection{Čtení paketů}
-Pro otestování rychlosti systému pro čtení paketů podle kritérií byla odeslána zpráva obsahující příkaz \texttt{LOAD\_PCAP} s~následujícími kritérii:
+Prohledávání bylo spuštěno nad 50 851 631 pakety uloženými v~předchozím scénáři. Za zmínku ještě stojí, že systém nebyl v~průběhu testu zastaven. Pro otestování rychlosti systému z~hlediska čtení paketů podle kritérií byla odeslána zpráva obsahující příkaz \texttt{LOAD\_PCAP} s~následujícími kritérii:
 
 \vspace{0.5cm}
 \texttt{field = ipProtocolName} \\
@@ -926,7 +929,10 @@ Pro otestování rychlosti systému pro čtení paketů podle kritérií byla od
 \indent \texttt{value = [443, 80]}
 
 \vspace{0.5cm}
-\noindent Prohledávání bylo spuštěno nad 50 851 631 pakety uloženými v~předchozím scénáři.
+\noindent Z~těchto kritérií byl sestaven následující výraz, který byl odeslán v~databázovém dotazu:
+
+\vspace{0.5cm}
+\verb|{ "ipProtocolName" : "TCP", "dstPort" : { "$in" : [443, 80] } }|
 
 \subsection{HW konfigurace}
 Testovacím strojem je notebook \texttt{Fujitsu Celsius H730}, specifikace:
