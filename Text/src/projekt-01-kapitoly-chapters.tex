@@ -221,7 +221,7 @@ Distribuovaná databáze se skládá z~většího počtu samostatných databáz�
 
 \subsection{Rozdělení}
 \subsubsection{Homogenní}
-Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se uživateli navenek jeví jako jeden systém. Je jednodušší jej navrhnout a~spravovat. Homogenní distribuované databáze můžeme ještě dělit na autonomní a neautonomní:
+Všechny uzly používají identické SŘBD a~operační systémy. Uzly mají informace o~ostatních uzlech a~spolupracují při zpracování uživatelských požadavků. Homogenní distribuovaná databáze se uživateli navenek jeví jako jeden systém. Je jednodušší jej navrhnout a~spravovat. Homogenní distribuované databáze můžeme ještě dělit na autonomní a~neautonomní:
 
 \begin{itemize}
     \item Autonomní -- Každá databáze je nezávislá, neexistuje žádný centrální uzel. Databáze jsou spravovány aplikací, a~pro předávání dat používají zasílání zpráv.
@@ -561,10 +561,10 @@ HDFS nabízí tři API, jejichž vlastnosti znázorňuje tabulka \ref{HDFSApi}.
     \centering
     \begin{tabular}{| l | l | l | l | l |}
     \hline
-    Soubor. systém   &   Metoda   &   Schéma/Prefix &  Zápis/Čtení &   Verze \\ \hline
-    HDFS & RPC & \texttt{hdfs://} & Zápis i~čtení & Pouze stejná verze \\ \hline
-    HFTP & HTTP & \texttt{hftp://} & Pouze čtení & Nezávislé na verzi \\ \hline
-    WebHDFS & HTTP (REST) & \texttt{webhdfs://} & Zápis i~čtení & Nezávislé na verzi \\ \hline
+    File System   &   Comm. Method   &   Scheme / Prefix &  Read / Write &   Cross Version \\ \hline
+    HDFS & RPC & \texttt{hdfs://} & Read / Write & Same HDFS v. only \\ \hline
+    HFTP & HTTP & \texttt{hftp://} & Read only & Version independent \\ \hline
+    WebHDFS & HTTP (REST) & \texttt{webhdfs://} & Read / Write & Version independent \\ \hline
     \end{tabular}\par
     \bigskip
     \caption{Druhy API, které HDFS poskytuje, převzato z~referenční dokumentace \cite{springHadoopReference}.}
@@ -986,13 +986,13 @@ Je ale potřeba mít dostatečnou velikost paměti RAM k~načtení aktivních p�
 
 Většina konfigurací, kde je Kafka nasazena, nevyžaduje značný výkon procesoru. Výjimkou je však případ, kdy je zapnuto \texttt{SSL}, požadavky na výkon CPU potom mohou vzrůst. Je doporučeno zvolit moderní procesor s~více jádry, běžný Kafka cluster využije 24 jader. Větší počet jader má větší význam než vyšší frekvence procesoru.
 
-Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}. Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť s nízkými latencemi při přenosech. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
+Je také doporučeno nainstalovat více disků pro získání optimální propustnosti a~nesdílet tyto disky s~jinými aplikacemi nebo aktivitami operačního systému, aby byla zaručena nízká latence \cite{kafkaBestPractises}. Jisté výhody mají i~SSD disky, případně zapojení disků v~\texttt{RAID}. Důležitou součástí distribuovaného systému je rychlá a~spolehlivá síť s~nízkými latencemi při přenosech. Moderní ethernetová připojení s~rychlostí 1 Gb/s, či 10 Gb/s jsou dostatečná. Nedoporučuje se provozovat clustery, jejichž uzly se nachází v~geograficky vzdálených lokacích.
 
 \subsection{Cassandra}
 Výběr hardware závisí na konkrétním případu použití. Správná kombinace paměti RAM, CPU, disků, počtu uzlů a~sítě je obrovsky rozdílná pro prostředí se statickými daty, ke kterým se přistupuje zřídka, a~pro prostředí s~nestálými daty, ke kterým se přistupuje často \cite{cassandraPlanningHW}. Pro otestování clusteru před nasazením lze využít nástroje \texttt{cassandra-stress}, který provede řadu výkonostních testů, více na webových stránkách společnosti DataStax \footnote{https://docs.datastax.com/en/dse/6.0/dse-admin/datastax\_enterprise/tools/toolsCStress.html}.
 
 Cassandra běží ve virtuálním stroji Java s~přidělenou fixní velikostí \texttt{heap}-u. Cassandra používá značný objem paměti RAM mimo \texttt{heap} pro kompresi metadat, \texttt{bloom} filtry, řádky, klíče, čítače atd. Využívá výhod \texttt{pagecache} operačního systému, kam ukládá části naposledy manipulovaných souborů z~RAM pro okamžité znovupoužití. 
-Minimální produkční server vyžaduje aspoň 2 jádra procesoru a~aspoň 8 GB RAM \cite{cassandraHW}. Typická konfigurace bývá 8 a více jader spolu s 32 GB RAM.
+Minimální produkční server vyžaduje aspoň 2 jádra procesoru a~aspoň 8 GB RAM \cite{cassandraHW}. Typická konfigurace bývá 8 a~více jader spolu s~32 GB RAM.
 
 Cassandra je vysoce vícevláknová, obsluhující mnoho souběžných požadavků (čtení i~zápisů) v~mnoha vláknech běžících na tolika jádrech CPU, kolik je dostupných. Zápis probíhá do tzv. \texttt{commitlog}-u a~poté vkládáním dat do \texttt{memtable} (optimalizovaná cache pro data, která mohou být vyhledána pomocí klíče), takže operace zápisu bývají především limitované procesorem. V~důsledku toho se po přidání dalších výpočetních jader zvýší propustnost čtení i~zápisů \cite{cassandraHW}.
 

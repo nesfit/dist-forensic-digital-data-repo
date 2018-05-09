@@ -7,6 +7,25 @@
 
 %\chapter{Manuál}
 
+\chapter{Obsah přiloženého paměťového média}
+Součástí diplomové práce je paměťové médium, které obsahuje:
+
+\begin{itemize}
+    \item \texttt{DIP\_DistributedRepository} -- zdrojové kódy modulů distribuovaného úložiště
+    
+    \item \texttt{Docker} -- běhové prostředí, skripty a~Docker obrazy technologií pro běh systému
+    
+    \item \texttt{PCAP\_Input} -- adresář, jehož cesta je předána klientské demo aplikaci ve spouštěcím skriptu, slouží jako zdroj PCAP souborů k~odeslání do distribuovaného úložiště
+    
+    \item \texttt{SEP\_DistributedRepository} -- zdrojové kódy modulů prototypu
+    
+    \item \texttt{Text} -- zdrojové kódy k~technické zprávě včetně všech diagramů ve formátu PDF a~formátu pro grafický online nástroj \texttt{draw.io} \footnote{https://www.draw.io/}
+    
+    \item \texttt{LICENSE} -- licence systému
+    
+    \item \texttt{README.md} -- návod k~běhovému prostředí a~ke spuštění systému
+\end{itemize}
+
 \chapter{Konfigurace} \label{configuration}
 \section{Systém distribuovaného úložiště}
 Konfigurace aplikace DistributedRepository se nachází v~souboru \\ \texttt{DistributedRepository/src/main/resources/application.properties} \\
@@ -92,7 +111,7 @@ cz.vutbr.fit.producerdemo.demo.LoadPcapProducerDemo.dataSourceStorage=HDFS
 }
 
 \chapter{Běhové prostředí} \label{dockerEnv}
-Jako běhové prostředí pro systém distribuovaného repositáře byl zvolen projekt Docker \footnote{https://www.docker.com/} z~důvodu jednodušší a~oddělené správy použitých technologií. Každá technologie běží v~odděleném kontejneru spuštěném z~předem připraveného obrazu. Všechny soubory a~skripty týkající se běhového prostředí jsou uloženy v~adresáři \texttt{Docker/}.
+Jako běhové prostředí pro systém distribuovaného repositáře byl zvolen projekt Docker \footnote{https://www.docker.com/} z~důvodu jednodušší a~oddělené správy použitých technologií. Každá technologie běží v~odděleném kontejneru spuštěném z~předem připraveného obrazu. Všechny soubory a~skripty týkající se běhového prostředí jsou uloženy v~adresáři \texttt{Docker}.
 
 \section{Obrazy}
 Každou technologii reprezentuje samostatný obraz (angl. \texttt{image}), v~němž je daná technologie nainstalována.
