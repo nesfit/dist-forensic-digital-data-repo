@@ -265,6 +265,7 @@
 % Projectinfo - parametrizace sablony / template parameters
 %-----------------------------------------------------------------------------
 %Parametry 
+\define@key{projinfo}{titlefront}{\global\def\@titlefront@CS{#1}}
 \define@key{projinfo}{title.cs}{\global\def\@title@CS{#1}}
 \define@key{projinfo}{title.en}{\global\def\@title@EN{#1}}
 \define@key{projinfo}{department}{\set@department{#1}}
@@ -609,7 +610,7 @@
 \vfill
 
 % Pro název práce na 2 řádky použijte \mkuctxttl{18} / For the 2-line thesis title use \mkuctxttl{18}
-\mkuctxtt{18}{\ifslovak\@title@CS\else\ifczech\@title@CS\else\@title@EN\fi\fi}
+\mkuctxtt{18}{\ifslovak\@title@CS\else\ifczech\@titlefront@CS\else\@title@EN\fi\fi}
 \mkuctxtt{10}{\ifslovak\@title@EN\else\ifczech\@title@EN\else\@title@CS\fi\fi}
 
 \vfill
