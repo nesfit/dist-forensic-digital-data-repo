@@ -1,6 +1,7 @@
 #!/bin/sh
 
-VM_IP=192.168.99.100
+#VM_IP=192.168.99.100
+VM_IP=`docker-machine ip default`
 SPRING_DATA_CASSANDRA_CONTACT_POINTS=$VM_IP
 
 HADOOP_IP=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' hadoop`

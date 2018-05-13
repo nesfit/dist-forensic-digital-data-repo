@@ -35,8 +35,8 @@ public class StorePcapProducerDemo extends BaseProducerDemo {
             return;
         }
 
-        // TODO: Will be removed
-        initStatsForDirectory(directory);
+        // Uncomment this line to enable time-duration statistics
+        //initStatsForDirectory(directory);
 
         Arrays.stream(directory.listFiles())
                 .filter(this::isPcapOrCapFile)
@@ -58,8 +58,8 @@ public class StorePcapProducerDemo extends BaseProducerDemo {
             byte[] bytes = preparePayload(dataSourceStorage, filename, requestId.toString());
             KafkaRequest request = buildKafkaRequest(dataSource, Command.STORE_PCAP, requestId);
 
-            // TODO: Will be removed
-            initStatsForRequest(filename, request.getId());
+            // Uncomment this line to enable time-duration statistics
+            //initStatsForRequest(filename, request.getId());
 
             producer.produce(inputTopic, request, bytes,
                     result -> unlockMutexForFile(filename),
