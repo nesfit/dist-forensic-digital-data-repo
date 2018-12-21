@@ -1,0 +1,17 @@
+# LaTeX
+*.aux
+*.idx
+*.log
+*.vrb
+
+# BibTeX
+*.bbl
+*.blg
+*.brf
+
+# LaTeX/Beamer
+*.ent
+*.nav
+*.out
+*.snm
+*.toc
