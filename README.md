@@ -1,5 +1,7 @@
 # Distributed Forensic Digital Data Repository
 
+(c) 2018-2020 Marek Rychly (rychly@fit.vutbr.cz) and Martin Josefik (xjosef00@stud.fit.vutbr.cz)
+
 Distributed storage for digital forensic data with data/metadata repository, API for queries and incoming/outgoing data, indexing, plug-in system for yet unsupported data-types, etc.
 
 ## Applications
@@ -20,10 +22,10 @@ The individual components can run in the Docker by `run.sh` script in their root
 
 ## Documentation and Experiments
 
-The documentation in Czech can be found in [docs directory](./docs).
+The documentation can be found in [docs directory](./docs).
+
 There is also a set of experiments to measure the performance on PCAP storing/retrieving to/from the repository, see [experiments directory](./experiments).
 
-## Authors
+## Acknowledgements
 
-The development was started by [Martin Josefík](mailto:xjosef00@stud.fit.vutbr.cz) in his Master's Thesis.
-The project is maintained and the further development is done by [Marek Rychly](mailto:marek.rychly@gmail.com).
+*This work was supported by the Ministry of the Interior of the Czech Republic as a part of the project Integrated platform for analysis of digital data from security incidents VI20172020062.*

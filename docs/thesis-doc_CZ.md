@@ -1,5 +1,9 @@
 # Master-Thesis
 
+This is a legacy documentation -- please, do not use.
+
+Toto je zastaralá dokumentace -- prosím, nepoužívejte.
+
 #### Distributed Forensic Digital Data Repository ####
 
 Obsah
