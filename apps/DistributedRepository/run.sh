@@ -1,27 +1,27 @@
 #!/bin/sh
 
-#VM_IP=192.168.99.100
-VM_IP=`docker-machine ip default`
-SPRING_DATA_CASSANDRA_CONTACT_POINTS=$VM_IP
+SPRING_DATA_CASSANDRA_CONTACT_POINTS=172.16.254.31
 
-HADOOP_IP=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' hadoop`
+HADOOP_IP=172.16.254.33
 HDFS_PORT=9000
 SPRING_HADOOP_FS_URI=hdfs://$HADOOP_IP:$HDFS_PORT
 
+KAFKA_IP=172.16.254.34
 KAFKA_PORT=9092
-SPRING_KAFKA_BOOTSTRAP_SERVERS=$VM_IP:$KAFKA_PORT
-SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=$VM_IP:$KAFKA_PORT
+SPRING_KAFKA_BOOTSTRAP_SERVERS=$KAFKA_IP:$KAFKA_PORT
+SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=$KAFKA_IP:$KAFKA_PORT
 
-SPRING_DATA_MONGODB_HOST=$VM_IP
+SPRING_DATA_MONGODB_HOST=172.16.254.32
 
-docker run \
+exec docker run \
 	-it \
 	--rm \
 	--name distributed-repository \
+	--network environment_default \
 	-v "$PWD":/usr/src/app \
 	-v "$HOME/.m2":/root/.m2 \
 	-w "/usr/src/app/" \
-	martinfit/maven:3.5.2-jdk-9-slim \
+	maven:3.5.2-jdk-9-slim \
 		java \
 			-Dspring.data.cassandra.contact-points=$SPRING_DATA_CASSANDRA_CONTACT_POINTS \
 			-Dspring.hadoop.fs-uri=$SPRING_HADOOP_FS_URI \

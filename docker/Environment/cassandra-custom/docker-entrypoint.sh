@@ -1,31 +1,56 @@
 #!/bin/bash
 #set -e
 
-# This Entrypoint is more or less the same as the Entrypoint from the official image: changes 68-73!
+# This Entrypoint is more or less the same as the Entrypoint from the official image: changes 92-98!
+# See https://github.com/docker-library/cassandra/blob/master/docker-entrypoint.sh
 
 # first arg is `-f` or `--some-option`
-if [ "${1:0:1}" = '-' ]; then
+# or there are no args
+if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
 	set -- cassandra -f "$@"
 fi
 
 # allow the container to be started with `--user`
 if [ "$1" = 'cassandra' -a "$(id -u)" = '0' ]; then
-	chown -R cassandra /var/lib/cassandra /var/log/cassandra "$CASSANDRA_CONFIG"
+	find "$CASSANDRA_CONF" /var/lib/cassandra /var/log/cassandra \
+		\! -user cassandra -exec chown cassandra '{}' +
 	exec gosu cassandra "$BASH_SOURCE" "$@"
 fi
+
+_ip_address() {
+	# scrape the first non-localhost IP address of the container
+	# in Swarm Mode, we often get two IPs -- the container IP, and the (shared) VIP, and the container IP should always be first
+	ip address | awk '
+		$1 == "inet" && $NF != "lo" {
+			gsub(/\/.+$/, "", $2)
+			print $2
+			exit
+		}
+	'
+}
+
+# "sed -i", but without "mv" (which doesn't work on a bind-mounted file, for example)
+_sed-in-place() {
+	local filename="$1"; shift
+	local tempFile
+	tempFile="$(mktemp)"
+	sed "$@" "$filename" > "$tempFile"
+	cat "$tempFile" > "$filename"
+	rm "$tempFile"
+}
 
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
 	: ${CASSANDRA_LISTEN_ADDRESS='auto'}
 	if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
-		CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_LISTEN_ADDRESS="$(_ip_address)"
 	fi
 
 	: ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}
 
 	if [ "$CASSANDRA_BROADCAST_ADDRESS" = 'auto' ]; then
-		CASSANDRA_BROADCAST_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_BROADCAST_ADDRESS="$(_ip_address)"
 	fi
 	: ${CASSANDRA_BROADCAST_RPC_ADDRESS:=$CASSANDRA_BROADCAST_ADDRESS}
 
@@ -33,8 +58,9 @@ if [ "$1" = 'cassandra' ]; then
 		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
-  
-	sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
+
+	_sed-in-place "$CASSANDRA_CONF/cassandra.yaml" \
+		-r 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/'
 
 	for yaml in \
 		broadcast_address \
@@ -49,7 +75,8 @@ if [ "$1" = 'cassandra' ]; then
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
 		if [ "$val" ]; then
-			sed -ri 's/^(# )?('"$yaml"':).*/\2 '"$val"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
+			_sed-in-place "$CASSANDRA_CONF/cassandra.yaml" \
+				-r 's/^(# )?('"$yaml"':).*/\2 '"$val"'/'
 		fi
 	done
 
@@ -57,7 +84,8 @@ if [ "$1" = 'cassandra' ]; then
 		var="CASSANDRA_${rackdc^^}"
 		val="${!var}"
 		if [ "$val" ]; then
-			sed -ri 's/^('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+			_sed-in-place "$CASSANDRA_CONF/cassandra-rackdc.properties" \
+				-r 's/^('"$rackdc"'=).*/\1 '"$val"'/'
 		fi
 	done
 fi
